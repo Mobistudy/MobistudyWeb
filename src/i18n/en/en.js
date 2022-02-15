@@ -43,7 +43,7 @@ Technical logs will be deleted after 1 year they are produced.
 \u2022 You can ask the processing of your data to be stopped or restricted (even without deleting your account). In this case contact mobistudy@mau.se.
 \u2022 You can find out what has been registered about you and download the data in a machine-readable format by contacting mobistudy@mau.se.
 \u2022 You can ask for errors in your data to be corrected. In this case, contact mobistudy@mau.se.
-\u2022 If you have complaints that cannot be resolved with Malmö University you may submit these to Datainspektionen.`,
+\u2022 If you have complaints that cannot be resolved with Malmö University you may submit these to Integritetsskyddsmyndigheten.`,
     contacts: `For questions about how data is processed by each institution involved in the study please contact:
 \u2022 Malmö University's data protection officer at dataskyddsombud@mau.se`,
     piContact: `\u2022 {name} at: {contact}`

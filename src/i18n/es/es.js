@@ -43,7 +43,7 @@ Los registros técnicos se eliminarán después de 1 año de su producción.
 \u2022 Puede solicitar que se detenga o restrinja el procesamiento de sus datos (incluso sin eliminar su cuenta). En este caso, póngase en contacto con mobistudy@mau.se.
 \u2022 Puede averiguar qué se ha registrado sobre usted y descargar los datos en un formato legible por máquina poniéndose en contacto con mobistudy@mau.se.
 \u2022 Puede solicitar la corrección de errores en sus datos. En este caso, póngase en contacto con mobistudy@mau.se.
-\u2022 Si tiene quejas que no se pueden resolver con la Universidad de Malmö, puede enviarlas a Datainspektionen.`,
+\u2022 Si tiene quejas que no se pueden resolver con la Universidad de Malmö, puede enviarlas a Integritetsskyddsmyndigheten.`,
     contacts: `Si tiene preguntas sobre cómo procesa los datos cada institución involucrada en el estudio, comuníquese con:
 \u2022 Responsable de protección de datos de la Universidad de Malmö en dataskyddsombud@mau.se`,
     piContact: `\u2022 {name} at: {contact}`

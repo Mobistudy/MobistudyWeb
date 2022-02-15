@@ -43,7 +43,7 @@ Teknisk data (loggar) kommer att tas bort 1 år efter de producerats.
 \u2022 Du kan be att behandling av din data stoppas eller begränsas (även utan att ta bort ditt konto). I det här fallet, kontakta mobistudy@mau.se.
 \u2022 Du kan få svar på vad som registrerats om dig och ladda ned datan i ett maskinläsligt format genom att kontakta mobistudy@mau.se.
 \u2022 Du kan be om att fel i din insamlade data blir rättade. I det här fallet, kontakta mobistudy@mau.se.
-\u2022 Om du har klagomål som inte kan åtgärdas med Malmö Universitet kan dessa skickas till Datainspektionen.`,
+\u2022 Om du har klagomål som inte kan åtgärdas med Malmö Universitet kan dessa skickas till Integritetsskyddsmyndigheten.`,
     contacts: `För frågor gällande hur insamlad data är hanterad av respektive involverad institution i studien, var god kontakta:
 \u2022 Malmö Universitets dataskyddsombud via dataskyddsombud@mau.se`,
     piContact: `\u2022 {name} hos: {contact}`
