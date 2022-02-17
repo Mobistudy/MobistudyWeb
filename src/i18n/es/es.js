@@ -58,7 +58,8 @@ Los registros técnicos se eliminarán después de 1 año de su producción.
     taskItemPeakFlow: 'Acepto realizar una prueba de flujo espiratorio máximo, {scheduling}',
     taskItemPosition: 'Acepto enviar mi posición geográfica, {scheduling}',
     taskItemFingerTapping: 'Acepto realizar la tarea de tocar la pantalla con el dedo, {scheduling}',
-    taskItemTUGT: 'Acepto realizar la prueba de levantarse y avanzar, {scheduling}'
+    taskItemTUGT: 'Acepto realizar la prueba "Levanta y anda", {scheduling}',
+    taskItemHoldPhone: 'Acepto realizar la prueba "Sostén el teléfono", {scheduling}'
   },
   scheduling: {
     notDefined: 'Aún no definido',

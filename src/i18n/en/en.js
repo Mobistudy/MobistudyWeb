@@ -58,7 +58,8 @@ Technical logs will be deleted after 1 year they are produced.
     taskItemPeakFlow: 'I agree to perform a Peak flow measurement, {scheduling}',
     taskItemPosition: 'I agree to send my location, {scheduling}',
     taskItemFingerTapping: 'I agree to perform the Finger tapping test, {scheduling}',
-    taskItemTUGT: 'I agree to perform the Timed up and go test, {scheduling}'
+    taskItemTUGT: 'I agree to perform the "Timed up and go" test, {scheduling}',
+    taskItemHoldPhone: 'I agree to perform "Hold the phone" test, {scheduling}'
   },
   scheduling: {
     notDefined: 'Not yet defined',

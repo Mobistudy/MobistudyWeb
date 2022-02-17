@@ -104,6 +104,16 @@
               </q-item-section>
             </q-item>
 
+            <q-item
+              clickable
+              v-close-popup
+              @click.native="addHoldPhone()"
+            >
+              <q-item-section>
+                <q-item-label>Hold the phone test</q-item-label>
+              </q-item-section>
+            </q-item>
+
           </q-list>
         </q-btn-dropdown>
       </q-card-section>
@@ -295,7 +305,10 @@
               expand-separator
               :label="schedulingToString(task.scheduling)"
             >
-              <scheduler v-model="task.scheduling" :taskIds="value.tasks.map(t => t.id).filter(i => i != task.id)"></scheduler>
+              <scheduler
+                v-model="task.scheduling"
+                :taskIds="value.tasks.map(t => t.id).filter(i => i != task.id)"
+              ></scheduler>
             </q-expansion-item>
           </div>
         </div>
@@ -568,6 +581,14 @@ export default {
       this.value.tasks.push({
         id: this.value.tasks.length + 1,
         type: 'tugt',
+        scheduling: defaultScheduling
+      })
+      this.update()
+    },
+    addHoldPhone () {
+      this.value.tasks.push({
+        id: this.value.tasks.length + 1,
+        type: 'holdPhone',
         scheduling: defaultScheduling
       })
       this.update()

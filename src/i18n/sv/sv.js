@@ -58,7 +58,8 @@ Teknisk data (loggar) kommer att tas bort 1 år efter de producerats.
     taskItemPeakFlow: 'Jag godkänner att utföra en  Smart Peak Flow Meter, {scheduling}',
     taskItemPosition: 'Jag accepterar att skicka min plats, {scheduling}',
     taskItemFingerTapping: 'Jag godkänner att utföra en fingeravtryckningsuppgiften, {scheduling}',
-    taskItemTUGT: 'Jag godkänner att utföra ett Timed up and Go test, {scheduling}'
+    taskItemTUGT: 'Jag godkänner att utföra ett "Timed up and Go" test, {scheduling}',
+    taskItemHoldPhone: 'Jag går med på att utföra "Håll i telefonen"-testet, {scheduling}'
   },
   scheduling: {
     notDefined: 'Icke ännu definierad',
