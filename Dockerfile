@@ -15,6 +15,6 @@ WORKDIR /usr/src/app
 RUN npm install
 RUN npx quasar build
 
-FROM caddy:2-alpine
+FROM caddy:2.4.6-alpine
 
 COPY --from=build /usr/src/app/dist/spa /var/www
