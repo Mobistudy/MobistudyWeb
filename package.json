@@ -16,7 +16,7 @@
     "dev:test": "concurrently \"quasar dev\" \"jest --watch\""
   },
   "dependencies": {
-    "quasar": "^1.18.3",
+    "quasar": "^1.18.4",
     "@quasar/extras": "^1.12.5",
     "axios": "^0.25.0",
     "core-js": "^3.21.0",
