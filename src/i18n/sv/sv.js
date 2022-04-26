@@ -22,6 +22,9 @@ Denna information är nödvändig för säkerhets- och granskningssyften.
     collectedDataPosition: `    \u2022 Din geografiska position.`,
     collectedDataFingerTapping: `    \u2022 Tiden du trycker på skärmen under fingeravtryckningsuppgiften.`,
     collectedDataTUGT: `    \u2022 Telefonens acceleration och orientering och steg som du gick under testet Timed up and go.`,
+    collectedDataHoldPhone: `    \u2022 Acceleration och riktning av din telefon under testet Hålla telefonen.`,
+    collectedDataVocalization: `    \u2022 Din röst under vokaliseringstestet.`,
+    collectedDataDrawing: `    \u2022 Strecken du gör på skärmen under figurtestet.`,
     collectedDataReason: ` Den insamlade datan är nödvändig för att uppnå forskningssyftet. [LÄGG TILL ANLEDNINGEN FÖR INSAMLINGEN AV SPECIFIKT DEN HÄR DATAN]`,
     storage: `Var kommer min data att lagras?
 All data kommer lagras på Mobistudys egen server, vilken hanteras av Malmö Universitet i Sverige. Din telefon lagrar enbart din profil samt data om deltagande vilka studier du deltar i.

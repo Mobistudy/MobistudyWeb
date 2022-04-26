@@ -22,6 +22,9 @@ Estos son necesarios para la seguridad y la auditoría.
     collectedDataPosition: `    \u2022 Su posición geográfica.`,
     collectedDataFingerTapping: `    \u2022 Los tiempos en los que tocas la pantalla durante la tarea de medición de movimiento de los dedos.`,
     collectedDataTUGT: `    \u2022 La aceleración y la orientación del teléfono y los pasos recorridos durante la prueba de levantarse y avanzar.`,
+    collectedDataHoldPhone: `    \u2022 La aceleración y orientación de su teléfono durante la prueba de sostener el teléfono.`,
+    collectedDataVocalization: `    \u2022 Tu voz durante la prueba de vocalización.`,
+    collectedDataDrawing: `    \u2022 Los trazos que haces en la pantalla durante la prueba de dibujo.`,
     collectedDataReason: `Estos datos son necesarios para cumplir con los objetivos de la investigación. [ADD REASONS FOR WHY THESE DATA ARE NEEDED IN THE SPECIFIC STUDY]`,
     storage: `¿Dónde se almacenarán mis datos?
 Todos estos datos se almacenarán en el servidor de Mobistudy, gestionado por la Universidad de Malmö en Suecia. Su teléfono solo conservará su perfil y datos sobre los estudios en los que está participando.

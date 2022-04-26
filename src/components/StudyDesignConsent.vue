@@ -242,7 +242,7 @@ export default {
               newTaskItem.description[lang] = this.$i18n.t('consent.taskItemHoldPhone', lang, {
                 scheduling: schedulingToString(task.scheduling, lang)
               })
-            } else if (task.type === 'Vocalization') {
+            } else if (task.type === 'vocalization') {
               newTaskItem.description[lang] = this.$i18n.t('consent.taskItemVocalization', lang, {
                 scheduling: schedulingToString(task.scheduling, lang)
               })

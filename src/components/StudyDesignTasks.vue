@@ -110,7 +110,7 @@
               @click.native="addHoldPhone()"
             >
               <q-item-section>
-                <q-item-label>Hold the phone test</q-item-label>
+                <q-item-label>Hold the phone (tremor) test</q-item-label>
               </q-item-section>
             </q-item>
 
@@ -614,7 +614,7 @@ export default {
     addVocalization () {
       this.value.tasks.push({
         id: this.value.tasks.length + 1,
-        type: 'Vocalization',
+        type: 'vocalization',
         scheduling: defaultScheduling
       })
       this.update()
