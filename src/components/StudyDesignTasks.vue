@@ -114,6 +114,16 @@
               </q-item-section>
             </q-item>
 
+            <q-item
+              clickable
+              v-close-popup
+              @click.native="addVocalization()"
+            >
+              <q-item-section>
+                <q-item-label>Vocalization test</q-item-label>
+              </q-item-section>
+            </q-item>
+
           </q-list>
         </q-btn-dropdown>
       </q-card-section>
@@ -165,6 +175,14 @@
           class="text-h5"
           v-if="task.type === 'tugt'"
         >Timed up and go test</div>
+        <div
+          class="text-h5"
+          v-if="task.type === 'holdPhone'"
+        >Hold the phone test</div>
+        <div
+          class="text-h5"
+          v-if="task.type === 'Vocalization'"
+        >Vocalization test</div>
         Task Id: {{task.id}}
       </q-card-section>
       <q-card-section>
@@ -589,6 +607,14 @@ export default {
       this.value.tasks.push({
         id: this.value.tasks.length + 1,
         type: 'holdPhone',
+        scheduling: defaultScheduling
+      })
+      this.update()
+    },
+    addVocalization () {
+      this.value.tasks.push({
+        id: this.value.tasks.length + 1,
+        type: 'Vocalization',
         scheduling: defaultScheduling
       })
       this.update()

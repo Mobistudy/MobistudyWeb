@@ -242,6 +242,10 @@ export default {
               newTaskItem.description[lang] = this.$i18n.t('consent.taskItemHoldPhone', lang, {
                 scheduling: schedulingToString(task.scheduling, lang)
               })
+            } else if (task.type === 'Vocalization') {
+              newTaskItem.description[lang] = this.$i18n.t('consent.taskItemVocalization', lang, {
+                scheduling: schedulingToString(task.scheduling, lang)
+              })
             }
           }
         } else {
@@ -293,6 +297,10 @@ export default {
             string += '\n' + this.$i18n.t('privacyPolicy.collectedDataFingerTapping', lang)
           } else if (task.type === 'tugt') {
             string += '\n' + this.$i18n.t('privacyPolicy.collectedDataTUGT', lang)
+          } else if (task.type === 'holdPhone') {
+            string += '\n' + this.$i18n.t('privacyPolicy.collectedDataHoldPhone', lang)
+          } else if (task.type === 'Vocalization') {
+            string += '\n' + this.$i18n.t('privacyPolicy.collectedDataVocalization', lang)
           }
         }
         string += this.$i18n.t('privacyPolicy.collectedDataReason', lang)
