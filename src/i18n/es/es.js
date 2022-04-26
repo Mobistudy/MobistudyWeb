@@ -20,7 +20,7 @@ Estos son necesarios para la seguridad y la auditoría.
     collectedDataPO60: `    \u2022 Su saturación de oxígeno en sangre y frecuencia cardíaca medida por el oxímetro de pulso.`,
     collectedDataPeakFlow: `    \u2022 Su flujo máximo medido por el medidor de flujo máximo inteligente.`,
     collectedDataPosition: `    \u2022 Su posición geográfica.`,
-    collectedDataFingerTapping: `    \u2022 Los tiempos en los que tocas la pantalla durante la tarea de tocar con el dedo.`,
+    collectedDataFingerTapping: `    \u2022 Los tiempos en los que tocas la pantalla durante la tarea de medición de movimiento de los dedos.`,
     collectedDataTUGT: `    \u2022 La aceleración y la orientación del teléfono y los pasos recorridos durante la prueba de levantarse y avanzar.`,
     collectedDataReason: `Estos datos son necesarios para cumplir con los objetivos de la investigación. [ADD REASONS FOR WHY THESE DATA ARE NEEDED IN THE SPECIFIC STUDY]`,
     storage: `¿Dónde se almacenarán mis datos?
