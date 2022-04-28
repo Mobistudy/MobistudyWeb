@@ -58,6 +58,7 @@ export default {
         { name: 'userkey', required: true, label: 'User Key', align: 'left', field: 'userkey', sortable: false }, // Change "_key" to "key" eventually
         { name: 'email', required: true, label: 'Email', align: 'left', field: 'email', sortable: true },
         { name: 'role', required: true, label: 'Role', align: 'left', field: 'role', sortable: false },
+        { name: 'testuser', required: false, label: 'Test user', align: 'left', field: 'testUser', sortable: false },
         { name: 'delete', required: true, label: 'Delete user', align: 'left', field: 'delete', sortable: false }
       ],
       filter: {
@@ -88,6 +89,7 @@ export default {
         }
         this.pagination.rowsNumber = await API.getAllUsers(true, queryParams)
         this.users = await API.getAllUsers(false, queryParams)
+        console.log(this.users)
       } catch (err) {
         this.$q.notify({
           color: 'negative',
@@ -101,7 +103,7 @@ export default {
       this.$q.dialog({
         title: 'Delete User',
         color: 'warning',
-        message: 'You are deleting ' + user.role + ' ' + user.email + ' from the DB. This cannot be undone. Would you like to continue?',
+        message: 'You are deleting ' + user.role + ' ' + user.email + ' with all its data. This cannot be undone. Would you like to continue?',
         ok: 'Yes, delete user',
         cancel: 'Cancel'
       }).onOk(async () => {
