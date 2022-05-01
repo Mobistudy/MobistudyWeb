@@ -80,6 +80,9 @@ export default {
     let resp = await axios.get(URL, axiosConfig)
     return resp.data
   },
+  async updateUser (userKey, user) {
+    return axios.patch(BASE_URL + '/users/' + userKey, user, axiosConfig)
+  },
   async deleteUser (userKey) {
     let resp = await axios.delete(BASE_URL + '/users/' + userKey, axiosConfig)
     return resp.data

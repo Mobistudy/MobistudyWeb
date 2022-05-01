@@ -31,6 +31,14 @@
           debounce="500"
         />
       </template>
+      <template #body-cell-testuser="props">
+        <q-td :props="props">
+          <q-toggle
+            :value="props.row.testUser"
+            @input="toggleTestUser(props.row)"
+          />
+        </q-td>
+      </template>
       <template #body-cell-delete="props">
         <q-td :props="props">
           <q-btn
@@ -89,7 +97,6 @@ export default {
         }
         this.pagination.rowsNumber = await API.getAllUsers(true, queryParams)
         this.users = await API.getAllUsers(false, queryParams)
-        console.log(this.users)
       } catch (err) {
         this.$q.notify({
           color: 'negative',
@@ -99,10 +106,23 @@ export default {
       }
       this.loading = false
     },
+    async toggleTestUser (user) {
+      console.log(user)
+      user.testUser = !user.testUser
+      try {
+        await API.updateUser(user.userkey, user)
+      } catch (err) {
+        this.$q.notify({
+          color: 'negative',
+          message: 'Cannot update user' + err.message,
+          icon: 'report_problem'
+        })
+      }
+    },
     async deleteUser (user) {
       this.$q.dialog({
         title: 'Delete User',
-        color: 'warning',
+        color: 'negative',
         message: 'You are deleting ' + user.role + ' ' + user.email + ' with all its data. This cannot be undone. Would you like to continue?',
         ok: 'Yes, delete user',
         cancel: 'Cancel'
@@ -117,7 +137,6 @@ export default {
           } else {
             await API.deleteUser(user.userkey)
           }
-          this.users.splice(user, 1)
           this.$q.notify('User ' + user.email + ' deleted')
           this.loadUsers({
             pagination: this.pagination,
