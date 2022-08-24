@@ -48,6 +48,7 @@
                 <q-btn
                   label="Register"
                   color="primary"
+                  :loading="registering"
                   @click="registerUser"
                 />
               </div>
@@ -108,13 +109,16 @@ export default {
     return {
       email: '',
       password: '',
-      password2: ''
+      password2: '',
+      registering: false
     }
   },
-  validations: {
-    email: { required, email },
-    password: { required, checkPwdStrength },
-    password2: { required, sameAsPassword: sameAs('password') }
+  validations () {
+    return {
+      email: { required, email },
+      password: { required, checkPwdStrength },
+      password2: { required, sameAsPassword: sameAs(this.password) }
+    }
   },
   methods: {
     getFirstPwdCheckError (pwd) {
@@ -148,6 +152,7 @@ export default {
       this.$router.push('/login')
     },
     async registerUser () {
+      this.registering = true
       try {
         this.vuelidate.email.$touch()
         this.vuelidate.password.$touch()
@@ -185,6 +190,7 @@ export default {
           })
         }
       }
+      this.registering = false
     }
   }
 }
