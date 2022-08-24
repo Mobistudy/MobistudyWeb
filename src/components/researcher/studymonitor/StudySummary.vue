@@ -3,14 +3,14 @@
     <q-card>
       <q-card-section>
         <div class="text-h5">
-          {{ studyDesign.generalities.title[$root.$i18n.locale] }}
+          {{ studyDesign.generalities.title[locale] }}
         </div>
       </q-card-section>
       <q-card-section>
         <div class="row q-ma-sm">
           <div class="col-2 text-bold">Description:</div>
           <div class="col">
-            {{ studyDesign.generalities.longDescription[$root.$i18n.locale] }}
+            {{ studyDesign.generalities.longDescription[locale] }}
           </div>
         </div>
         <q-separator />
@@ -105,7 +105,7 @@
           <div class="row q-ma-sm">
             <div class="col-2 text-bold">Reason for Data Access:</div>
             <div class="col">
-              {{ inst.reasonForDataAccess[$root.$i18n.locale] }}
+              {{ inst.reasonForDataAccess[locale] }}
             </div>
           </div>
           <q-separator v-show="inIndex != studyDesign.generalities.institutions.length - 1" />
@@ -179,7 +179,7 @@
             >
               <q-field label="Question:"> {{ qu.title }} </q-field>
               <q-field label="Answer:"> {{ qu.answer }} </q-field>
-              <q-card-separator v-show="
+              <q-separator v-show="
                   qIndex !=
                     studyDesign.inclusionCriteria.criteriaQuestions.length - 1
                 " />
@@ -247,14 +247,14 @@
         <div class="row q-ma-sm">
           <div class="col-2 text-bold">Invitation:</div>
           <div class="col">
-            {{ studyDesign.consent.invitation[$root.$i18n.locale] }}
+            {{ studyDesign.consent.invitation[locale] }}
           </div>
         </div>
         <div class="row q-ma-sm">
           <div class="col-2 text-bold">Privacy Policy:</div>
           <div class="col">
             <div v-html="
-                studyDesign.consent.privacyPolicy[$root.$i18n.locale].replace(
+                studyDesign.consent.privacyPolicy[locale].replace(
                   new RegExp('\n', 'g'),
                   '<br>'
                 )
@@ -279,7 +279,7 @@
               <div class="row q-ma-sm">
                 <div class="col-2 text-bold">Description:</div>
                 <div class="col">
-                  {{ tkItem.description[$root.$i18n.locale] }}
+                  {{ tkItem.description[locale] }}
                 </div>
               </div>
               <div class="row q-ma-sm">
@@ -321,12 +321,19 @@ import { schedulingToString } from '@shared/scheduling.js'
 export default {
   name: 'StudySummary',
   props: ['studyDesign'],
+
+  data () {
+    return {
+      // prefer the locale set in i18n
+      locale: this.$i18n.locale
+    }
+  },
   methods: {
     niceDate (timeStamp) {
       return date.formatDate(timeStamp, 'DD/MM/YYYY')
     },
     schedulingToString (sc) {
-      return schedulingToString(sc)
+      return schedulingToString(sc, this.locale)
     }
   }
 }
