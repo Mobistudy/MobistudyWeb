@@ -2,63 +2,60 @@
 const routes = [
   {
     path: '/',
-    component: () => import('pages/Login.vue')
+    component: () => import('components/usermgmt/LoginPage.vue')
   },
   {
     path: '/login',
-    component: () => import('pages/Login.vue')
+    component: () => import('components/usermgmt/LoginPage.vue')
   },
   {
     path: '/resetPassword',
-    component: () => import('pages/ResetPassword.vue')
+    component: () => import('components/usermgmt/ResetPasswordPage.vue')
   },
   {
     path: '/newuser',
-    component: () => import('pages/Newuser.vue')
+    component: () => import('components/usermgmt/NewuserPage.vue')
   },
   {
     path: '/admin',
-    component: () => import('layouts/HomeLayout.vue'),
+    component: () => import('components/HomeLayout.vue'),
     children: [
       {
         path: '/',
-        component: () => import('pages/AdminHome.vue')
+        component: () => import('components/admin/AdminHome.vue')
       }
     ]
   },
   {
     path: '/researcher',
-    component: () => import('layouts/HomeLayout.vue'),
+    component: () => import('components/HomeLayout.vue'),
     children: [
       {
         path: '/',
-        component: () => import('pages/ResearcherHome.vue')
+        component: () => import('components/researcher/ResearcherHome.vue')
       },
       {
         path: '/studyDesign/:propTeamKey',
-        component: () => import('pages/StudyDesign.vue'),
+        component: () => import('components/researcher/studydesign/StudyDesignPage.vue'),
         props: true
       },
       {
         path: '/studyDesign/:propTeamKey/:propStudyKey',
-        component: () => import('pages/StudyDesign.vue'),
+        component: () => import('src/components/researcher/studydesign/StudyDesignPage.vue'),
         props: true
       },
       {
         path: '/studyMonitor/:studyKey',
-        component: () => import('pages/StudyMonitor.vue'),
+        component: () => import('components/researcher/studymonitor/StudyMonitorPage.vue'),
         props: true
       }
     ]
+  },
+  // Always leave this as last one
+  {
+    path: '/:catchAll(.*)*',
+    component: () => import('src/components/Error404Page.vue')
   }
 ]
-
-// Always leave this as last one
-if (process.env.MODE !== 'ssr') {
-  routes.push({
-    path: '*',
-    component: () => import('pages/Error404.vue')
-  })
-}
 
 export default routes

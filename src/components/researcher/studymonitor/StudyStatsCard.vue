@@ -1,0 +1,129 @@
+<template>
+  <q-card>
+    <q-card-section>
+      <div class="text-h5"> Participants </div>
+    </q-card-section>
+    <q-card-section>
+      <div class="row justify-around">
+        <div>
+          <div class="text-h5">
+            Joined
+          </div>
+          <div class="text-h4">
+            {{ participants.joined }}
+          </div>
+        </div>
+        <div>
+          <div class="text-h5">
+            Active
+          </div>
+          <div class="text-h4">
+            {{ participants.active }}
+          </div>
+        </div>
+        <div>
+          <div class="text-h5">
+            Completed
+          </div>
+          <div class="text-h4">
+            {{ participants.completed }}
+          </div>
+        </div>
+        <div>
+          <div class="text-h5">
+            Withdrawn
+          </div>
+          <div class="text-h4">
+            {{ participants.withdrawn }}
+          </div>
+        </div>
+      </div>
+
+      <div class="row q-ma-lg justify-around">
+        <q-btn
+          label="Download study data"
+          @click="downloadData()"
+          :loading="creatingDownload"
+        ></q-btn>
+      </div>
+
+      <table-audit-log :studyKey="studyDesign._key" />
+    </q-card-section>
+  </q-card>
+</template>
+
+<script>
+import API from '@shared/API'
+import TableAuditLog from '@components/AuditLogTable'
+
+export default {
+  name: 'StudyStatsCard',
+  props: ['studyDesign'], // TODO: maybe pass the study key only?
+  components: {
+    TableAuditLog
+  },
+  data () {
+    return {
+      studyKey: this.studyDesign._key,
+      participants: {
+        joined: 0,
+        active: 0,
+        completed: 0,
+        withdrawn: 0
+      },
+      creatingDownload: false
+    }
+  },
+  created () {
+    // set the study key to -1 to avoid loading data in the audit log table
+    if (!this.studyDesign._key) this.studyKey = -1
+  },
+  watch: {
+    async studyDesign () {
+      if (this.studyKey) {
+        try {
+          const stats = await API.getParticipantsStatusStats(this.studyKey)
+          for (const stat of stats) {
+            if (stat.status === 'accepted') {
+              this.participants.joined += stat.count
+              this.participants.active = stat.count
+            }
+            if (stat.status === 'completed') {
+              this.participants.joined += stat.count
+              this.participants.completed = stat.count
+            }
+            if (stat.status === 'withdrawn') {
+              this.participants.joined += stat.count
+              this.participants.withdrawn = stat.count
+            }
+          }
+        } catch (err) {
+          this.$q.notify({
+            color: 'negative',
+            position: 'bottom',
+            message: 'Cannot retrieve the study statistics. ' + err.message,
+            icon: 'report_problem'
+          })
+        }
+      }
+    }
+  },
+  methods: {
+    async downloadData () {
+      this.creatingDownload = true
+      try {
+        const filename = await API.downloadStudyData(this.studyKey)
+        window.open('datadownload/' + filename)
+      } catch (error) {
+        this.$q.notify({
+          color: 'negative',
+          position: 'bottom',
+          message: 'Cannot retrieve the study data. ' + error.message,
+          icon: 'report_problem'
+        })
+      }
+      this.creatingDownload = false
+    }
+  }
+}
+</script>
