@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import user from './shared/userinfo.js'
 import API from './shared/API.js'
 import { defineComponent } from 'vue'
@@ -19,7 +20,7 @@ export default defineComponent({
       if (!resettingpwd) API.setToken(user.user.token)
     }
     // Add a 401 response interceptor
-    this.$axios.interceptors.response.use((response) => {
+    axios.interceptors.response.use((response) => {
       return response
     }, (error) => {
       if (error.response.status === 401 && !error.config.url.includes('login')) {
