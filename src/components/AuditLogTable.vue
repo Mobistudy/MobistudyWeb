@@ -4,7 +4,7 @@
       title="Audit logs"
       ref="table"
       color="primary"
-      :data="logs"
+      :rows="logs"
       selection="none"
       :columns="columns"
       :filter="filter"

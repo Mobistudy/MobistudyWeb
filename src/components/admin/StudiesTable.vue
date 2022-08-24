@@ -4,7 +4,7 @@
       title="Studies"
       ref="table"
       color="primary"
-      :data="studies"
+      :rows="studies"
       selection="none"
       :columns="columns"
       :filter="filter"

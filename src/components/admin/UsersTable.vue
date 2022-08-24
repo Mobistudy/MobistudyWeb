@@ -4,7 +4,7 @@
       title="Users"
       ref="table"
       color="primary"
-      :data="users"
+      :rows="users"
       selection="none"
       :columns="columns"
       :filter="filter"
