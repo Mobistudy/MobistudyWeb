@@ -47,6 +47,7 @@
       <q-btn
         label="Send"
         color="primary"
+        :loading="sending"
         @click="sendEmail"
       />
     </q-card-actions>
@@ -67,7 +68,8 @@ export default {
     return {
       emailAddress: '',
       emailSubject: '',
-      emailContent: ''
+      emailContent: '',
+      sending: false
     }
   },
   validations: {
@@ -83,6 +85,8 @@ export default {
       if (this.vuelidate.emailAddress.$error || this.vuelidate.emailSubject.$error || this.vuelidate.emailContent.$error) {
         this.$q.notify('Please correct the indicated fields.')
       } else {
+        this.sending = true
+
         try {
           await API.sendTestEmail(this.emailAddress, this.emailSubject, this.emailContent)
           this.$q.notify({
@@ -96,6 +100,7 @@ export default {
             icon: 'report_problem'
           })
         }
+        this.sending = false
       }
     }
   }
