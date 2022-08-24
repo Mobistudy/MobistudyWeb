@@ -21,7 +21,7 @@ const routes = [
     component: () => import('components/HomeLayout.vue'),
     children: [
       {
-        path: '/',
+        path: '',
         component: () => import('components/admin/AdminHome.vue')
       }
     ]
