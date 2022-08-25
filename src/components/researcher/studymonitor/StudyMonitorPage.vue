@@ -35,7 +35,7 @@
         keep-alive
       >
         <q-tab-panel name="tab-stats">
-          <study-stats :studyDesign="studyDesign" />
+          <study-stats :studyKey="studyKey" />
         </q-tab-panel>
         <q-tab-panel name="tab-description">
           <study-summary :studyDesign="studyDesign" />

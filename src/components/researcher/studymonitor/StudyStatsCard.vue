@@ -47,7 +47,7 @@
         ></q-btn>
       </div>
 
-      <table-audit-log :studyKey="studyDesign._key" />
+      <table-audit-log :studyKey="studyKey" />
     </q-card-section>
   </q-card>
 </template>
@@ -58,13 +58,12 @@ import TableAuditLog from '@components/AuditLogTable'
 
 export default {
   name: 'StudyStatsCard',
-  props: ['studyDesign'], // TODO: maybe pass the study key only?
+  props: ['studyKey'],
   components: {
     TableAuditLog
   },
   data () {
     return {
-      studyKey: this.studyDesign._key,
       participants: {
         joined: 0,
         active: 0,
@@ -74,38 +73,30 @@ export default {
       creatingDownload: false
     }
   },
-  created () {
-    // set the study key to -1 to avoid loading data in the audit log table
-    if (!this.studyDesign._key) this.studyKey = -1
-  },
-  watch: {
-    async studyDesign () {
-      if (this.studyKey) {
-        try {
-          const stats = await API.getParticipantsStatusStats(this.studyKey)
-          for (const stat of stats) {
-            if (stat.status === 'accepted') {
-              this.participants.joined += stat.count
-              this.participants.active = stat.count
-            }
-            if (stat.status === 'completed') {
-              this.participants.joined += stat.count
-              this.participants.completed = stat.count
-            }
-            if (stat.status === 'withdrawn') {
-              this.participants.joined += stat.count
-              this.participants.withdrawn = stat.count
-            }
-          }
-        } catch (err) {
-          this.$q.notify({
-            color: 'negative',
-            position: 'bottom',
-            message: 'Cannot retrieve the study statistics. ' + err.message,
-            icon: 'report_problem'
-          })
+  async created () {
+    try {
+      const stats = await API.getParticipantsStatusStats(this.studyKey)
+      for (const stat of stats) {
+        if (stat.status === 'accepted') {
+          this.participants.joined += stat.count
+          this.participants.active = stat.count
+        }
+        if (stat.status === 'completed') {
+          this.participants.joined += stat.count
+          this.participants.completed = stat.count
+        }
+        if (stat.status === 'withdrawn') {
+          this.participants.joined += stat.count
+          this.participants.withdrawn = stat.count
         }
       }
+    } catch (err) {
+      this.$q.notify({
+        color: 'negative',
+        position: 'bottom',
+        message: 'Cannot retrieve the study statistics. ' + err.message,
+        icon: 'report_problem'
+      })
     }
   },
   methods: {

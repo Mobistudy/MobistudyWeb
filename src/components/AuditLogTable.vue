@@ -172,9 +172,8 @@ export default {
   },
   async created () {
     this.getLogsEventTypes()
-  },
-  async mounted () {
-    if (!this.studyKey || this.studyKey !== -1) {
+    if (this.studyKey && this.studyKey !== -1) {
+      this.filter.studyKey = this.studyKey
       this.loadLogs({
         pagination: this.pagination,
         filter: this.filter
@@ -182,6 +181,7 @@ export default {
     }
   },
   watch: {
+    // update the table if the study key changes
     async studyKey () {
       this.filter.studyKey = this.studyKey
       this.loadLogs({
