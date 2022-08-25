@@ -15,7 +15,7 @@
             map-options
             v-model="selectedTeamValue"
             :options="teamsListOptions"
-            @input="selectTeam()"
+            @update:model-value="selectTeam()"
           />
         </div>
       </q-card-section>
@@ -182,6 +182,7 @@ export default {
       }
     },
     selectTeam (index) {
+      console.log('TEAM SELECTED', index)
       const result = this.teamsListOptions.find(opts => opts.value === this.selectedTeamValue)
       this.selectedTeamLabel = result.label
       this.getAllStudies()
