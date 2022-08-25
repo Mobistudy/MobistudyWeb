@@ -18,14 +18,10 @@
             </div>
           </div>
           <div class="col q-pl-sm">
-            <q-field
-              :error="v.invitational.$error"
-              error-message="You must specify if its invitational only"
-            >
+            <q-field :rules="[v => studyDesign.generalities.invitational == undefined || 'Field is required']">
               <div>
                 <q-checkbox
                   v-model="studyDesign.invitational"
-                  @blur="v.invitational.$touch"
                   @input="getInvitationCode"
                   val="true"
                   label="Yes"
@@ -46,26 +42,23 @@
           </div>
           <div class="col q-pl-sm">
             <q-field
-              :error="v.generalities.languages.$error"
+              :error="studyDesign.generalities.languages.length == 0"
               error-message="At least one language must be specified"
             >
               <q-checkbox
                 v-model="studyDesign.generalities.languages"
-                @blur="v.generalities.languages.$touch"
                 @input="update()"
                 val="en"
                 label="English"
               />
               <q-checkbox
                 v-model="studyDesign.generalities.languages"
-                @blur="v.generalities.languages.$touch"
                 @input="update()"
                 val="sv"
                 label="Swedish"
               />
               <q-checkbox
                 v-model="studyDesign.generalities.languages"
-                @blur="v.generalities.languages.$touch"
                 @input="update()"
                 val="es"
                 label="Spanish"
@@ -85,7 +78,6 @@
           <div class="col q-pl-sm">
             <multilang-input
               v-model="studyDesign.generalities.title"
-              @blur="v.generalities.title.$touch"
               @input="update()"
               :languages="studyDesign.generalities.languages"
               required
@@ -104,7 +96,6 @@
           <div class="col q-pl-sm">
             <multilang-input
               v-model="studyDesign.generalities.shortDescription"
-              @blur="v.generalities.shortDescription.$touch"
               @input="update()"
               :languages="studyDesign.generalities.languages"
               required
@@ -124,7 +115,6 @@
             <multilang-input
               type="textarea"
               v-model="studyDesign.generalities.longDescription"
-              @blur="v.generalities.longDescription.$touch"
               @input="update()"
               :languages="studyDesign.generalities.languages"
               required
@@ -141,7 +131,7 @@
       </q-card-section>
       <q-card-section>
         <div
-          v-for="(pi, index) in v.generalities.principalInvestigators.$each.$iter"
+          v-for="(pi, index) in studyDesign.generalities.principalInvestigators"
           :key="index"
         >
           <div class="row">
@@ -157,11 +147,9 @@
               <q-input
                 type="text"
                 hint="Same text for all languages"
-                v-model.trim="pi.name.$model"
-                @blur="pi.name.$touch"
-                @input="update()"
-                :error="pi.name.$error"
-                error-message="Field is required."
+                v-model.trim="pi.name"
+                @update:model-value="update()"
+                :rules="[val => !!val || 'Field is required']"
               />
             </div>
           </div>
@@ -179,11 +167,9 @@
                 type="textarea"
                 autogrow
                 hint="Same text for all languages"
-                v-model.trim="pi.contact.$model"
-                @blur="pi.contact.$touch"
-                @input="update()"
-                :error="pi.contact.$error"
-                error-message="Field is required."
+                v-model.trim="pi.contact"
+                @update:model-value="update()"
+                :rules="[val => !!val || 'Field is required']"
               />
             </div>
           </div>
@@ -200,11 +186,9 @@
               <q-input
                 type="text"
                 hint="Same text for all languages"
-                v-model.trim="pi.institution.$model"
-                @blur="pi.institution.$touch"
-                @input="update()"
-                :error="pi.institution.$error"
-                error-message="Field is required."
+                v-model.trim="pi.institution"
+                @update:model-value="update()"
+                :rules="[val => !!val || 'Field is required']"
               />
             </div>
           </div>
@@ -245,7 +229,7 @@
       </q-card-section>
       <q-card-section>
         <div
-          v-for="(inst, index) in v.generalities.institutions.$each.$iter"
+          v-for="(inst, index) in studyDesign.generalities.institutions"
           :key="index"
         >
           <div class="row">
@@ -261,11 +245,9 @@
               <q-input
                 type="text"
                 hint="Same text for all languages."
-                v-model.trim="inst.name.$model"
-                @blur="inst.name.$touch"
-                @input="update()"
-                :error="inst.name.$error"
-                error-message="Field is required."
+                v-model="inst.name"
+                @update:model-value="update()"
+                :rules="[val => !!val || 'Field is required']"
               />
             </div>
           </div>
@@ -283,11 +265,9 @@
                 type="textarea"
                 autogrow
                 hint="Same text for all languages."
-                v-model.trim="inst.contact.$model"
-                @blur="inst.contact.$touch"
-                @input="update()"
-                :error="inst.contact.$error"
-                error-message="Field is required"
+                v-model="inst.contact"
+                @update:model-value="update()"
+                :rules="[val => !!val || 'Field is required']"
               />
             </div>
           </div>
@@ -303,30 +283,30 @@
             <div class="col q-pl-sm">
               <q-field
                 class="q-mt-md"
-                :error="inst.dataAccess.$error"
+                :error="inst.dataAccess === undefined"
                 error-message="The level of data access is required"
               >
                 <q-radio
-                  v-model.trim="inst.dataAccess.$model"
-                  val="no access"
+                  v-model="inst.dataAccess"
+                  val="no"
                   color="secondary"
                   label="No Access"
-                  @input="update()"
+                  @update:model-value="update()"
                 />
                 <q-radio
-                  v-model.trim="inst.dataAccess.$model"
+                  v-model="inst.dataAccess"
                   val="anonymised"
                   color="secondary"
                   label="Anonymised"
-                  @input="update()"
+                  @update:model-value="update()"
                   style="margin-left: 10px"
                 />
                 <q-radio
-                  v-model.trim="inst.dataAccess.$model"
+                  v-model="inst.dataAccess"
                   val="full"
                   color="secondary"
                   label="Full"
-                  @input="update()"
+                  @update:model-value="update()"
                   style="margin-left: 10px"
                 />
               </q-field>
@@ -344,12 +324,11 @@
             <div class="col q-pl-sm">
               <multilang-input
                 type="textarea"
-                v-model.trim="inst.reasonForDataAccess.$model"
-                @blur="inst.reasonForDataAccess.$touch"
-                :readonly="inst.dataAccess.$model === 'no'"
+                v-model="inst.reasonForDataAccess"
+                :readonly="inst.dataAccess === 'no'"
                 @input="update()"
                 :languages="studyDesign.generalities.languages"
-                required
+                :required="inst.dataAccess !== 'no'"
               />
             </div>
           </div>
@@ -399,10 +378,8 @@
               type="date"
               format="D-MMM-YYYY"
               v-model="studyDesign.generalities.startDate"
-              @blur="v.generalities.startDate.$touch"
               @input="update()"
-              :error="v.generalities.startDate.$error"
-              error-message="Field is required."
+              :rules="[val => !!val || 'Field is required']"
             />
           </div>
         </div>
@@ -420,10 +397,8 @@
               type="date"
               format="D-MMM-YYYY"
               v-model="studyDesign.generalities.endDate"
-              @blur="v.generalities.endDate.$touch"
               @input="update()"
-              :error="v.generalities.endDate.$error"
-              error-message="Field is required."
+              :rules="[val => !!val || 'Field is required']"
             />
           </div>
         </div>
@@ -438,21 +413,27 @@ import API from '@shared/API.js'
 
 export default {
   name: 'StudyDesignGeneralities',
-  // modelValue here contains the study design
-  // v is the vuelidate object
-  props: ['modelValue', 'v'],
+  // modelValue here contains the whole study design object
+  props: ['modelValue'],
   emits: ['update:modelValue'],
   components: {
     MultilangInput
   },
-  data () {
-    return {
-      studyDesign: this.modelValue
+  computed: {
+    studyDesign: {
+      get () {
+        return this.modelValue
+      },
+      set (newValue) {
+        console.log('set')
+        this.$emit('update:modelValue', newValue)
+      }
     }
   },
   methods: {
     update () {
-      this.$emit('update:modelValue', this.studyDesign)
+      console.log('update', this.studyDesign)
+      this.$emit('update:modelValue', this.modelValue)
     },
     addRowInvestigator (index) {
       // increment the id
@@ -492,7 +473,7 @@ export default {
           this.$q.notify({
             color: 'negative',
             position: 'bottom',
-            message: 'Error. Invitation code could not be generated.', // TODO
+            message: 'Error. Invitation code could not be generated.',
             icon: 'report_problem'
           })
         }

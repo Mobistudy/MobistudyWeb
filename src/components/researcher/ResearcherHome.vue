@@ -182,7 +182,6 @@ export default {
       }
     },
     selectTeam (index) {
-      console.log('TEAM SELECTED', index)
       const result = this.teamsListOptions.find(opts => opts.value === this.selectedTeamValue)
       this.selectedTeamLabel = result.label
       this.getAllStudies()

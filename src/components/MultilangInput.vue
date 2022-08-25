@@ -8,9 +8,8 @@
         :type="inputtype"
         :autogrow="inputtype == 'textarea'"
         :readonly="readonly"
-        :value="modelValue[lang]"
+        v-model="multiText[lang]"
         @blur="blur()"
-        @input="update()"
         :hint="'Text in '+extendedLang(lang)"
         :rules="[val => (!required || !!val) || 'Field is required.']"
       />
@@ -28,19 +27,33 @@ export default {
     readonly: Boolean,
     type: String
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'blur'],
   computed: {
+    multiText: {
+      get () {
+        let value = this.modelValue
+        if (!value || Object.getPrototypeOf(value) !== Object.prototype) {
+          value = {}
+        }
+        if (value.length < this.languages.length) {
+          for (const lan in this.languages) {
+            if (!value[lan]) value[lan] = ''
+          }
+        }
+        return value
+      },
+      set (newValue) {
+        this.$emit('update:modelValue', newValue)
+      }
+    },
     inputtype () {
       if (this.type) return this.type
       else return 'text'
     }
   },
   methods: {
-    update () {
-      this.$emit('update:modelValue', this.modelValue)
-    },
     blur () {
-      this.$emit('update:modelValue', this.modelValue)
+      this.$emit('blur', this.multiText)
     },
     extendedLang (lang) {
       if (lang === 'en') return 'English'

@@ -1,60 +1,61 @@
 <template>
   <q-page>
-    <q-toolbar class="bg-info text-black">
-      <q-toolbar-title>
-        Study Designer
-      </q-toolbar-title>
-      <q-btn
-        class="q-mr-md"
-        v-show="studyKey && !studyDesign.publishedTS"
-        color="negative"
-        label="Delete Draft"
-        @click="removeDraftStudy()"
-      />
-      <q-btn
-        class="q-mr-md"
-        v-show="!studyDesign.publishedTS"
-        color="warning"
-        label="Save Draft"
-        @click="saveProgress()"
-      />
-      <q-btn
-        class="float-right q-mr-md"
-        v-show="!studyDesign.publishedTS"
-        color="positive"
-        label="Publish"
-        @click="publish()"
-      />
-      <q-btn
-        class="float-right q-mr-md"
-        v-show="studyDesign.publishedTS"
-        disabled
-        color="blue"
-        label="Published"
-      />
-      <q-btn
-        class="float-right q-mr-md"
-        round
-        color="black"
-        icon="close"
-        @click="exitDesigner"
-      />
-    </q-toolbar>
+    <q-form ref="studyDesignForm">
+      <q-toolbar class="bg-info text-black">
+        <q-toolbar-title>
+          Study Designer
+        </q-toolbar-title>
+        <q-btn
+          class="q-mr-md"
+          v-show="studyKey && !studyDesign.publishedTS"
+          color="negative"
+          label="Delete Draft"
+          @click="removeDraftStudy()"
+        />
+        <q-btn
+          class="q-mr-md"
+          v-show="!studyDesign.publishedTS"
+          color="warning"
+          label="Save Draft"
+          @click="saveProgress()"
+        />
+        <q-btn
+          class="float-right q-mr-md"
+          v-show="!studyDesign.publishedTS"
+          color="positive"
+          label="Publish"
+          @click="publish()"
+        />
+        <q-btn
+          class="float-right q-mr-md"
+          v-show="studyDesign.publishedTS"
+          disabled
+          color="blue"
+          label="Published"
+        />
+        <q-btn
+          class="float-right q-mr-md"
+          round
+          color="black"
+          icon="close"
+          @click="exitDesigner"
+        />
+      </q-toolbar>
 
-    <q-tabs
-      v-model="studyTab"
-      class="bg-info text-black shadow-2"
-      active-color="brown-5"
-      switch-indicator
-      align="justify"
-    >
-      <q-tab
-        name="tab-gen"
-        icon="subject"
-        label="Generalities"
-        :class="vuelidate.studyDesign.generalities.$error? 'text-red': ''"
-      />
-      <q-tab
+      <q-tabs
+        v-model="studyTab"
+        class="bg-info text-black shadow-2"
+        active-color="brown-5"
+        switch-indicator
+        align="justify"
+      >
+        <q-tab
+          name="tab-gen"
+          icon="subject"
+          label="Generalities"
+        />
+        <!-- ADD :class="vuelidate.studyDesign.generalities.$error? 'text-red': ''" -->
+        <!-- <q-tab
         name="tab-crit"
         icon="fingerprint"
         label="Inclusion Criteria"
@@ -71,24 +72,21 @@
         icon="verified_user"
         label="Consent"
         :class="vuelidate.studyDesign.consent.$error? 'text-red': ''"
+      /> -->
+      </q-tabs>
+      <q-tab-panels
+        v-model="studyTab"
+        animated
+      >
+        <q-tab-panel name="tab-gen">
+          <study-design-generalities v-model="studyDesign" />
+        </q-tab-panel>
+        <!-- <q-tab-panel name="tab-crit">
+        TODO: pass the whole study design to this component and remove languages
+      <study-design-criteria
+        v-model="studyDesign"
+        :v="vuelidate.studyDesign"
       />
-    </q-tabs>
-    <q-tab-panels
-      v-model="studyTab"
-      animated
-    >
-      <q-tab-panel name="tab-gen">
-        <study-design-generalities
-          v-model="studyDesign"
-          :v="vuelidate.studyDesign"
-        />
-      </q-tab-panel>
-      <q-tab-panel name="tab-crit">
-        <!-- TODO: pass the whole study design to this component and remove languages -->
-        <study-design-criteria
-          v-model="studyDesign"
-          :v="vuelidate.studyDesign"
-        />
       </q-tab-panel>
       <q-tab-panel name="tab-tasks">
         <study-design-tasks
@@ -102,8 +100,9 @@
           v-model="studyDesign"
           :v="vuelidate.studyDesign"
         />
-      </q-tab-panel>
-    </q-tab-panels>
+      </q-tab-panel> -->
+      </q-tab-panels>
+    </q-form>
     <q-page-scroller
       position="bottom-right"
       :scroll-offset="150"
@@ -121,31 +120,26 @@
 
 <script>
 import StudyDesignGeneralities from '@components/researcher/studydesign/StudyDesignGeneralities'
-import StudyDesignCriteria from '@components/researcher/studydesign/StudyDesignCriteria'
-import StudyDesignTasks from '@components/researcher/studydesign/StudyDesignTasks'
-import StudyDesignConsent from '@components/researcher/studydesign/StudyDesignConsent'
+// import StudyDesignCriteria from '@components/researcher/studydesign/StudyDesignCriteria'
+// import StudyDesignTasks from '@components/researcher/studydesign/StudyDesignTasks'
+// import StudyDesignConsent from '@components/researcher/studydesign/StudyDesignConsent'
 import API from '@shared/API.js'
-import useVuelidate from '@vuelidate/core'
-import { required, requiredIf, minLength, minValue, maxValue } from '@vuelidate/validators'
 
 export default {
   name: 'StudyDesignLayout',
   props: ['propStudyKey', 'propTeamKey'],
   components: {
-    StudyDesignGeneralities,
-    StudyDesignCriteria,
-    StudyDesignTasks,
-    StudyDesignConsent
-  },
-  setup () {
-    return { vuelidate: useVuelidate() }
+    StudyDesignGeneralities
+    // StudyDesignCriteria,
+    // StudyDesignTasks,
+    // StudyDesignConsent
   },
   data () {
     return {
       keyOfStudy: undefined,
       studyTab: 'tab-gen',
       studyDesign: {
-        teamKey: '',
+        teamKey: this.propTeamKey,
         invitationCode: undefined,
         invitational: false,
         publishedTS: undefined,
@@ -222,56 +216,27 @@ export default {
       }
     }
   },
-  validations: {
-    studyDesign: {
-      invitational: { required },
-      generalities: {
-        languages: { required },
-        title: { required },
-        shortDescription: { required },
-        longDescription: { required },
-        principalInvestigators: {
-          required,
-          $each: {
-            name: { required },
-            contact: { required },
-            institution: { required }
-          }
-        },
-        institutions: {
-          required,
-          $each: {
-            name: { required },
-            contact: { required },
-            dataAccess: { required },
-            reasonForDataAccess: {
-              required: requiredIf(function (institution) {
-                return institution.dataAccess !== 'no'
-              })
-            }
-          }
-        },
-        startDate: { required },
-        endDate: { required }
-      },
-      inclusionCriteria: {
-        countries: { required },
-        minAge: { required, minValue: minValue(0), maxValue: maxValue(150) },
-        maxAge: { required, minValue: minValue(0), maxValue: maxValue(150) },
-        sex: { required },
-        minBMI: { required, minValue: minValue(5), maxValue: maxValue(210) },
-        maxBMI: { required, minValue: minValue(5), maxValue: maxValue(210) }
-      },
-      tasks: {
-        required,
-        minLength: minLength(1)
-      },
-      consent: {
-        invitation: { required },
-        privacyPolicy: { required }
-      }
-    }
-  },
+  // validations: {
+  //   studyDesign: {
+  //     invitational: { required },
+  //     inclusionCriteria: {
+  //       countries: { required },
+  //       minAge: { required, minValue: minValue(0), maxValue: maxValue(150) },
+  //       maxAge: { required, minValue: minValue(0), maxValue: maxValue(150) },
+  //       sex: { required },
+  //       minBMI: { required, minValue: minValue(5), maxValue: maxValue(210) },
+  //       maxBMI: { required, minValue: minValue(5), maxValue: maxValue(210) }
+  //     },
+  //     tasks: {
+  //       required,
+  //       minLength: minLength(1)
+  //     },
+  //     consent: {
+  //       invitation: { required },
+  //       privacyPolicy: { required }
+  //     }
+  //   }
+  // },
   computed: {
     studyKey () {
       let key = false
@@ -286,14 +251,11 @@ export default {
     }
   },
   async created () {
-    // Populate the teamKey with the prop value
-    if (!this.studyDesign.teamKey || this.studyDesign.teamKey === '') {
-      this.studyDesign.teamKey = this.propTeamKey
-    }
     // Populate Study if it has already been created before
     if (this.propStudyKey) {
       try {
         this.studyDesign = await API.getStudy(this.propStudyKey)
+        console.log('LOADED STUDY DESIGN FROM DB', this.studyDesign)
       } catch (err) {
         this.$q.notify({
           color: 'negative',
