@@ -6,6 +6,7 @@ const userinfo = {
   user: {
     loggedin: false,
     role: undefined,
+    teamKey: undefined,
     email: undefined,
     _key: undefined,
     token: undefined
@@ -18,10 +19,14 @@ const userinfo = {
     this.user.token = newuser.token
     window.localStorage.setItem('user', JSON.stringify(this.user))
   },
+  selectTeam (teamKey) {
+    this.user.teamKey = teamKey
+  },
   logout () {
     this.user = {
       loggedin: false,
       role: undefined,
+      teamKey: undefined,
       email: undefined,
       _key: undefined,
       token: undefined

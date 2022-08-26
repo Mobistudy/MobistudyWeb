@@ -13,7 +13,7 @@
           <q-select
             emit-value
             map-options
-            v-model="selectedTeamValue"
+            v-model="selectedTeamKey"
             :options="teamsListOptions"
             @update:model-value="selectTeam()"
           />
@@ -73,7 +73,7 @@
 
         <div class="row q-mt-lg">
           <q-btn
-            :label="createStudyLabel"
+            :label="'Create new study for Team: ' + selectedTeamLabel"
             color="primary"
             @click="createNewStudy()"
           />
@@ -84,6 +84,7 @@
 </template>
 
 <script>
+import userinfo from '@shared/userinfo'
 import API from '@shared/API.js'
 
 export default {
@@ -92,9 +93,8 @@ export default {
       unpublishedStudies: [],
       publishedStudies: [],
       teamsListOptions: [],
-      selectedTeamValue: '',
-      selectedTeamLabel: '',
-      createStudyLabel: ''
+      selectedTeamKey: '',
+      selectedTeamLabel: ''
     }
   },
   async created () {
@@ -141,17 +141,24 @@ export default {
     },
     async initTeams () {
       const teams = await API.getTeams()
-      this.teamsListOptions = teams.map(t => {
-        return {
-          label: t.name,
-          value: t._key
-        }
-      })
       if (teams.length > 0) {
-        // Set default value displayed to that of first element
-        this.selectedTeamValue = teams[0]._key
-        this.selectedTeamLabel = teams[0].name
-        this.createStudyLabel = 'Create new study for Team: ' + this.selectedTeamLabel
+        let foundTeam = false
+        this.teamsListOptions = teams.map(t => {
+          if (t._key === userinfo.user.teamKey) {
+            foundTeam = true
+            this.selectedTeamKey = t._key
+            this.selectedTeamLabel = t.name
+          }
+          return {
+            label: t.name,
+            value: t._key
+          }
+        })
+        if (!foundTeam) {
+          // Set default value displayed to that of first element
+          this.selectedTeamKey = teams[0]._key
+          this.selectedTeamLabel = teams[0].name
+        }
         this.getAllStudies()
       }
     },
@@ -182,17 +189,17 @@ export default {
       }
     },
     selectTeam (index) {
-      const result = this.teamsListOptions.find(opts => opts.value === this.selectedTeamValue)
+      userinfo.user.teamKey = this.selectedTeamKey
+      const result = this.teamsListOptions.find(opts => opts.value === this.selectedTeamKey)
       this.selectedTeamLabel = result.label
       this.getAllStudies()
-      this.createStudyLabel = 'Create new study for ' + this.selectedTeamLabel
       this.unpublishedStudies = []
       this.publishedStudies = []
     },
     async getAllStudies () {
       try {
         // All Studies for a team
-        const studies = await API.getAllTeamStudies(this.selectedTeamValue)
+        const studies = await API.getAllTeamStudies(this.selectedTeamKey)
         if (studies.length > 0) {
           // Get Published Studies
           this.publishedStudies = studies.filter(function (obj) {
@@ -219,18 +226,18 @@ export default {
     },
     createNewStudy () {
       // user has to select a team
-      if (this.selectedTeamValue === '') {
+      if (this.selectedTeamKey === '') {
         this.$q.notify({
           color: 'negative',
           message: 'You must select a team in order to create a study.',
           icon: 'report_problem'
         })
       } else {
-        this.$router.push('/studyDesign/' + this.selectedTeamValue)
+        this.$router.push('/studyDesign/' + this.selectedTeamKey)
       }
     },
     goToStudyDesigner (index) {
-      this.$router.push('/studyDesign/' + this.selectedTeamValue + '/' + this.unpublishedStudies[index].study_key)
+      this.$router.push('/studyDesign/' + this.selectedTeamKey + '/' + this.unpublishedStudies[index].study_key)
     },
     goToStudyStats (studyKey) {
       this.$router.push('/studyMonitor/' + studyKey)
