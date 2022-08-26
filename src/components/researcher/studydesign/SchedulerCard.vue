@@ -19,7 +19,6 @@
             emit-value
             map-options
             hint="The event that triggers the start of the task."
-            @input="update()"
           />
         </div>
       </div>
@@ -28,12 +27,11 @@
         <div class="col">
           <q-select
             type="number"
-            v-model="eventTaskId"
+            v-model.number="eventTaskId"
             :options="taskIds"
             :disable="startEvent != 'taskExecution'"
             emit-value
             hint="The task that triggers the event."
-            @input="update()"
           />
         </div>
       </div>
@@ -46,10 +44,9 @@
           <div class="col">
             <q-input
               type="number"
-              v-model="start"
+              v-model.number="start"
               clearable
-              hint="Optional. Enter the number of days from the start."
-              @input="update()"
+              hint="Optional. Enter the number of days from the start event."
             />
           </div>
         </div>
@@ -58,10 +55,9 @@
           <div class="col">
             <q-input
               type="number"
-              v-model="until"
+              v-model.number="until"
               clearable
-              hint="Optional. In number of days from the start. If To and Occurrences are not specified, this task will run until the end date of the study."
-              @input="update()"
+              hint="Optional. In number of days from the start event. If To and Occurrences are not specified, this task will run until the end date of the study."
             />
           </div>
         </div>
@@ -70,10 +66,7 @@
           <div class="col">
             <q-field hint="Optional. The tasks will always be available 24/7 during the study period.">
               <div class="row">
-                <q-checkbox
-                  v-model="alwaysOn"
-                  @input="update()"
-                />
+                <q-checkbox v-model="alwaysOn" />
               </div>
             </q-field>
           </div>
@@ -87,10 +80,9 @@
         <div class="col">
           <q-input
             type="number"
-            v-model="occurrences"
+            v-model.number="occurrences"
             clearable
             hint="Optional. The maximum number of occurrences. If Occurrences and To are not specified, this task will run until the end date of the study."
-            @input="update()"
           />
         </div>
       </div>
@@ -107,7 +99,6 @@
               emit-value
               map-options
               hint="Enter the desired frequency."
-              @input="update()"
             />
           </div>
         </div>
@@ -115,35 +106,31 @@
           <div class="col-2 q-pt-lg">Interval:</div>
           <div class="col">
             <q-select
-              @input="update()"
               v-show="intervalType == 'd'"
               emit-value
               map-options
-              v-model="dailyInterval"
+              v-model.number="dailyInterval"
               :options="dailyIntervalOptions"
             />
             <q-select
-              @input="update()"
               v-show="intervalType == 'w'"
               emit-value
               map-options
-              v-model="weeklyInterval"
+              v-model.number="weeklyInterval"
               :options="weeklyIntervalOptions"
             />
             <q-select
-              @input="update()"
               v-show="intervalType == 'm'"
               emit-value
               map-options
-              v-model="monthlyInterval"
+              v-model.number="monthlyInterval"
               :options="monthlyIntervalOptions"
             />
             <q-select
-              @input="update()"
               v-show="intervalType == 'y'"
               emit-value
               map-options
-              v-model="yearlyInterval"
+              v-model.number="yearlyInterval"
               :options="yearlyIntervalOptions"
             />
           </div>
@@ -159,7 +146,6 @@
               hide-dropdown-icon
               input-debounce="0"
               new-value-mode="add-unique"
-              @input="update()"
               hint="Optional. Tasks are scheduled soon after midnight, but you can specify an hour (0 to 23) or multiple hours. Write a number and press retrun to add an hour."
             />
           </div>
@@ -172,7 +158,6 @@
                 <q-checkbox
                   v-for="(opt, ind) in weekDaysOpts"
                   :key="ind"
-                  @input="update()"
                   v-model="weekDays"
                   :val="opt.value"
                   :label="opt.label"
@@ -189,7 +174,6 @@
                 <q-checkbox
                   v-for="(monOpt, ind2) in monthsOpts"
                   :key="ind2"
-                  @input="update()"
                   v-model="months"
                   :val="monOpt.value"
                   :label="monOpt.label"
@@ -206,7 +190,6 @@
                 <q-checkbox
                   v-for="monthday in 31"
                   :key="monthday"
-                  @input="update()"
                   v-model="monthDays"
                   :val="monthday"
                   :label="monthday.toString()"
@@ -239,7 +222,7 @@ export default {
         }
       ],
       eventTaskId: this.modelValue.eventTaskId,
-      startDelaySecs: this.modelValue.startDelaySecs,
+      startDelaySecs: undefined,
       validitySecs: this.modelValue.untilSecs,
       alwaysOn: this.modelValue.alwaysOn,
       occurrences: this.modelValue.occurrences,
@@ -263,355 +246,339 @@ export default {
         }
       ],
 
-      dailyInterval: this.modelValue.interval
-        ? this.modelValue.interval.toString()
-        : undefined,
+      dailyInterval: this.modelValue.interval,
       dailyIntervalOptions: [
         {
           label: 'Every day',
-          value: '1'
+          value: 1
         },
         {
           label: 'Every other day',
-          value: '2'
+          value: 2
         },
         {
           label: 'Every 3rd day',
-          value: '3'
+          value: 3
         },
         {
           label: 'Every 4th day',
-          value: '4'
+          value: 4
         },
         {
           label: 'Every 5th day',
-          value: '5'
+          value: 5
         },
         {
           label: 'Every 6th day',
-          value: '6'
+          value: 6
         },
         {
           label: 'Every 7th day',
-          value: '7'
+          value: 7
         },
         {
           label: 'Every 8th day',
-          value: '8'
+          value: 8
         },
         {
           label: 'Every 9th day',
-          value: '9'
+          value: 9
         },
         {
           label: 'Every 10th day',
-          value: '10'
+          value: 10
         },
         {
           label: 'Every 11th day',
-          value: '11'
+          value: 11
         },
         {
           label: 'Every 12th day',
-          value: '12'
+          value: 12
         },
         {
           label: 'Every 13th day',
-          value: '13'
+          value: 13
         },
         {
           label: 'Every 14th day',
-          value: '14'
+          value: 14
         },
         {
           label: 'Every 15th day',
-          value: '15'
+          value: 15
         },
         {
           label: 'Every 16th day',
-          value: '16'
+          value: 16
         },
         {
           label: 'Every 17th day',
-          value: '17'
+          value: 17
         },
         {
           label: 'Every 18th day',
-          value: '18'
+          value: 18
         },
         {
           label: 'Every 19th day',
-          value: '19'
+          value: 19
         },
         {
           label: 'Every 20th day',
-          value: '20'
+          value: 20
         },
         {
           label: 'Every 21th day',
-          value: '21'
+          value: 21
         },
         {
           label: 'Every 22th day',
-          value: '22'
+          value: 22
         },
         {
           label: 'Every 23th day',
-          value: '23'
+          value: 23
         },
         {
           label: 'Every 24th day',
-          value: '24'
+          value: 24
         },
         {
           label: 'Every 25th day',
-          value: '25'
+          value: 25
         },
         {
           label: 'Every 26th day',
-          value: '26'
+          value: 26
         },
         {
           label: 'Every 27th day',
-          value: '27'
+          value: 27
         },
         {
           label: 'Every 28th day',
-          value: '28'
+          value: 28
         },
         {
           label: 'Every 29th day',
-          value: '29'
+          value: 29
         },
         {
           label: 'Every 30th day',
-          value: '30'
+          value: 30
         }
       ],
 
-      weeklyInterval: this.modelValue.interval
-        ? this.modelValue.interval.toString()
-        : undefined,
+      weeklyInterval: this.modelValue.interval,
       weeklyIntervalOptions: [
         {
           label: 'Every week',
-          value: '1'
+          value: 1
         },
         {
           label: 'Every other week',
-          value: '2'
+          value: 2
         },
         {
           label: 'Every 3rd week',
-          value: '3'
+          value: 3
         },
         {
           label: 'Every 4th week',
-          value: '4'
+          value: 4
         },
         {
           label: 'Every 5th week',
-          value: '5'
+          value: 5
         },
         {
           label: 'Every 6th week',
-          value: '6'
+          value: 6
         },
         {
           label: 'Every 7th week',
-          value: '7'
+          value: 7
         },
         {
           label: 'Every 8th week',
-          value: '8'
+          value: 8
         },
         {
           label: 'Every 9th week',
-          value: '9'
+          value: 9
         },
         {
           label: 'Every 10th week',
-          value: '10'
+          value: 10
         },
         {
           label: 'Every 11th week',
-          value: '11'
+          value: 11
         },
         {
           label: 'Every 12th week',
-          value: '12'
+          value: 12
         },
         {
           label: 'Every 13th week',
-          value: '13'
+          value: 13
         },
         {
           label: 'Every 14th week',
-          value: '14'
+          value: 14
         },
         {
           label: 'Every 15th week',
-          value: '15'
+          value: 15
         },
         {
           label: 'Every 16th week',
-          value: '16'
+          value: 16
         },
         {
           label: 'Every 17th week',
-          value: '17'
+          value: 17
         },
         {
           label: 'Every 18th week',
-          value: '18'
+          value: 18
         },
         {
           label: 'Every 19th week',
-          value: '19'
+          value: 19
         },
         {
           label: 'Every 20th week',
-          value: '20'
+          value: 20
         },
         {
           label: 'Every 21th week',
-          value: '21'
+          value: 21
         },
         {
           label: 'Every 22th week',
-          value: '22'
+          value: 22
         },
         {
           label: 'Every 23th week',
-          value: '23'
+          value: 23
         },
         {
           label: 'Every 24th week',
-          value: '24'
+          value: 24
         },
         {
           label: 'Every 25th week',
-          value: '25'
+          value: 25
         },
         {
           label: 'Every 26th week',
-          value: '26'
+          value: 26
         }
       ],
 
-      monthlyInterval: this.modelValue.interval
-        ? this.modelValue.interval.toString()
-        : undefined,
+      monthlyInterval: this.modelValue.interval,
       monthlyIntervalOptions: [
         {
           label: 'Every month',
-          value: '1'
+          value: 1
         },
         {
           label: 'Every other month',
-          value: '2'
+          value: 2
         },
         {
           label: 'Every 3rd month',
-          value: '3'
+          value: 3
         },
         {
           label: 'Every 4th month',
-          value: '4'
+          value: 4
         },
         {
           label: 'Every 5th month',
-          value: '5'
+          value: 5
         },
         {
           label: 'Every 6th month',
-          value: '6'
+          value: 6
         },
         {
           label: 'Every 7th month',
-          value: '7'
+          value: 7
         },
         {
           label: 'Every 8th month',
-          value: '8'
+          value: 8
         },
         {
           label: 'Every 9th month',
-          value: '9'
+          value: 9
         },
         {
           label: 'Every 10th month',
-          value: '10'
+          value: 10
         },
         {
           label: 'Every 11th month',
-          value: '11'
+          value: 11
         },
         {
           label: 'Every 12th month',
-          value: '12'
+          value: 12
         },
         {
           label: 'Every 18th month',
-          value: '18'
+          value: 18
         },
         {
           label: 'Every 24th month',
-          value: '24'
-        },
-        {
-          label: 'Every 36th month',
-          value: '36'
-        },
-        {
-          label: 'Every 48th month',
-          value: '48'
+          value: 24
         }
       ],
 
-      yearlyInterval: this.modelValue.interval
-        ? this.modelValue.interval.toString()
-        : undefined,
+      yearlyInterval: this.modelValue.interval,
       yearlyIntervalOptions: [
         {
           label: 'Every year',
-          value: '1'
+          value: 1
         },
         {
           label: 'Every other year',
-          value: '2'
+          value: 2
         },
         {
           label: 'Every 3rd year',
-          value: '3'
+          value: 3
         },
         {
           label: 'Every 4th year',
-          value: '4'
+          value: 4
         },
         {
           label: 'Every 5th year',
-          value: '5'
+          value: 5
         },
         {
           label: 'Every 6th year',
-          value: '6'
+          value: 6
         },
         {
           label: 'Every 7th year',
-          value: '7'
+          value: 7
         },
         {
           label: 'Every 8th year',
-          value: '8'
+          value: 8
         },
         {
           label: 'Every 9th year',
-          value: '9'
+          value: 9
         },
         {
           label: 'Every 10th year',
-          value: '10'
+          value: 10
         }
       ],
 
@@ -704,13 +671,64 @@ export default {
       monthDays: this.modelValue.monthDays
     }
   },
+  watch: {
+    startEvent (newQuestion, oldQuestion) {
+      this.update()
+    },
+    eventTaskId (newQuestion, oldQuestion) {
+      this.update()
+    },
+    startDelaySecs (newQuestion, oldQuestion) {
+      this.update()
+    },
+    validitySecs (newQuestion, oldQuestion) {
+      this.update()
+    },
+    alwaysOn (newQuestion, oldQuestion) {
+      this.update()
+    },
+    occurrences (newQuestion, oldQuestion) {
+      this.update()
+    },
+    intervalType (newQuestion, oldQuestion) {
+      this.update()
+    },
+    dailyInterval (newQuestion, oldQuestion) {
+      this.update()
+    },
+    weeklyInterval (newQuestion, oldQuestion) {
+      this.update()
+    },
+    monthlyInterval (newQuestion, oldQuestion) {
+      this.update()
+    },
+    yearlyInterval (newQuestion, oldQuestion) {
+      this.update()
+    },
+    weekDays (newQuestion, oldQuestion) {
+      this.update()
+    },
+    months (newQuestion, oldQuestion) {
+      this.update()
+    },
+    hours (newQuestion, oldQuestion) {
+      this.update()
+    },
+    monthDays (newQuestion, oldQuestion) {
+      this.update()
+    }
+  },
   computed: {
     start: {
       get () {
         return Math.floor(this.startDelaySecs / (24 * 60 * 60))
       },
       set (days) {
-        this.startDelaySecs = days * (24 * 60 * 60)
+        if (!days) {
+          this.startDelaySecs = undefined
+        } else {
+          this.startDelaySecs = days * (24 * 60 * 60)
+        }
       }
     },
     until: {
@@ -718,7 +736,11 @@ export default {
         return Math.floor(this.validitySecs / (24 * 60 * 60))
       },
       set (days) {
-        this.validitySecs = days * (24 * 60 * 60)
+        if (!days) {
+          this.validitySecs = undefined
+        } else {
+          this.validitySecs = days * (24 * 60 * 60)
+        }
       }
     }
   },
@@ -726,13 +748,11 @@ export default {
     update () {
       const v = {
         startEvent: this.startEvent,
-        eventTaskId: isNaN(this.eventTaskId) ? undefined : this.eventTaskId,
-        startDelaySecs: isNaN(this.startDelaySecs)
-          ? undefined
-          : this.startDelaySecs,
-        untilSecs: isNaN(this.validitySecs) ? undefined : this.validitySecs,
+        eventTaskId: this.eventTaskId,
+        startDelaySecs: this.startDelaySecs,
+        untilSecs: this.validitySecs,
         alwaysOn: this.alwaysOn,
-        occurrences: isNaN(this.occurrences) ? undefined : this.occurrences,
+        occurrences: this.occurrences,
         intervalType: this.intervalType,
         hours: this.hours,
         months: this.months,
@@ -740,25 +760,18 @@ export default {
         weekDays: this.weekDays
       }
       if (v.intervalType === 'd') {
-        v.interval = isNaN(this.dailyInterval)
-          ? undefined
-          : parseInt(this.dailyInterval)
+        v.interval = this.dailyInterval
       }
       if (v.intervalType === 'w') {
-        v.interval = isNaN(this.weeklyInterval)
-          ? undefined
-          : parseInt(this.weeklyInterval)
+        v.interval = this.weeklyInterval
       }
       if (v.intervalType === 'm') {
-        v.interval = isNaN(this.monthlyInterval)
-          ? undefined
-          : parseInt(this.monthlyInterval)
+        v.interval = this.monthlyInterval
       }
       if (v.intervalType === 'y') {
-        v.interval = isNaN(this.yearlyInterval)
-          ? undefined
-          : parseInt(this.yearlyInterval)
+        v.interval = this.yearlyInterval
       }
+      console.log('update', v)
       this.$emit('update:modelValue', v)
     }
   }
