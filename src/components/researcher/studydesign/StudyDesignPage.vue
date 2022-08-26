@@ -1,47 +1,47 @@
 <template>
   <q-page>
-    <q-form ref="studyDesignForm">
-      <q-toolbar class="bg-info text-black">
-        <q-toolbar-title>
-          Study Designer
-        </q-toolbar-title>
-        <q-btn
-          class="q-mr-md"
-          v-show="studyKey && !studyDesign.publishedTS"
-          color="negative"
-          label="Delete Draft"
-          @click="removeDraftStudy()"
-        />
-        <q-btn
-          class="q-mr-md"
-          v-show="!studyDesign.publishedTS"
-          color="warning"
-          label="Save Draft"
-          @click="saveProgress()"
-        />
-        <q-btn
-          class="float-right q-mr-md"
-          v-show="!studyDesign.publishedTS"
-          color="positive"
-          label="Publish"
-          @click="publish()"
-        />
-        <q-btn
-          class="float-right q-mr-md"
-          v-show="studyDesign.publishedTS"
-          disabled
-          color="blue"
-          label="Published"
-        />
-        <q-btn
-          class="float-right q-mr-md"
-          round
-          color="black"
-          icon="close"
-          @click="exitDesigner"
-        />
-      </q-toolbar>
+    <q-toolbar class="bg-info text-black">
+      <q-toolbar-title>
+        Study Designer
+      </q-toolbar-title>
+      <q-btn
+        class="q-mr-md"
+        v-show="studyKey && !studyDesign.publishedTS"
+        color="negative"
+        label="Delete Draft"
+        @click="removeDraftStudy()"
+      />
+      <q-btn
+        class="q-mr-md"
+        v-show="!studyDesign.publishedTS"
+        color="warning"
+        label="Save Draft"
+        @click="saveProgress()"
+      />
+      <q-btn
+        class="float-right q-mr-md"
+        v-show="!studyDesign.publishedTS"
+        color="positive"
+        label="Publish"
+        @click="publish()"
+      />
+      <q-btn
+        class="float-right q-mr-md"
+        v-show="studyDesign.publishedTS"
+        disabled
+        color="blue"
+        label="Published"
+      />
+      <q-btn
+        class="float-right q-mr-md"
+        round
+        color="black"
+        icon="close"
+        @click="exitDesigner"
+      />
+    </q-toolbar>
 
+    <q-form ref="studyDesignForm">
       <q-tabs
         v-model="studyTab"
         class="bg-info text-black shadow-2"
@@ -54,19 +54,17 @@
           icon="subject"
           label="Generalities"
         />
-        <!-- ADD :class="vuelidate.studyDesign.generalities.$error? 'text-red': ''" -->
-        <!-- <q-tab
-        name="tab-crit"
-        icon="fingerprint"
-        label="Inclusion Criteria"
-        :class="vuelidate.studyDesign.inclusionCriteria.$error? 'text-red': ''"
-      />
-      <q-tab
-        name="tab-tasks"
-        icon="list"
-        label="Tasks"
-        :class="vuelidate.studyDesign.tasks.$error? 'text-red': ''"
-      />
+        <q-tab
+          name="tab-crit"
+          icon="fingerprint"
+          label="Inclusion Criteria"
+        />
+        <q-tab
+          name="tab-tasks"
+          icon="list"
+          label="Tasks"
+        />
+        <!--
       <q-tab
         name="tab-consent"
         icon="verified_user"
@@ -75,26 +73,31 @@
       /> -->
       </q-tabs>
       <q-tab-panels
+        ref="tabs"
         v-model="studyTab"
         animated
+        keep-alive
       >
-        <q-tab-panel name="tab-gen">
+        <q-tab-panel
+          name="tab-gen"
+          ref="panelGen"
+        >
           <study-design-generalities v-model="studyDesign" />
         </q-tab-panel>
-        <!-- <q-tab-panel name="tab-crit">
-        TODO: pass the whole study design to this component and remove languages
-      <study-design-criteria
-        v-model="studyDesign"
-        :v="vuelidate.studyDesign"
-      />
-      </q-tab-panel>
-      <q-tab-panel name="tab-tasks">
-        <study-design-tasks
-          v-model="studyDesign"
-          :teamKey="studyDesign.teamKey"
-          :v="vuelidate.studyDesign.tasks"
-        />
-      </q-tab-panel>
+        <q-tab-panel
+          name="tab-crit"
+          ref="panelCrit"
+        >
+          <study-design-criteria v-model="studyDesign" />
+        </q-tab-panel>
+
+        <q-tab-panel
+          name="tab-tasks"
+          ref="panelTasks"
+        >
+          <study-design-tasks v-model="studyDesign" />
+        </q-tab-panel>
+        <!--
       <q-tab-panel name="tab-consent">
         <study-design-consent
           v-model="studyDesign"
@@ -120,8 +123,8 @@
 
 <script>
 import StudyDesignGeneralities from '@components/researcher/studydesign/StudyDesignGeneralities'
-// import StudyDesignCriteria from '@components/researcher/studydesign/StudyDesignCriteria'
-// import StudyDesignTasks from '@components/researcher/studydesign/StudyDesignTasks'
+import StudyDesignCriteria from '@components/researcher/studydesign/StudyDesignCriteria'
+import StudyDesignTasks from '@components/researcher/studydesign/StudyDesignTasks'
 // import StudyDesignConsent from '@components/researcher/studydesign/StudyDesignConsent'
 import API from '@shared/API.js'
 
@@ -129,9 +132,9 @@ export default {
   name: 'StudyDesignLayout',
   props: ['propStudyKey', 'propTeamKey'],
   components: {
-    StudyDesignGeneralities
-    // StudyDesignCriteria,
-    // StudyDesignTasks,
+    StudyDesignGeneralities,
+    StudyDesignCriteria,
+    StudyDesignTasks
     // StudyDesignConsent
   },
   data () {
@@ -146,19 +149,13 @@ export default {
         generalities: {
           languages: ['en'],
           title: {
-            en: '',
-            sv: '',
-            es: ''
+            en: ''
           },
           shortDescription: {
-            en: '',
-            sv: '',
-            es: ''
+            en: ''
           },
           longDescription: {
-            en: '',
-            sv: '',
-            es: ''
+            en: ''
           },
           startDate: undefined,
           endDate: undefined,
@@ -175,9 +172,7 @@ export default {
               contact: '',
               dataAccess: '',
               reasonForDataAccess: {
-                en: '',
-                sv: '',
-                es: ''
+                en: ''
               }
             }
           ]
@@ -201,14 +196,10 @@ export default {
         tasks: [],
         consent: {
           invitation: {
-            en: '',
-            sv: '',
-            es: ''
+            en: ''
           },
           privacyPolicy: {
-            en: '',
-            sv: '',
-            es: ''
+            en: ''
           },
           taskItems: [],
           extraItems: []
@@ -216,27 +207,6 @@ export default {
       }
     }
   },
-  // validations: {
-  //   studyDesign: {
-  //     invitational: { required },
-  //     inclusionCriteria: {
-  //       countries: { required },
-  //       minAge: { required, minValue: minValue(0), maxValue: maxValue(150) },
-  //       maxAge: { required, minValue: minValue(0), maxValue: maxValue(150) },
-  //       sex: { required },
-  //       minBMI: { required, minValue: minValue(5), maxValue: maxValue(210) },
-  //       maxBMI: { required, minValue: minValue(5), maxValue: maxValue(210) }
-  //     },
-  //     tasks: {
-  //       required,
-  //       minLength: minLength(1)
-  //     },
-  //     consent: {
-  //       invitation: { required },
-  //       privacyPolicy: { required }
-  //     }
-  //   }
-  // },
   computed: {
     studyKey () {
       let key = false
@@ -267,30 +237,16 @@ export default {
     }
   },
   methods: {
-    checkValidation: function () {
-      // Checking for Errors only in tabs generalities and Error
-      let errors = false
-      this.vuelidate.studyDesign.$touch()
-      this.vuelidate.studyDesign.generalities.$touch()
-      this.vuelidate.studyDesign.inclusionCriteria.$touch()
-      this.vuelidate.studyDesign.tasks.$touch()
-      this.vuelidate.studyDesign.consent.$touch()
-      // Check for errors from validation
-      if (this.vuelidate.studyDesign.generalities.$error) {
-        this.$q.notify('Please correct the fields in the Generalities tab.')
-        errors = true
-      } else if (this.vuelidate.studyDesign.inclusionCriteria.$error) {
-        this.$q.notify('Please correct the fields in the Inclusion criteria tab.')
-        errors = true
-      } else if (this.vuelidate.studyDesign.tasks.$error) {
-        this.$q.notify('Please correct the fields in the Tasks tab.')
-        errors = true
-      } else if (this.vuelidate.studyDesign.consent.$error) {
-        this.$q.notify('Please correct the fields in the Consent tab.')
-        errors = true
+    checkValidation: async function () {
+      if (!this.$refs.panelGen || !this.$refs.panelCrit || !this.$refs.panelTasks) {
+        this.$q.notify('Please review all tabs at least once before submitting')
+        return false
       }
-      // If there are any validation errors, the validation check has failed
-      return !errors
+      const valid = await this.$refs.studyDesignForm.validate(true)
+      if (!valid) {
+        this.$q.notify('Please correct the highlighted fields before submitting')
+      }
+      return valid
     },
     async publish () {
       // If published not empty, study has already been published
@@ -302,37 +258,39 @@ export default {
           icon: 'report_problem'
         })
       } else {
-        if (this.checkValidation() !== false) {
-          try {
-            this.studyDesign.publishedTS = new Date()
-            if (this.studyKey) {
-              // If there is a studyKey, a draft exists
-              await API.updateStudy(this.studyKey, this.studyDesign)
-              this.$q.notify({
-                color: 'primary',
-                position: 'bottom',
-                message: 'Study has been published.',
-                icon: 'done'
-              })
-            } else {
-              // If no studyKey, publish directly
-              await API.createStudy(this.studyDesign)
-              this.$q.notify({
-                color: 'primary',
-                position: 'bottom',
-                message: 'Study has been published.',
-                icon: 'done'
-              })
-            }
-            this.$router.push('/researcher')
-          } catch (err) {
-            this.$q.notify({
-              color: 'negative',
-              position: 'bottom',
-              message: 'Error. Please check the connection.',
-              icon: 'report_problem'
-            })
-          }
+        if (await this.checkValidation()) {
+          console.log('ALL OK!', this.studyDesign)
+          //   try {
+          //     this.studyDesign.publishedTS = new Date()
+          //     if (this.studyKey) {
+          //       // If there is a studyKey, a draft exists
+          //       await API.updateStudy(this.studyKey, this.studyDesign)
+          //       this.$q.notify({
+          //         color: 'primary',
+          //         position: 'bottom',
+          //         message: 'Study has been published.',
+          //         icon: 'done'
+          //       })
+          //     } else {
+          //       // If no studyKey, publish directly
+          //       await API.createStudy(this.studyDesign)
+          //       this.$q.notify({
+          //         color: 'primary',
+          //         position: 'bottom',
+          //         message: 'Study has been published.',
+          //         icon: 'done'
+          //       })
+          //     }
+          //     this.$router.push('/researcher')
+          //   } catch (err) {
+          //     this.$q.notify({
+          //       color: 'negative',
+          //       position: 'bottom',
+          //       message: 'Error. Please check the connection.',
+          //       icon: 'report_problem'
+          //     })
+          //   }
+          // }
         }
       }
     },
@@ -378,14 +336,13 @@ export default {
     },
     async removeDraftStudy () {
       if (this.studyKey && !this.studyDesign.publishedTS) {
-        try {
-          await this.$q.dialog({
-            title: 'Remove Study',
-            color: 'warning',
-            message: 'You are deleting the draft Study. Would you like to continue?',
-            ok: 'Yes, delete the study.',
-            cancel: 'Cancel'
-          })
+        this.$q.dialog({
+          title: 'Remove Study',
+          color: 'warning',
+          message: 'You are deleting the draft Study. Would you like to continue?',
+          ok: 'Yes, delete the study.',
+          cancel: 'Cancel'
+        }).onOk(async () => {
           // Remove from db
           try {
             await API.deleteStudy(this.studyKey)
@@ -398,27 +355,21 @@ export default {
               icon: 'report_problem'
             })
           }
-        } catch (error) {
-          // nothing to do
-        }
+        })
       }
     },
     exitDesigner () {
-      if (this.keyOfStudy === '') {
+      if (this.studyKey === '') {
         this.$q.dialog({
           title: 'Exit',
           color: 'warning',
           message: 'You have not saved this draft. Would you like to continue exiting?',
           ok: 'Yes, exit without saving',
           cancel: 'Cancel'
-        }).then(() => {
+        }).onOk(() => {
           this.$router.push('/researcher')
-        }).catch(() => {
-          this.$q.notify('Cancel')
         })
-      } else {
-        this.$router.push('/researcher')
-      }
+      } else this.$router.push('/researcher')
     }
   }
 }

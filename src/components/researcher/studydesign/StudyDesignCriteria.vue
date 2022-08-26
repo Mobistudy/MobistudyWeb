@@ -20,23 +20,23 @@
           </div>
           <div class="col q-pl-sm">
             <q-field
-              :error="validation.inclusionCriteria.countries.$error"
+              :error="studyDesign.inclusionCriteria.countries.length == 0"
               error-message="At least one country must be specified"
             >
               <q-checkbox
-                v-model="validation.inclusionCriteria.countries.$model"
+                v-model="studyDesign.inclusionCriteria.countries"
                 label="Sweden"
                 val="se"
                 @input="update()"
               />
               <q-checkbox
-                v-model="validation.inclusionCriteria.countries.$model"
+                v-model="studyDesign.inclusionCriteria.countries"
                 label="United Kingdom"
                 val="gb"
                 @input="update()"
               />
               <q-checkbox
-                v-model="validation.inclusionCriteria.countries.$model"
+                v-model="studyDesign.inclusionCriteria.countries"
                 label="Spain"
                 val="es"
                 @input="update()"
@@ -60,27 +60,21 @@
           <div class="col q-pl-sm">
             <q-input
               type="number"
-              align="center"
-              min="0"
-              v-model.number="validation.inclusionCriteria.minAge.$model"
+              min="18"
+              v-model.number="studyDesign.inclusionCriteria.minAge"
               hint="Minimum age."
-              @blur="validation.inclusionCriteria.minAge.$touch"
               @input="update()"
-              :error="validation.inclusionCriteria.minAge.$error"
-              error-message="A minimum age of 0 is required"
+              :rules="[val => !!val || 'Field is required', val => (val && (val >=18)) || 'A minimum age of 18 is required']"
             />
           </div>
           <div class="col q-ml-sm">
             <q-input
               type="number"
-              align="center"
-              min="0"
-              v-model.number="validation.inclusionCriteria.maxAge.$model"
+              min="18"
+              v-model.number="studyDesign.inclusionCriteria.maxAge"
               hint="Maximum age."
-              @blur="validation.inclusionCriteria.maxAge.$touch"
               @input="update()"
-              :error="validation.inclusionCriteria.maxAge.$error"
-              error-message="A minimum age of 0 is required"
+              :rules="[val => !!val || 'Field is required', val => (val && (val >=18)) || 'A minimum age of 18 is required']"
             />
           </div>
         </div>
@@ -99,23 +93,23 @@
           </div>
           <div class="col q-pl-sm">
             <q-field
-              :error="validation.inclusionCriteria.sex.$error"
+              :error="studyDesign.inclusionCriteria.sex.length == 0"
               error-message="At least one sex must be specified"
             >
               <q-checkbox
-                v-model="validation.inclusionCriteria.sex.$model"
+                v-model="studyDesign.inclusionCriteria.sex"
                 label="Male"
                 val="male"
                 @input="update()"
               />
               <q-checkbox
-                v-model="validation.inclusionCriteria.sex.$model"
+                v-model="studyDesign.inclusionCriteria.sex"
                 label="Female"
                 val="female"
                 @input="update()"
               />
               <q-checkbox
-                v-model="validation.inclusionCriteria.sex.$model"
+                v-model="studyDesign.inclusionCriteria.sex"
                 label="Other"
                 val="other"
                 @input="update()"
@@ -140,8 +134,7 @@
             <q-input
               type="number"
               min="1"
-              align="center"
-              v-model.trim="studyDesign.numberOfParticipants"
+              v-model.number="studyDesign.numberOfParticipants"
               onkeypress="return event.charCode >= 48 && event.charCode <= 57"
               clearable
               @input="update()"
@@ -235,12 +228,10 @@
               type="number"
               min="5"
               max="210"
-              v-model="studyDesign.inclusionCriteria.minBMI"
+              v-model.number="studyDesign.inclusionCriteria.minBMI"
               hint="Minimum BMI."
-              @blur="v.inclusionCriteria.minBMI.$touch"
               @input="update()"
-              :error="v.inclusionCriteria.minBMI.$error"
-              error-message="A BMI between 5 and 210 is required"
+              :rules="[val => !!val || 'Field is required', val => (val>=5 && val<=210) || 'A BMI between 5 and 210 is required']"
             />
           </div>
           <div class="col q-ml-sm">
@@ -248,13 +239,10 @@
               type="number"
               min="5"
               max="210"
-              align="center"
-              v-model="studyDesign.inclusionCriteria.maxBMI"
+              v-model.number="studyDesign.inclusionCriteria.maxBMI"
               hint="Maximum BMI."
-              @blur="v.inclusionCriteria.maxBMI.$touch"
               :input="update()"
-              :error="v.inclusionCriteria.maxBMI.$error"
-              error-message="A BMI between 5 and 210 is required"
+              :rules="[val => !!val || 'Field is required', val => (val>=5 && val<=210) || 'A BMI between 5 and 210 is required']"
             />
           </div>
         </div>
@@ -363,21 +351,26 @@ import MultilangInput from '@components/MultilangInput'
 export default {
   name: 'StudyDesignCriteria',
   // modelValue here is the study design
-  // vuelidate is the vuelidate object
-  props: ['modelValue', 'vuelidate'],
-  emits: ['update:modelValue', 'update:validation'],
+  props: ['modelValue'],
+  emits: ['update:modelValue'],
   components: {
     MultilangInput
   },
   data () {
     return {
-      studyDesign: this.modelValue,
-      validation: this.vuelidate,
       diseaseOptions: [],
       medsOptions: []
     }
   },
   computed: {
+    studyDesign: {
+      get () {
+        return this.modelValue
+      },
+      set (newValue) {
+        this.$emit('update:modelValue', newValue)
+      }
+    },
     // these are used to map label and value to term and conceptId
     diseasesVue: {
       get: function () {
@@ -427,7 +420,6 @@ export default {
   methods: {
     update () {
       this.$emit('update:modelValue', this.studyDesign)
-      this.$emit('update:validation', this.validation)
     },
     async searchDisease (diseaseDescription, update, abort) {
       if (diseaseDescription.length < 2) {
@@ -504,7 +496,7 @@ export default {
           sv: '',
           es: ''
         },
-        answer: ''
+        answer: 'yes'
       })
       this.update()
     },

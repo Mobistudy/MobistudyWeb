@@ -425,14 +425,12 @@ export default {
         return this.modelValue
       },
       set (newValue) {
-        console.log('set')
         this.$emit('update:modelValue', newValue)
       }
     }
   },
   methods: {
     update () {
-      console.log('update', this.studyDesign)
       this.$emit('update:modelValue', this.modelValue)
     },
     addRowInvestigator (index) {

@@ -130,7 +130,7 @@
     </q-card>
     <!-- Tasks -->
     <q-card
-      v-for="(task, index) in value.tasks"
+      v-for="(task, index) in studyDesign.tasks"
       :key="index"
       class="form-card q-my-md"
     >
@@ -294,7 +294,6 @@
             <div class="text-caption">
               How often the heart rate must be measured in minutes.
               The more often its measured the more the battery is used.
-              <!-- TODO: it would be nice to have more specific information about battery life -->
             </div>
           </div>
           <div class="col q-pl-sm">
@@ -340,7 +339,7 @@
       </q-card-section>
     </q-card>
 
-    <formbuilder
+    <!-- <formbuilder
       ref="formbuilder"
       v-model="newForm"
       @simulateForm="openFormSimulator()"
@@ -352,16 +351,17 @@
       :form='newForm'
       @closed="openFormBuilder()"
       :languages="studyDesign.generalities.languages"
-    ></formsimulator>
+    ></formsimulator> -->
   </div>
 </template>
 
 <script>
+import userinfo from '@shared/userinfo'
 import Scheduler from '@components/researcher/studydesign/SchedulerCard'
 import { schedulingToString } from '@shared/scheduling'
 import API from '@shared/API'
-import FormBuilder from '@components/researcher/studydesign/FormBuilder'
-import FormSimulator from '@components/researcher/studydesign/FormSimulator'
+// import FormBuilder from '@components/researcher/studydesign/FormBuilder'
+// import FormSimulator from '@components/researcher/studydesign/FormSimulator'
 import HealthDataTypesEnum from '@shared/healthDataTypesEnum'
 
 const healthDataTypesEnum2String = function (type) {
@@ -394,20 +394,19 @@ const defaultScheduling = {
 
 export default {
   components: {
-    scheduler: Scheduler,
-    formbuilder: FormBuilder,
-    formsimulator: FormSimulator
+    scheduler: Scheduler
+    // formbuilder: FormBuilder,
+    // formsimulator: FormSimulator
   },
   name: 'StudyDesignTasks',
   // modelValue here is the whole study design
-  props: ['modelValue', 'teamKey'],
+  props: ['modelValue'],
   emits: ['update:modelValue'],
   data () {
     return {
-      studyDesign: this.modelValue,
       selectOptionsFormsList: [],
       newForm: {
-        teamKey: this.teamKey,
+        teamKey: userinfo.user.teamKey,
         name: {
           en: '',
           sv: '',
@@ -480,6 +479,16 @@ export default {
           label: 'Year'
         }
       ]
+    }
+  },
+  computed: {
+    studyDesign: {
+      get () {
+        return this.modelValue
+      },
+      set (newValue) {
+        this.$emit('update:modelValue', newValue)
+      }
     }
   },
   async created () {
