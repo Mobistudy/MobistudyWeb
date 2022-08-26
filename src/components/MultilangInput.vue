@@ -5,6 +5,7 @@
       :key="lang"
     >
       <q-input
+        :ref="'input'+[lang]"
         :type="inputtype"
         :autogrow="inputtype == 'textarea'"
         :readonly="readonly"
@@ -36,7 +37,7 @@ export default {
           value = {}
         }
         if (value.length < this.languages.length) {
-          for (const lan in this.languages) {
+          for (const lan of this.languages) {
             if (!value[lan]) value[lan] = ''
           }
         }
@@ -54,6 +55,15 @@ export default {
   methods: {
     blur () {
       this.$emit('blur', this.multiText)
+    },
+    async validate () {
+      if (this.required) {
+        for (const lan of this.languages) {
+          const valid = await this.$refs['input' + [lan]].validate()
+          if (!valid) return false
+        }
+        return true
+      } else return true
     },
     extendedLang (lang) {
       if (lang === 'en') return 'English'
