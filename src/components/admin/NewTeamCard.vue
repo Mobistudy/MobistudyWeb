@@ -1,79 +1,71 @@
 <template>
   <!-- Create New Teams -->
-  <div class="q-pa-md q-gutter-sm text-center">
-    <q-btn
-      label="Create a New Team"
-      color="primary"
-      @click="promptTeamName = true"
-    />
+  <q-form ref="newTeamForm">
+    <div class="q-pa-md q-gutter-sm text-center">
+      <q-btn
+        label="Create a New Team"
+        color="primary"
+        @click="promptTeamName = true"
+      />
 
-    <q-dialog
-      v-model="promptTeamName"
-      persistent
-    >
-      <q-card style="min-width: 350px">
-        <q-card-section>
-          <div class="text-h6">Team Name</div>
-        </q-card-section>
+      <q-dialog
+        v-model="promptTeamName"
+        persistent
+      >
+        <q-card style="min-width: 350px">
+          <q-card-section>
+            <div class="text-h6">Team Name</div>
+          </q-card-section>
 
-        <q-card-section class="q-pt-none">
-          <q-input
-            placeholder="Enter a New Team Name"
-            dense
-            autofocus
-            @keyup.enter="promptTeamName = false"
-            v-model="teamName"
-            @blur="vuelidate.teamName.$touch"
-            :error="vuelidate.teamName.$error"
-            error-message="A name is required"
-          />
-        </q-card-section>
+          <q-card-section class="q-pt-none">
+            <q-input
+              placeholder="Enter a New Team Name"
+              dense
+              autofocus
+              @keyup.enter="promptTeamName = false"
+              v-model="teamName"
+              :rules="[val => !!val || 'Field is required']"
+            />
+          </q-card-section>
 
-        <q-card-actions
-          align="right"
-          class="text-primary"
-        >
-          <q-btn
-            flat
-            label="Cancel"
-            v-close-popup
-          />
-          <q-btn
-            flat
-            label="Create Team"
-            v-close-popup
-            @click="createTeam()"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-  </div>
+          <q-card-actions
+            align="right"
+            class="text-primary"
+          >
+            <q-btn
+              flat
+              label="Cancel"
+              v-close-popup
+            />
+            <q-btn
+              flat
+              label="Create Team"
+              v-close-popup
+              @click="createTeam()"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+    </div>
+  </q-form>
 </template>
 
 <script>
 import API from '@shared/API'
-import useVuelidate from '@vuelidate/core'
-import { required } from '@vuelidate/validators'
 
 export default {
   name: 'NewTeamCard',
-  setup () {
-    return { vuelidate: useVuelidate() }
-  },
   data () {
     return {
       teamName: '',
       promptTeamName: false
     }
   },
-  validations: {
-    teamName: { required }
-  },
   methods: {
     async createTeam () {
-      this.vuelidate.teamName.$touch()
-      if (this.vuelidate.teamName.$error) {
-        this.$q.notify('Please correct the indicated fields')
+      const valid = await this.$refs.newTeamForm.validate(true)
+      if (!valid) {
+        this.$q.notify('Please correct the highlighted fields before submitting')
       } else {
         this.$q.dialog({
           title: 'Create Team',
