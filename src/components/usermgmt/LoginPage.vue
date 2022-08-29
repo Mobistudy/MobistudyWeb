@@ -2,56 +2,54 @@
   <q-layout>
     <q-page-container>
       <q-page class="flex flex-center">
-        <q-card class="q-pa-sm loginBox">
-          <q-card-section>
-            <div class="text-h4">Sign In</div>
-          </q-card-section>
-          <q-card-section>
-            <form autocomplete="on">
-              <q-input
-                v-model.trim="vuelidate.email.$model"
-                type="email"
-                label="Email"
-                placeholder="e.g. email@email.com"
-                autocomplete="on"
-                @blur="vuelidate.email.$touch"
-                :error="vuelidate.email.$error"
-                error-message="An email address is required."
+        <q-form ref="loginForm">
+          <q-card class="q-pa-sm loginBox">
+            <q-card-section>
+              <div class="text-h4">Sign In</div>
+            </q-card-section>
+            <q-card-section>
+              <form autocomplete="on">
+                <q-input
+                  v-model.trim="email"
+                  type="email"
+                  label="Email"
+                  placeholder="e.g. email@email.com"
+                  autocomplete="on"
+                  :rules="emailRules"
+                />
+                <q-input
+                  v-model.trim="password"
+                  type="password"
+                  label="Password"
+                  autocomplete="on"
+                  @keyup.enter="login()"
+                  :rules="[val => !!val || 'Field is required']"
+                />
+              </form>
+            </q-card-section>
+            <q-card-actions>
+              <q-btn
+                label="login"
+                color="primary"
+                @click="login()"
               />
-              <q-input
-                v-model.trim="vuelidate.password.$model"
-                type="password"
-                label="Password"
-                autocomplete="on"
-                @blur="vuelidate.password.$touch"
-                @keyup.enter="login()"
-                :error="vuelidate.password.$error"
-                error-message="A password is required."
+              <q-btn
+                label="New User"
+                color="secondary"
+                @click="newUser()"
               />
-            </form>
-          </q-card-section>
-          <q-card-actions>
-            <q-btn
-              label="login"
-              color="primary"
-              @click="login()"
-            />
-            <q-btn
-              label="New User"
-              color="secondary"
-              @click="newUser()"
-            />
-          </q-card-actions>
-          <q-card-actions>
-            <q-btn
-              label="Reset password"
-              flat
-              color="primary"
-              :disable="vuelidate.email.$error"
-              @click="resetPassword()"
-            />
-          </q-card-actions>
-        </q-card>
+            </q-card-actions>
+            <q-card-actions>
+              <q-btn
+                label="Reset password"
+                flat
+                color="primary"
+                :disable="email == ''"
+                @click="resetPassword()"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-form>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -66,30 +64,25 @@
 <script>
 import API from '@shared/API'
 import userinfo from '@shared/userinfo.js'
-import useVuelidate from '@vuelidate/core'
-import { required, email } from '@vuelidate/validators'
+import { testPattern } from 'quasar/src/utils/patterns'
 
 export default {
   name: 'LoginPage',
-  setup () {
-    return { vuelidate: useVuelidate() }
-  },
   data () {
     return {
       email: '',
-      password: ''
+      password: '',
+      emailRules: [
+        val => !!val || 'Filed is required',
+        val => testPattern.email(val) || 'Must be an email address'
+      ]
     }
-  },
-  validations: {
-    email: { required, email },
-    password: { required }
   },
   methods: {
     async login () {
-      this.vuelidate.email.$touch()
-      this.vuelidate.password.$touch()
-      if (this.vuelidate.email.$error || this.vuelidate.password.$error) {
-        this.$q.notify('Please correct the indicated fields.')
+      const valid = await this.$refs.loginForm.validate(true)
+      if (!valid) {
+        this.$q.notify('Please correct the highlighted fields')
       } else {
         try {
           const user = await API.login(this.email.toLowerCase(), this.password)
