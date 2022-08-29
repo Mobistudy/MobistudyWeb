@@ -181,7 +181,7 @@
         >Hold the phone test</div>
         <div
           class="text-h5"
-          v-if="task.type === 'Vocalization'"
+          v-if="task.type === 'vocalization'"
         >Vocalization test</div>
         Task Id: {{task.id}}
       </q-card-section>

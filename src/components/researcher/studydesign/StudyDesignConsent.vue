@@ -20,8 +20,6 @@
             <multilang-input
               type="textarea"
               v-model="studyDesign.consent.invitation"
-              @blur="validation.consent.invitation.$touch"
-              @input="update()"
               :languages="studyDesign.generalities.languages"
               required
             />
@@ -37,11 +35,12 @@
             </div>
           </div>
           <div class="col q-pl-sm">
+            <!-- TODO: use an html editor instead of simple text
+            complex privacy policy text does not go well with the html parser
+            -->
             <multilang-input
               type="textarea"
               v-model="studyDesign.consent.privacyPolicy"
-              @blur="validation.consent.privacyPolicy.$touch"
-              @input="update()"
               :languages="studyDesign.generalities.languages"
               required
             />
@@ -75,7 +74,6 @@
                       <multilang-input
                         type="textarea"
                         v-model="tt.description"
-                        @input="update()"
                         :languages="studyDesign.generalities.languages"
                         required
                       />
@@ -133,7 +131,6 @@
                       <multilang-input
                         type="textarea"
                         v-model="et.description"
-                        @input="update()"
                         :languages="studyDesign.generalities.languages"
                         required
                       />
@@ -142,7 +139,6 @@
                       <q-checkbox
                         label="Optional"
                         v-model="et.optional"
-                        @input="update()"
                       />
                     </div>
                   </div>
@@ -167,27 +163,30 @@ import { schedulingToString } from '@shared/scheduling.js'
 export default {
   name: 'StudyDesignConsent',
   // value is the whole study design
-  // vuelidate is the validation object
-  props: ['modelValue', 'vuelidate'],
-  emits: ['update:modelValue', 'update:validation'],
+  props: ['modelValue'],
+  emits: ['update:modelValue'],
   components: {
     MultilangInput
   },
   data () {
     return {
-      studyDesign: this.modelValue,
-      validation: this.vuelidate,
       alwaysTrue: true
+    }
+  },
+  computed: {
+    studyDesign: {
+      get () {
+        return this.modelValue
+      },
+      set (newVal) {
+        this.$emit('update:modelValue', newVal)
+      }
     }
   },
   created () {
     this.generateConsent(true)
   },
   methods: {
-    update () {
-      this.$emit('update:modelValue', this.studyDesign)
-      this.$emit('update:validation', this.validation)
-    },
     generateConsent (keepOld) {
       const consentItemList = []
       for (let i = 0; i < this.studyDesign.tasks.length; i++) {

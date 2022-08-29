@@ -64,13 +64,11 @@
           icon="list"
           label="Tasks"
         />
-        <!--
-      <q-tab
-        name="tab-consent"
-        icon="verified_user"
-        label="Consent"
-        :class="vuelidate.studyDesign.consent.$error? 'text-red': ''"
-      /> -->
+        <q-tab
+          name="tab-consent"
+          icon="verified_user"
+          label="Consent"
+        />
       </q-tabs>
       <q-tab-panels
         ref="tabs"
@@ -97,13 +95,9 @@
         >
           <study-design-tasks v-model="studyDesign" />
         </q-tab-panel>
-        <!--
-      <q-tab-panel name="tab-consent">
-        <study-design-consent
-          v-model="studyDesign"
-          :v="vuelidate.studyDesign"
-        />
-      </q-tab-panel> -->
+        <q-tab-panel name="tab-consent">
+          <study-design-consent v-model="studyDesign" />
+        </q-tab-panel>
       </q-tab-panels>
     </q-form>
     <q-page-scroller
@@ -125,7 +119,7 @@
 import StudyDesignGeneralities from '@components/researcher/studydesign/StudyDesignGeneralities'
 import StudyDesignCriteria from '@components/researcher/studydesign/StudyDesignCriteria'
 import StudyDesignTasks from '@components/researcher/studydesign/StudyDesignTasks'
-// import StudyDesignConsent from '@components/researcher/studydesign/StudyDesignConsent'
+import StudyDesignConsent from '@components/researcher/studydesign/StudyDesignConsent'
 import API from '@shared/API.js'
 
 export default {
@@ -134,8 +128,8 @@ export default {
   components: {
     StudyDesignGeneralities,
     StudyDesignCriteria,
-    StudyDesignTasks
-    // StudyDesignConsent
+    StudyDesignTasks,
+    StudyDesignConsent
   },
   data () {
     return {
@@ -259,118 +253,117 @@ export default {
         })
       } else {
         if (await this.checkValidation()) {
-          console.log('ALL OK!', this.studyDesign)
-          //   try {
-          //     this.studyDesign.publishedTS = new Date()
-          //     if (this.studyKey) {
-          //       // If there is a studyKey, a draft exists
-          //       await API.updateStudy(this.studyKey, this.studyDesign)
-          //       this.$q.notify({
-          //         color: 'primary',
-          //         position: 'bottom',
-          //         message: 'Study has been published.',
-          //         icon: 'done'
-          //       })
-          //     } else {
-          //       // If no studyKey, publish directly
-          //       await API.createStudy(this.studyDesign)
-          //       this.$q.notify({
-          //         color: 'primary',
-          //         position: 'bottom',
-          //         message: 'Study has been published.',
-          //         icon: 'done'
-          //       })
-          //     }
-          //     this.$router.push('/researcher')
-          //   } catch (err) {
-          //     this.$q.notify({
-          //       color: 'negative',
-          //       position: 'bottom',
-          //       message: 'Error. Please check the connection.',
-          //       icon: 'report_problem'
-          //     })
-          //   }
-          // }
-        }
-      }
-    },
-    async saveProgress () {
-      if (this.studyKey) {
-        try {
-          await API.updateStudy(this.studyKey, this.studyDesign)
-          this.$q.notify({
-            color: 'primary',
-            position: 'bottom',
-            message: 'Updated draft and saved Progress',
-            icon: 'done'
-          })
-        } catch (err) {
-          this.$q.notify({
-            color: 'negative',
-            position: 'bottom',
-            message: 'Cannot update and save progress. Please check the connection.',
-            icon: 'report_problem'
-          })
-        }
-      } else {
-        try {
-          // If no studyKey in the prop, then save the study for the 1st time
-          this.studyDesign.createdTS = new Date()
-          const response = await API.createStudy(this.studyDesign)
-          this.keyOfStudy = response.data._key
-          this.$q.notify({
-            color: 'primary',
-            position: 'bottom',
-            message: 'Updated draft and saved Progress',
-            icon: 'done'
-          })
-        } catch (err) {
-          this.$q.notify({
-            color: 'negative',
-            position: 'bottom',
-            message: 'Cannot save progress. Please check the connection.',
-            icon: 'report_problem'
-          })
-        }
-      }
-    },
-    async removeDraftStudy () {
-      if (this.studyKey && !this.studyDesign.publishedTS) {
-        this.$q.dialog({
-          title: 'Remove Study',
-          color: 'warning',
-          message: 'You are deleting the draft Study. Would you like to continue?',
-          ok: 'Yes, delete the study.',
-          cancel: 'Cancel'
-        }).onOk(async () => {
-          // Remove from db
           try {
-            await API.deleteStudy(this.studyKey)
+            this.studyDesign.publishedTS = new Date()
+            if (this.studyKey) {
+              // If there is a studyKey, a draft exists
+              await API.updateStudy(this.studyKey, this.studyDesign)
+              this.$q.notify({
+                color: 'primary',
+                position: 'bottom',
+                message: 'Study has been published.',
+                icon: 'done'
+              })
+            } else {
+              // If no studyKey, publish directly
+              await API.createStudy(this.studyDesign)
+              this.$q.notify({
+                color: 'primary',
+                position: 'bottom',
+                message: 'Study has been published.',
+                icon: 'done'
+              })
+            }
             this.$router.push('/researcher')
-          } catch (error) {
+          } catch (err) {
             this.$q.notify({
               color: 'negative',
               position: 'bottom',
-              message: 'Cannot delete the study: ' + error.message,
+              message: 'Error. Please check the connection.',
               icon: 'report_problem'
             })
           }
+        }
+      }
+    }
+  },
+  async saveProgress () {
+    if (this.studyKey) {
+      try {
+        await API.updateStudy(this.studyKey, this.studyDesign)
+        this.$q.notify({
+          color: 'primary',
+          position: 'bottom',
+          message: 'Updated draft and saved Progress',
+          icon: 'done'
+        })
+      } catch (err) {
+        this.$q.notify({
+          color: 'negative',
+          position: 'bottom',
+          message: 'Cannot update and save progress. Please check the connection.',
+          icon: 'report_problem'
         })
       }
-    },
-    exitDesigner () {
-      if (this.studyKey === '') {
-        this.$q.dialog({
-          title: 'Exit',
-          color: 'warning',
-          message: 'You have not saved this draft. Would you like to continue exiting?',
-          ok: 'Yes, exit without saving',
-          cancel: 'Cancel'
-        }).onOk(() => {
-          this.$router.push('/researcher')
+    } else {
+      try {
+        // If no studyKey in the prop, then save the study for the 1st time
+        this.studyDesign.createdTS = new Date()
+        const response = await API.createStudy(this.studyDesign)
+        this.keyOfStudy = response.data._key
+        this.$q.notify({
+          color: 'primary',
+          position: 'bottom',
+          message: 'Updated draft and saved Progress',
+          icon: 'done'
         })
-      } else this.$router.push('/researcher')
+      } catch (err) {
+        this.$q.notify({
+          color: 'negative',
+          position: 'bottom',
+          message: 'Cannot save progress. Please check the connection.',
+          icon: 'report_problem'
+        })
+      }
     }
+  },
+  async removeDraftStudy () {
+    if (this.studyKey && !this.studyDesign.publishedTS) {
+      this.$q.dialog({
+        title: 'Remove Study',
+        color: 'warning',
+        message: 'You are deleting the draft Study. Would you like to continue?',
+        ok: 'Yes, delete the study.',
+        cancel: 'Cancel'
+      }).onOk(async () => {
+        // Remove from db
+        try {
+          await API.deleteStudy(this.studyKey)
+          this.$router.push('/researcher')
+        } catch (error) {
+          this.$q.notify({
+            color: 'negative',
+            position: 'bottom',
+            message: 'Cannot delete the study: ' + error.message,
+            icon: 'report_problem'
+          })
+        }
+      })
+    }
+  },
+  exitDesigner () {
+    if (this.studyKey === '') {
+      this.$q.dialog({
+        title: 'Exit',
+        color: 'warning',
+        message: 'You have not saved this draft. Would you like to continue exiting?',
+        ok: 'Yes, exit without saving',
+        cancel: 'Cancel'
+      }).onOk(() => {
+        this.$router.push('/researcher')
+      })
+    } else this.$router.push('/researcher')
   }
+}
 }
 </script>
