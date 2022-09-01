@@ -36,6 +36,33 @@ npm run concurrently:dev:jest
 The code is written mostly in ES6 and uses ES6 modules, please be consistent.
 If you use VS Code, follow the [recommended settings from Quasar](https://quasar.dev/start/vs-code-configuration#Introduction).
 
+Folders follows this structure:
+```
+project
+└───public                  // static assets, images, icons etc.
+└───src                     // application code
+│   └───assets              // static assets that need to be included in the source code by webpack
+│   └───boot                // Vue plugins
+│   └───components          // Vue components
+│   │   └───admin           // Vue components for the admin user
+│   │   └───researcher      // Vue components for the researcher
+│   │   └───usermgmt        // Vue components for general user/account management
+│   └───css                 // css used throughout the web interface
+│   └───i18n                // internationalised text
+│   │   └───en              // English text
+│   │   └───sv              // Swedish text
+│   │   └───es              // Spanish text
+│   └───mixins              // Vue mixins
+│   └───router              // Vue router and routes
+│   └───shared              // shared functions, objects and services
+└───test                    // automatic tests and experiments
+    └───jest                // jest tests and config
+        └───__tests__       // unit tests specs
+```
+
+Run `npm run dev` to start a self-served web interface, but first have the API running and exposed at port 3000.
+To run automatic tests: `npm run test` and to run tests and develop at the same time: `npm run dev:test`.
+
 ## Deploy
 
 Run `quasar build`. This will generate the material UI interfaces and make it available under `./dist/`
