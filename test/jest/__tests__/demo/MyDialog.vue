@@ -7,14 +7,14 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'MyDialog',
-  data() {
+  data () {
     return {
-      isDialogOpen: false,
-    };
-  },
-});
+      isDialogOpen: false
+    }
+  }
+})
 </script>
