@@ -3,14 +3,14 @@
     <q-card>
       <q-card-section>
         <div class="text-h5">
-          {{ studyDesign.generalities.title[locale] }}
+          {{ getBestLocale(studyDesign.generalities.title) }}
         </div>
       </q-card-section>
       <q-card-section>
         <div class="row q-ma-sm">
           <div class="col-2 text-bold">Description:</div>
           <div class="col">
-            {{ studyDesign.generalities.longDescription[locale] }}
+            {{ getBestLocale(studyDesign.generalities.longDescription) }}
           </div>
         </div>
         <q-separator />
@@ -105,7 +105,7 @@
           <div class="row q-ma-sm">
             <div class="col-2 text-bold">Reason for Data Access:</div>
             <div class="col">
-              {{ inst.reasonForDataAccess[locale] }}
+              {{ getBestLocale(inst.reasonForDataAccess) }}
             </div>
           </div>
           <q-separator v-show="inIndex != studyDesign.generalities.institutions.length - 1" />
@@ -120,7 +120,14 @@
       <q-card-section>
         <div class="row q-ma-sm">
           <div class="col-2 text-bold">Countries:</div>
-          <div class="col">{{ studyDesign.inclusionCriteria.countries }}</div>
+          <div class="col">
+            <div
+              v-for="(cou, cIndex) in studyDesign.inclusionCriteria.countries"
+              :key="cIndex"
+            >
+              {{ cou }}
+            </div>
+          </div>
         </div>
         <div class="row q-ma-sm">
           <div class="col-2 text-bold">Age range:</div>
@@ -130,10 +137,10 @@
           </div>
         </div>
         <div class="row q-ma-sm">
-          <div class="col-2 text-bold">Gender:</div>
+          <div class="col-2 text-bold">Genders:</div>
           <div class="col">
             <div
-              v-for="(ge, gIndex) in studyDesign.inclusionCriteria.gender"
+              v-for="(ge, gIndex) in studyDesign.inclusionCriteria.sex"
               :key="gIndex"
             >
               {{ ge }}
@@ -143,7 +150,7 @@
         <div class="row q-ma-sm">
           <div class="col-2 text-bold">Number Of Participants:</div>
           <div class="col">
-            {{ studyDesign.inclusionCriteria.numberOfParticipants }}
+            {{ studyDesign.numberOfParticipants }}
           </div>
         </div>
         <div class="row q-ma-sm">
@@ -227,7 +234,7 @@
             </div>
             <div class="row q-ma-sm">
               <div class="col-2 text-bold">Name:</div>
-              <div class="col">{{ task.formName[$root.$i18n.locale] }}</div>
+              <div class="col">{{ getBestLocale(task.formName) }}</div>
             </div>
           </div>
           <div class="row q-ma-sm">
@@ -247,14 +254,14 @@
         <div class="row q-ma-sm">
           <div class="col-2 text-bold">Invitation:</div>
           <div class="col">
-            {{ studyDesign.consent.invitation[locale] }}
+            {{ getBestLocale(studyDesign.consent.invitation) }}
           </div>
         </div>
         <div class="row q-ma-sm">
           <div class="col-2 text-bold">Privacy Policy:</div>
           <div class="col">
             <div v-html="
-                studyDesign.consent.privacyPolicy[locale].replace(
+                getBestLocale(studyDesign.consent.privacyPolicy).replace(
                   new RegExp('\n', 'g'),
                   '<br>'
                 )
@@ -279,7 +286,7 @@
               <div class="row q-ma-sm">
                 <div class="col-2 text-bold">Description:</div>
                 <div class="col">
-                  {{ tkItem.description[locale] }}
+                  {{ getBestLocale(tkItem.description) }}
                 </div>
               </div>
               <div class="row q-ma-sm">
@@ -317,11 +324,12 @@
 <script>
 import { date } from 'quasar'
 import { schedulingToString } from '@shared/scheduling.js'
+import { bestLocale } from '@mixins/bestLocale'
 
 export default {
   name: 'StudySummary',
   props: ['studyDesign'],
-
+  mixins: [bestLocale],
   data () {
     return {
       // prefer the locale set in i18n

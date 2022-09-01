@@ -51,7 +51,7 @@
             v-for="(pstudy, index) in unpublishedStudies"
             :key="'d' + index"
             class="q-ma-md"
-            :label="getStudyName(pstudy.title)"
+            :label="getBestLocale(pstudy.title)"
             color="primary"
             @click="goToStudyDesigner(index)"
           />
@@ -65,7 +65,7 @@
             v-for="(pstudy, index) in publishedStudies"
             :key="'p' + index"
             class="q-ma-md"
-            :label="getStudyName(pstudy.title)"
+            :label="getBestLocale(pstudy.title)"
             color="secondary"
             @click="goToStudyStats(pstudy.study_key)"
           />
@@ -86,8 +86,11 @@
 <script>
 import userinfo from '@shared/userinfo'
 import API from '@shared/API.js'
+import { bestLocale } from '@mixins/bestLocale'
 
 export default {
+  name: 'ResearchersHomePage',
+  mixins: [bestLocale],
   data () {
     return {
       unpublishedStudies: [],
@@ -109,17 +112,6 @@ export default {
     }
   },
   methods: {
-    getStudyName (title) {
-      if (title.en) return title.en
-      else {
-        // get the first available
-        for (const lang in title) {
-          if (title[lang]) return title[lang]
-        }
-      }
-      // default
-      return 'Unknown'
-    },
     async promptAddTeam () {
       try {
         this.$q.dialog({

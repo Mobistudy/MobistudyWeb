@@ -219,7 +219,6 @@ export default {
     if (this.propStudyKey) {
       try {
         this.studyDesign = await API.getStudy(this.propStudyKey)
-        console.log('LOADED STUDY DESIGN FROM DB', this.studyDesign)
       } catch (err) {
         this.$q.notify({
           color: 'negative',
@@ -285,85 +284,84 @@ export default {
           }
         }
       }
-    }
-  },
-  async saveProgress () {
-    if (this.studyKey) {
-      try {
-        await API.updateStudy(this.studyKey, this.studyDesign)
-        this.$q.notify({
-          color: 'primary',
-          position: 'bottom',
-          message: 'Updated draft and saved Progress',
-          icon: 'done'
-        })
-      } catch (err) {
-        this.$q.notify({
-          color: 'negative',
-          position: 'bottom',
-          message: 'Cannot update and save progress. Please check the connection.',
-          icon: 'report_problem'
-        })
-      }
-    } else {
-      try {
-        // If no studyKey in the prop, then save the study for the 1st time
-        this.studyDesign.createdTS = new Date()
-        const response = await API.createStudy(this.studyDesign)
-        this.keyOfStudy = response.data._key
-        this.$q.notify({
-          color: 'primary',
-          position: 'bottom',
-          message: 'Updated draft and saved Progress',
-          icon: 'done'
-        })
-      } catch (err) {
-        this.$q.notify({
-          color: 'negative',
-          position: 'bottom',
-          message: 'Cannot save progress. Please check the connection.',
-          icon: 'report_problem'
-        })
-      }
-    }
-  },
-  async removeDraftStudy () {
-    if (this.studyKey && !this.studyDesign.publishedTS) {
-      this.$q.dialog({
-        title: 'Remove Study',
-        color: 'warning',
-        message: 'You are deleting the draft Study. Would you like to continue?',
-        ok: 'Yes, delete the study.',
-        cancel: 'Cancel'
-      }).onOk(async () => {
-        // Remove from db
+    },
+    async saveProgress () {
+      if (this.studyKey) {
         try {
-          await API.deleteStudy(this.studyKey)
-          this.$router.push('/researcher')
-        } catch (error) {
+          await API.updateStudy(this.studyKey, this.studyDesign)
+          this.$q.notify({
+            color: 'primary',
+            position: 'bottom',
+            message: 'Updated draft and saved Progress',
+            icon: 'done'
+          })
+        } catch (err) {
           this.$q.notify({
             color: 'negative',
             position: 'bottom',
-            message: 'Cannot delete the study: ' + error.message,
+            message: 'Cannot update and save progress. Please check the connection.',
             icon: 'report_problem'
           })
         }
-      })
+      } else {
+        try {
+          // If no studyKey in the prop, then save the study for the 1st time
+          this.studyDesign.createdTS = new Date()
+          const response = await API.createStudy(this.studyDesign)
+          this.keyOfStudy = response.data._key
+          this.$q.notify({
+            color: 'primary',
+            position: 'bottom',
+            message: 'Updated draft and saved Progress',
+            icon: 'done'
+          })
+        } catch (err) {
+          this.$q.notify({
+            color: 'negative',
+            position: 'bottom',
+            message: 'Cannot save progress. Please check the connection.',
+            icon: 'report_problem'
+          })
+        }
+      }
+    },
+    async removeDraftStudy () {
+      if (this.studyKey && !this.studyDesign.publishedTS) {
+        this.$q.dialog({
+          title: 'Remove Study',
+          color: 'warning',
+          message: 'You are deleting the draft Study. Would you like to continue?',
+          ok: 'Yes, delete the study.',
+          cancel: 'Cancel'
+        }).onOk(async () => {
+          // Remove from db
+          try {
+            await API.deleteStudy(this.studyKey)
+            this.$router.push('/researcher')
+          } catch (error) {
+            this.$q.notify({
+              color: 'negative',
+              position: 'bottom',
+              message: 'Cannot delete the study: ' + error.message,
+              icon: 'report_problem'
+            })
+          }
+        })
+      }
+    },
+    exitDesigner () {
+      if (this.studyKey === '') {
+        this.$q.dialog({
+          title: 'Exit',
+          color: 'warning',
+          message: 'You have not saved this draft. Would you like to continue exiting?',
+          ok: 'Yes, exit without saving',
+          cancel: 'Cancel'
+        }).onOk(() => {
+          this.$router.push('/researcher')
+        })
+      } else this.$router.push('/researcher')
     }
-  },
-  exitDesigner () {
-    if (this.studyKey === '') {
-      this.$q.dialog({
-        title: 'Exit',
-        color: 'warning',
-        message: 'You have not saved this draft. Would you like to continue exiting?',
-        ok: 'Yes, exit without saving',
-        cancel: 'Cancel'
-      }).onOk(() => {
-        this.$router.push('/researcher')
-      })
-    } else this.$router.push('/researcher')
   }
-}
 }
 </script>

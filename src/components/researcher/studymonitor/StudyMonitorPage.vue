@@ -2,7 +2,7 @@
   <q-page>
     <q-toolbar class="bg-secondary text-white">
       <q-toolbar-title>
-        Statistics about <strong>{{ niceTitle(studyDesign.generalities.title) }}</strong>
+        Statistics about <strong>{{ getBestLocale(studyDesign.generalities.title) }}</strong>
       </q-toolbar-title>
       <q-btn
         class="float-right q-mr-md"
@@ -49,12 +49,12 @@
 import API from '@shared/API.js'
 import StudyStats from '@components/researcher/studymonitor/StudyStatsCard'
 import StudySummary from '@components/researcher/studymonitor/StudySummary'
-import { getLocalTitle } from '@mixins/getLocalTitleMixin'
+import { bestLocale } from '@mixins/bestLocale'
 
 export default {
   name: 'StudyMonitor',
   props: ['studyKey'],
-  mixins: [getLocalTitle],
+  mixins: [bestLocale],
   components: {
     StudyStats, StudySummary
   },
@@ -81,12 +81,6 @@ export default {
         message: 'Cannot retrieve the study description. ' + err.message,
         icon: 'report_problem'
       })
-    }
-  },
-  methods: {
-    niceTitle (titles) {
-      // Sends study titles object as a param and returns a single title
-      return this.getFirstTitle(titles)
     }
   }
 }
