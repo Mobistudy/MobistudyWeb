@@ -174,11 +174,11 @@ export default {
     this.getLogsEventTypes()
     if (this.studyKey && this.studyKey !== -1) {
       this.filter.studyKey = this.studyKey
-      this.loadLogs({
-        pagination: this.pagination,
-        filter: this.filter
-      })
     }
+    this.loadLogs({
+      pagination: this.pagination,
+      filter: this.filter
+    })
   },
   watch: {
     // update the table if the study key changes
