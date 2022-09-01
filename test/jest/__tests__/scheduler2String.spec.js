@@ -1,134 +1,122 @@
-import { mount, createLocalVue, shallowMount } from '@vue/test-utils'
-import * as All from 'quasar'
-import { schedulingToString } from '../../../src/modules/Scheduling.js'
-const { Quasar } = All
+import { schedulingToString } from '../../../src/shared/scheduling.js'
 
-const components = Object.keys(All).reduce((object, key) => {
-  const val = All[key]
-  if (val && val.component && val.component.name != null) {
-    object[key] = val
-  }
-  return object
-}, {})
+import { describe, expect, it } from '@jest/globals'
 
 describe('Scheduler to String', () => {
-  const localVue = createLocalVue()
-  localVue.use(Quasar, { components })
-
   it('until 5 days after consent', () => {
     const sch = {
-      startEvent: "consent",
+      startEvent: 'consent',
       startDelaySecs: 0,
-      untilSecs:5 * 24 * 60 * 60,
-      intervalType:"d",
-      months:[],
-      monthDays:[],
-      weekDays:[],
-      interval:0
+      untilSecs: 5 * 24 * 60 * 60,
+      intervalType: 'd',
+      months: [],
+      monthDays: [],
+      weekDays: [],
+      interval: 0
     }
-    let string = schedulingToString(sch, 'en')
-    expect(string).toBe('Until 5 days after you have consented. ')
+    const string = schedulingToString(sch, 'en')
+    expect(string).toBe('Until 5 days after I have consented. ')
   })
 
   it('from 5 days after consent', () => {
     const sch = {
-      startEvent: "consent",
+      startEvent: 'consent',
       startDelaySecs: 5 * 24 * 60 * 60,
-      untilSecs:0,
-      intervalType:"d",
-      months:[],
-      monthDays:[],
-      weekDays:[],
-      interval:0
+      untilSecs: 0,
+      intervalType: 'd',
+      months: [],
+      monthDays: [],
+      weekDays: [],
+      interval: 0
     }
-    let string = schedulingToString(sch, 'en')
-    expect(string).toBe('5 days after you have consented. ')
+    const string = schedulingToString(sch, 'en')
+    expect(string).toBe('5 days after I have consented. ')
   })
 
   it('Daily', () => {
     const sch = {
-      startEvent: "consent",
+      startEvent: 'consent',
       startDelaySecs: 0,
-      untilSecs:0,
-      intervalType:"d",
-      months:[],
-      monthDays:[],
-      weekDays:[],
-      interval:1
+      untilSecs: 0,
+      intervalType: 'd',
+      months: [],
+      monthDays: [],
+      weekDays: [],
+      interval: 1
     }
-    let string = schedulingToString(sch, 'en')
+    const string = schedulingToString(sch, 'en')
     expect(string).toBe('Repeated daily. ')
   })
 
   it('every 3 days', () => {
     const sch = {
-      startEvent: "consent",
+      startEvent: 'consent',
       startDelaySecs: 0,
-      untilSecs:0,
-      intervalType:"d",
-      months:[],
-      monthDays:[],
-      weekDays:[],
-      interval:3
+      untilSecs: 0,
+      intervalType: 'd',
+      months: [],
+      monthDays: [],
+      weekDays: [],
+      interval: 3
     }
-    let string = schedulingToString(sch, 'en')
+    const string = schedulingToString(sch, 'en')
     expect(string).toBe('Repeated every 3 days. ')
   })
 
   it('every 3 weeks', () => {
     const sch = {
-      startEvent: "consent",
+      startEvent: 'consent',
       startDelaySecs: 0,
-      untilSecs:0,
-      intervalType:"w",
-      months:[],
-      monthDays:[],
-      weekDays:[],
-      interval:3
+      untilSecs: 0,
+      intervalType: 'w',
+      months: [],
+      monthDays: [],
+      weekDays: [],
+      interval: 3
     }
-    let string = schedulingToString(sch, 'en')
+    const string = schedulingToString(sch, 'en')
     expect(string).toBe('Repeated every 3 weeks. ')
   })
 
   it('daily, on mondays', () => {
     const sch = {
-      startEvent: "consent",
+      startEvent: 'consent',
       startDelaySecs: 0,
-      untilSecs:0,
-      intervalType:"d",
-      months:[],
-      monthDays:[],
-      weekDays:['mo'],
-      interval:1
+      untilSecs: 0,
+      intervalType: 'd',
+      months: [],
+      monthDays: [],
+      weekDays: ['mo'],
+      interval: 1
     }
-    let string = schedulingToString(sch, 'en')
+    const string = schedulingToString(sch, 'en')
     expect(string).toBe('Repeated daily. On the following day(s) of the week: Monday. ')
   })
 
   it('daily, in September and November', () => {
     const sch = {
-      startEvent: "consent",
+      startEvent: 'consent',
       startDelaySecs: 0,
-      untilSecs:0,
-      intervalType:"d",
-      months:[9, 11],
-      monthDays:[],
-      weekDays:[],
-      interval:1
+      untilSecs: 0,
+      intervalType: 'd',
+      months: [9, 11],
+      monthDays: [],
+      weekDays: [],
+      interval: 1
     }
-    let string = schedulingToString(sch, 'en')
+    const string = schedulingToString(sch, 'en')
     expect(string).toBe('Repeated daily. In the following month(s): September, November. ')
   })
 
   it('1 day after task 2 is executed', () => {
     const sch = {
-      startEvent: "taskExecution",
+      startEvent: 'taskExecution',
       eventTaskId: 2,
       startDelaySecs: 24 * 60 * 60,
-      intervalType: "d",
+      intervalType: 'd',
       interval: 0
     }
-    let string = schedulingToString(sch, 'en')
-    expect(string).toBe('1 days after you have completed task 2. ')
+    const string = schedulingToString(sch, 'en')
+    expect(string).toBe('1 days after I have completed task 2. ')
   })
 })

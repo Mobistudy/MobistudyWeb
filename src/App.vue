@@ -1,26 +1,26 @@
 <template>
-  <div id="q-app">
-    <router-view />
-  </div>
+  <router-view />
 </template>
 
 <script>
-import user from './modules/userinfo.js'
-import API from './modules/API.js'
+import axios from 'axios'
+import user from './shared/userinfo.js'
+import API from './shared/API.js'
+import { defineComponent } from 'vue'
 
-export default {
-  name: 'Mobistudy',
+export default defineComponent({
+  name: 'MobistudyWeb',
   created () {
     // check if already logged in, otherwise go to login
-    let resettingpwd = window.location.href.includes('resetPassword')
-    if (!user.getUser().loggedin && !resettingpwd) {
+    const resettingpwd = window.location.href.includes('resetPassword')
+    if (!user.user.loggedin && !resettingpwd) {
       this.$router.push('login')
       return
     } else {
-      if (!resettingpwd) API.setToken(user.getUser().token)
+      if (!resettingpwd) API.setToken(user.user.token)
     }
     // Add a 401 response interceptor
-    this.$axios.interceptors.response.use((response) => {
+    axios.interceptors.response.use((response) => {
       return response
     }, (error) => {
       if (error.response.status === 401 && !error.config.url.includes('login')) {
@@ -30,8 +30,5 @@ export default {
       return Promise.reject(error)
     })
   }
-}
+})
 </script>
-
-<style>
-</style>

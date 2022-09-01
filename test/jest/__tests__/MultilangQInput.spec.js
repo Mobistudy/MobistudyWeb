@@ -1,25 +1,15 @@
-import { mount, createLocalVue } from '@vue/test-utils'
-import MULTILANGQINPUT from '../../../src/components/QInputMultilang.vue'
-import * as All from 'quasar'
-// import langEn from 'quasar/lang/en-us' // change to any language you wish! => this breaks wallaby :(
-const { Quasar } = All
+import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-jest'
+import MultilangInput from '../../../src/components/MultilangInput.vue'
+import { mount } from '@vue/test-utils'
 
-const components = Object.keys(All).reduce((object, key) => {
-  const val = All[key]
-  if (val && val.component && val.component.name != null) {
-    object[key] = val
-  }
-  return object
-}, {})
+import { describe, expect, it } from '@jest/globals'
 
-describe('QInput Multilanguage', () => {
-  const localVue = createLocalVue()
-  localVue.use(Quasar, { components }) // , lang: langEn
+installQuasarPlugin()
 
-  const multilang = mount(MULTILANGQINPUT, {
-    localVue,
-    propsData: {
-      value: {
+describe('MultilanguageInput', () => {
+  const multilangWrapper = mount(MultilangInput, {
+    props: {
+      modelValue: {
         en: 'test text',
         it: 'testo test'
       },
@@ -29,32 +19,35 @@ describe('QInput Multilanguage', () => {
     }
   })
 
-  it('passes the sanity check and creates a wrapper', () => {
-    expect(multilang.isVueInstance()).toBe(true)
-  })
-
-  it('has a created hook', () => {
-    expect(typeof multilang.vm.update).toBe('function')
+  it('should mount the component and expose for testing', () => {
+    expect(multilangWrapper.find('div').exists()).toBeTruthy()
+    expect(multilangWrapper.find('input').exists()).toBeTruthy()
   })
 
   it('sets the correct default data', () => {
-    expect(multilang.props('value').en).toBe('test text')
-    expect(multilang.props('value').it).toBe('testo test')
-    let qinputs = multilang.findAllComponents(components.QInput)
-    expect(qinputs.length).toBe(2)
-    expect(qinputs.at(0).isVisible()).toBe(true)
-    expect(qinputs.at(1).isVisible()).toBe(true)
-    expect(qinputs.at(0).vm.value).toBe('test text')
-    expect(qinputs.at(1).vm.value).toBe('testo test')
+    const { vm } = multilangWrapper
+
+    expect(vm.$props.modelValue.en).toBe('test text')
+    expect(vm.$props.modelValue.it).toBe('testo test')
+
+    const inputs = multilangWrapper.findAll('input')
+    expect(inputs.length).toBe(2)
+    expect(inputs.at(0).isVisible()).toBe(true)
+    expect(inputs.at(1).isVisible()).toBe(true)
+
+    expect(inputs.at(0).element.value).toBe('test text')
+    expect(inputs.at(1).element.value).toBe('testo test')
   })
 
   it('sets the translated texts', async () => {
-    const inputs = multilang.findAll('input')
-    expect(inputs.length).toBe(2)
-    inputs.at(0).setValue('test 1')
-    inputs.at(1).setValue('test 2')
+    const inputs = multilangWrapper.findAll('input')
+    const { vm } = multilangWrapper
 
-    expect(multilang.vm.value.en).toBe('test 1')
-    expect(multilang.vm.value.it).toBe('test 2')
+    expect(inputs.length).toBe(2)
+    await inputs.at(0).setValue('test 1')
+    await inputs.at(1).setValue('testo 2')
+
+    expect(vm.$props.modelValue.en).toBe('test 1')
+    expect(vm.$props.modelValue.it).toBe('testo 2')
   })
 })
