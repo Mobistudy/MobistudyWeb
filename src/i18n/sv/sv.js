@@ -62,7 +62,9 @@ Teknisk data (loggar) kommer att tas bort 1 år efter de producerats.
     taskItemPosition: 'Jag accepterar att skicka min plats, {scheduling}',
     taskItemFingerTapping: 'Jag godkänner att utföra en fingeravtryckningsuppgiften, {scheduling}',
     taskItemTUGT: 'Jag godkänner att utföra ett "Timed up and Go" test, {scheduling}',
-    taskItemHoldPhone: 'Jag går med på att utföra "Håll i telefonen"-testet, {scheduling}'
+    taskItemHoldPhone: 'Jag går med på att utföra "Håll i telefonen"-testet, {scheduling}',
+    taskItemHoldVocalization: 'Jag går med på att utföra "Vokalisering"-testet, {scheduling}',
+    taskItemHoldDrawing: 'Jag går med på att utföra "Teckning"-testet, {scheduling}'
   },
   scheduling: {
     notDefined: 'Icke ännu definierad',

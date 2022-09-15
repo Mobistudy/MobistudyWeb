@@ -62,7 +62,9 @@ Los registros técnicos se eliminarán después de 1 año de su producción.
     taskItemPosition: 'Acepto enviar mi posición geográfica, {scheduling}',
     taskItemFingerTapping: 'Acepto realizar la tarea de tocar la pantalla con el dedo, {scheduling}',
     taskItemTUGT: 'Acepto realizar la prueba "Levanta y anda", {scheduling}',
-    taskItemHoldPhone: 'Acepto realizar la prueba "Sostén el teléfono", {scheduling}'
+    taskItemHoldPhone: 'Acepto realizar la prueba "Sostén el teléfono", {scheduling}',
+    taskItemVocalization: 'Acepto realizar la prueba "Vocalización", {scheduling}',
+    taskItemDrawing: 'Acepto realizar la prueba "Dibujo", {scheduling}'
   },
   scheduling: {
     notDefined: 'Aún no definido',

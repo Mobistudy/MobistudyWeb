@@ -124,6 +124,16 @@
               </q-item-section>
             </q-item>
 
+            <q-item
+              clickable
+              v-close-popup
+              @click="addDrawingT()"
+            >
+              <q-item-section>
+                <q-item-label>Drawing test</q-item-label>
+              </q-item-section>
+            </q-item>
+
           </q-list>
         </q-btn-dropdown>
       </q-card-section>
@@ -183,6 +193,10 @@
           class="text-h5"
           v-if="task.type === 'vocalization'"
         >Vocalization test</div>
+        <div
+          class="text-h5"
+          v-if="task.type === 'drawing'"
+        >Drawing test</div>
         Task Id: {{task.id}}
       </q-card-section>
       <q-card-section>
@@ -624,6 +638,14 @@ export default {
       this.studyDesign.tasks.push({
         id: this.studyDesign.tasks.length + 1,
         type: 'vocalization',
+        scheduling: defaultScheduling
+      })
+      this.update()
+    },
+    addDrawingT () {
+      this.studyDesign.tasks.push({
+        id: this.studyDesign.tasks.length + 1,
+        type: 'drawing',
         scheduling: defaultScheduling
       })
       this.update()

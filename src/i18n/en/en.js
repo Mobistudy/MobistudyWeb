@@ -24,6 +24,7 @@ These are needed to study how data changes from phone to phone.
     collectedDataTUGT: '    \u2022 The acceleration and orientation of the phone and steps walked during the Timed up and go test.',
     collectedDataHoldPhone: '    \u2022 The acceleration and orientation of the phone during the hold the phone test.',
     collectedDataVocalization: '    \u2022 Your voice recorded during the vocalization test.',
+    collectedDataDrawing: '    \u2022 Your drawing coordinates will be saved during the drawing test.',
     collectedDataReason: 'These data are needed to fulfil the aims of the research. [ADD REASONS FOR WHY THESE DATA ARE NEEDED IN THE SPECIFIC STUDY]',
     storage: `Where will my data be stored?
 All these data will be stored on the Mobistudy server, which is managed by Malmö University in Sweden. Your phone will only keep your profile and data about which studies you are participating in.
@@ -62,7 +63,8 @@ Technical logs will be deleted after 1 year they are produced.
     taskItemFingerTapping: 'I agree to perform the Finger tapping test, {scheduling}',
     taskItemTUGT: 'I agree to perform the "Timed up and go" test, {scheduling}',
     taskItemHoldPhone: 'I agree to perform "Hold the phone" test, {scheduling}',
-    taskItemVocalization: 'I agree to perform "Vocalization" test, {scheduling}'
+    taskItemVocalization: 'I agree to perform "Vocalization" test, {scheduling}',
+    taskItemDrawing: 'I agree to perform "Drawing" test, {scheduling}'
   },
   scheduling: {
     notDefined: 'Not yet defined',
