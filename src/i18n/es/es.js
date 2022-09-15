@@ -56,15 +56,15 @@ Los registros técnicos se eliminarán después de 1 año de su producción.
     taskItemForm: 'Acepto contestar el formulario {formName}, {scheduling}',
     taskItemMiBand3: 'Acepto enviar mis datos recopilados por el reloj inteligente, {scheduling}',
     taskItemQCST: 'Acepto realizar la prueba Queen\'s College step test, {scheduling}',
-    taskItemSMWT: 'Acepto realizar la prueba de camino de seis minutos, {scheduling}',
+    taskItemSMWT: 'Acepto realizar la prueba de caminata de seis minutos, {scheduling}',
     taskItemPO60: 'Acepto emedir mi oximetría de pulso, {scheduling}',
     taskItemPeakFlow: 'Acepto realizar una prueba de flujo espiratorio máximo, {scheduling}',
     taskItemPosition: 'Acepto enviar mi posición geográfica, {scheduling}',
-    taskItemFingerTapping: 'Acepto realizar la tarea de tocar la pantalla con el dedo, {scheduling}',
+    taskItemFingerTapping: 'Acepto realizar la prueba de movimiento de los dedos, {scheduling}',
     taskItemTUGT: 'Acepto realizar la prueba "Levanta y anda", {scheduling}',
-    taskItemHoldPhone: 'Acepto realizar la prueba "Sostén el teléfono", {scheduling}',
-    taskItemVocalization: 'Acepto realizar la prueba "Vocalización", {scheduling}',
-    taskItemDrawing: 'Acepto realizar la prueba "Dibujo", {scheduling}'
+    taskItemHoldPhone: 'Acepto realizar la prueba de sostener el teléfono, {scheduling}',
+    taskItemVocalization: 'Acepto realizar la prueba de vocalización, {scheduling}',
+    taskItemDrawing: 'Acepto realizar la prueba de dibujo, {scheduling}'
   },
   scheduling: {
     notDefined: 'Aún no definido',
