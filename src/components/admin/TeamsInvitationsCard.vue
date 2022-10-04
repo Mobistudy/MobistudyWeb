@@ -20,15 +20,17 @@
         <div class="row q-ma-sm">
           <div class="col-2 text-bold">Code: </div>
           <div class="col">
-            <q-input
-              type="textarea"
-              autogrow
+            <q-field
               :error="codeExpired[index]"
               error-message="This invitation code has EXPIRED"
-              :value="team.invitationCode"
-              ref="invCode"
-              readonly
-            />
+            >
+              <template v-slot:control>
+                <div :ref="'invCode' + index">
+                  {{ team.invitationCode }}
+                </div>
+              </template>
+            </q-field>
+
           </div>
           <div class="q-ml-sm">
             <q-btn
@@ -126,17 +128,18 @@ export default {
         })
       }
     },
-    copyCode (index) {
+    async copyCode (index) {
       try {
-        this.$refs.invCode[index].select()
-        document.execCommand('copy')
-        window.getSelection().removeAllRanges()
+        const code = this.$refs['invCode' + index][0].innerText
+        console.log(code)
+        await navigator.clipboard.writeText(code)
         this.$q.notify({
           color: 'primary',
           position: 'bottom',
           message: 'Invitation code copied to clipboard'
         })
       } catch (error) {
+        console.error(error)
         this.$q.notify({
           color: 'negative',
           message: 'Cannot copy invitation code',
