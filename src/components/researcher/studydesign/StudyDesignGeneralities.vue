@@ -112,7 +112,7 @@
             </div>
           </div>
           <div class="col q-pl-sm">
-            <multilang-input
+            <multilang-editor
               type="textarea"
               v-model="studyDesign.generalities.longDescription"
               @input="update()"
@@ -409,6 +409,7 @@
 
 <script>
 import MultilangInput from '@components/MultilangInput'
+import MultilangEditor from '@components/MultilangEditor'
 import API from '@shared/API.js'
 
 export default {
@@ -417,7 +418,7 @@ export default {
   props: ['modelValue'],
   emits: ['update:modelValue'],
   components: {
-    MultilangInput
+    MultilangInput, MultilangEditor
   },
   computed: {
     studyDesign: {
