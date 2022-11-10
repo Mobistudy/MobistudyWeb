@@ -15,7 +15,7 @@
             <q-item
               clickable
               v-close-popup
-              @click="addDT()"
+              @click="addTask('dataQuery')"
             >
               <q-item-section>
                 <q-item-label>Data query</q-item-label>
@@ -24,7 +24,7 @@
             <q-item
               clickable
               v-close-popup
-              @click="addFormT()"
+              @click="addTask('form')"
             >
               <q-item-section>
                 <q-item-label>Form</q-item-label>
@@ -33,7 +33,7 @@
             <q-item
               clickable
               v-close-popup
-              @click="addMiband3T()"
+              @click="addTask('miband3')"
             >
               <q-item-section>
                 <q-item-label>Wearable (MiBand3) data collection</q-item-label>
@@ -42,7 +42,7 @@
             <q-item
               clickable
               v-close-popup
-              @click="addQCSTT()"
+              @click="addTask('qcst')"
             >
               <q-item-section>
                 <q-item-label>Queen's college step test</q-item-label>
@@ -51,7 +51,7 @@
             <q-item
               clickable
               v-close-popup
-              @click="addSMWTT()"
+              @click="addTask('smwt')"
             >
               <q-item-section>
                 <q-item-label>Six minute walk test</q-item-label>
@@ -60,7 +60,7 @@
             <q-item
               clickable
               v-close-popup
-              @click="addPulseOximeterT()"
+              @click="addTask('po60')"
             >
               <q-item-section>
                 <q-item-label>Pulse oximeter</q-item-label>
@@ -69,7 +69,7 @@
             <q-item
               clickable
               v-close-popup
-              @click="addPeakFlowT()"
+              @click="addTask('peakFlow')"
             >
               <q-item-section>
                 <q-item-label>Peak Flow</q-item-label>
@@ -78,7 +78,7 @@
             <q-item
               clickable
               v-close-popup
-              @click="addPositionT()"
+              @click="addTask('position')"
             >
               <q-item-section>
                 <q-item-label>Position</q-item-label>
@@ -87,7 +87,7 @@
             <q-item
               clickable
               v-close-popup
-              @click="addTappingT()"
+              @click="addTask('fingerTapping')"
             >
               <q-item-section>
                 <q-item-label>Finger tapping</q-item-label>
@@ -97,7 +97,7 @@
             <q-item
               clickable
               v-close-popup
-              @click="addTUGT()"
+              @click="addTask('tugt')"
             >
               <q-item-section>
                 <q-item-label>Timed up and go test</q-item-label>
@@ -107,7 +107,7 @@
             <q-item
               clickable
               v-close-popup
-              @click="addHoldPhone()"
+              @click="addTask('holdPhone')"
             >
               <q-item-section>
                 <q-item-label>Hold the phone (tremor) test</q-item-label>
@@ -117,7 +117,7 @@
             <q-item
               clickable
               v-close-popup
-              @click="addVocalization()"
+              @click="addTask('vocalization')"
             >
               <q-item-section>
                 <q-item-label>Vocalization test</q-item-label>
@@ -127,7 +127,7 @@
             <q-item
               clickable
               v-close-popup
-              @click="addDrawingT()"
+              @click="addTask('drawing')"
             >
               <q-item-section>
                 <q-item-label>Drawing test</q-item-label>
@@ -343,6 +343,36 @@
             </q-expansion-item>
           </div>
         </div>
+
+        <div class="row">
+          <div class="col-4 q-pt-lg">
+            <div class="text-bold">
+              Custom title:
+            </div>
+            <div class="text-caption">
+              This can be used to show a user-friendly name, or to specify the scope of the task
+              (e.g. "after medication"). Optional.
+            </div>
+          </div>
+          <div class="col q-pl-sm">
+            <div class="row">
+              <q-checkbox
+                class="col-4"
+                label="Use custom name"
+                v-model="task.useCustomTitle"
+              />
+              <multilang-input
+                class="col"
+                v-model="task.customTitle"
+                @input="update()"
+                :languages="studyDesign.generalities.languages"
+                :required="task.useCustomTitle"
+                :disable="!task.useCustomTitle"
+              />
+            </div>
+          </div>
+        </div>
+
         <q-btn
           label="Remove this task"
           color="negative"
@@ -374,6 +404,8 @@ import userinfo from '@shared/userinfo'
 import Scheduler from '@components/researcher/studydesign/SchedulerCard'
 import { schedulingToString } from '@shared/scheduling'
 import API from '@shared/API'
+import MultilangInput from '@components/MultilangInput'
+
 // import FormBuilder from '@components/researcher/studydesign/FormBuilder'
 // import FormSimulator from '@components/researcher/studydesign/FormSimulator'
 import HealthDataTypesEnum from '@shared/healthDataTypesEnum'
@@ -408,7 +440,8 @@ const defaultScheduling = {
 
 export default {
   components: {
-    scheduler: Scheduler
+    Scheduler,
+    MultilangInput
     // formbuilder: FormBuilder,
     // formsimulator: FormSimulator
   },
@@ -539,117 +572,31 @@ export default {
       const state = HealthDataTypesEnum.allowsAggregated(v)
       return state
     },
-    addDT () {
-      this.studyDesign.tasks.push({
+    addTask (type) {
+      const newTask = {
         id: this.studyDesign.tasks.length + 1,
-        type: 'dataQuery',
+        type,
         scheduling: defaultScheduling,
-        dataType: undefined,
-        aggregated: false,
-        bucket: 'none'
-      })
-      this.update()
-    },
-    addMiband3T () {
-      this.studyDesign.tasks.push({
-        id: this.studyDesign.tasks.length + 1,
-        type: 'miband3',
-        scheduling: defaultScheduling,
-        hrInterval: 1
-      })
-      this.update()
-    },
-    addQCSTT () {
-      this.studyDesign.tasks.push({
-        id: this.studyDesign.tasks.length + 1,
-        type: 'qcst',
-        scheduling: defaultScheduling
-      })
-      this.update()
-    },
-    addSMWTT () {
-      this.studyDesign.tasks.push({
-        id: this.studyDesign.tasks.length + 1,
-        type: 'smwt',
-        scheduling: defaultScheduling
-      })
-      this.update()
-    },
-    addPulseOximeterT () {
-      this.studyDesign.tasks.push({
-        id: this.studyDesign.tasks.length + 1,
-        type: 'po60',
-        scheduling: defaultScheduling
-      })
-      this.update()
-    },
-    addPeakFlowT () {
-      this.studyDesign.tasks.push({
-        id: this.studyDesign.tasks.length + 1,
-        type: 'peakFlow',
-        scheduling: defaultScheduling
-      })
-      this.update()
-    },
-    addPositionT () {
-      this.studyDesign.tasks.push({
-        id: this.studyDesign.tasks.length + 1,
-        type: 'position',
-        scheduling: defaultScheduling
-      })
-      this.update()
-    },
-    addFormT () {
-      this.studyDesign.tasks.push({
-        id: this.studyDesign.tasks.length + 1,
-        type: 'form',
-        scheduling: defaultScheduling,
-        formKey: undefined,
+        useCustomTitle: false,
+        customTitle: undefined
+      }
+      if (type === 'form') {
+        newTask.formKey = undefined
         // this is mainly used for the consent tab, it can be discarded when the object is sent to the server
-        formName: undefined
-      })
+        newTask.formName = undefined
+      }
+      if (type === 'dataQuery') {
+        newTask.dataType = undefined
+        newTask.aggregated = false
+        newTask.bucket = 'none'
+      }
+      if (type === 'miband3') {
+        newTask.hrInterval = 1
+      }
+      this.studyDesign.tasks.push(newTask)
       this.update()
     },
-    addTappingT () {
-      this.studyDesign.tasks.push({
-        id: this.studyDesign.tasks.length + 1,
-        type: 'fingerTapping',
-        scheduling: defaultScheduling
-      })
-      this.update()
-    },
-    addTUGT () {
-      this.studyDesign.tasks.push({
-        id: this.studyDesign.tasks.length + 1,
-        type: 'tugt',
-        scheduling: defaultScheduling
-      })
-      this.update()
-    },
-    addHoldPhone () {
-      this.studyDesign.tasks.push({
-        id: this.studyDesign.tasks.length + 1,
-        type: 'holdPhone',
-        scheduling: defaultScheduling
-      })
-      this.update()
-    },
-    addVocalization () {
-      this.studyDesign.tasks.push({
-        id: this.studyDesign.tasks.length + 1,
-        type: 'vocalization',
-        scheduling: defaultScheduling
-      })
-      this.update()
-    },
-    addDrawingT () {
-      this.studyDesign.tasks.push({
-        id: this.studyDesign.tasks.length + 1,
-        type: 'drawing',
-        scheduling: defaultScheduling
-      })
-      this.update()
-    },
+
     removeTask (index) {
       this.studyDesign.tasks.splice(index, 1)
       // update task id
