@@ -9,6 +9,7 @@
         :type="inputtype"
         :autogrow="inputtype == 'textarea'"
         :readonly="readonly"
+        :disable="disable"
         v-model="multiText[lang]"
         @blur="blur()"
         :hint="'Text in '+extendedLang(lang)"
@@ -26,6 +27,7 @@ export default {
     languages: Array,
     required: Boolean,
     readonly: Boolean,
+    disable: Boolean,
     type: String
   },
   emits: ['update:modelValue', 'blur'],
