@@ -131,7 +131,6 @@ export default {
     async copyCode (index) {
       try {
         const code = this.$refs['invCode' + index][0].innerText
-        console.log(code)
         await navigator.clipboard.writeText(code)
         this.$q.notify({
           color: 'primary',

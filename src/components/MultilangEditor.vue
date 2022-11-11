@@ -128,10 +128,7 @@ export default {
     isValid () {
       if (this.required) {
         for (const lan of this.languages) {
-          console.log(!this.modelValue[lan])
-          console.log(this.modelValue[lan].length)
           if ((!this.modelValue[lan]) || (this.modelValue[lan].length === 0)) {
-            console.log('NOT VALID')
             return false
           }
         }

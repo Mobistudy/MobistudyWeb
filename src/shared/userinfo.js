@@ -45,6 +45,4 @@ if (userstr) {
   }
 }
 
-console.log('USER INITIALIZED')
-
 export default userinfo

@@ -108,7 +108,6 @@ export default {
       this.loading = false
     },
     async toggleTestUser (user) {
-      console.log(user)
       user.testUser = !user.testUser
       try {
         await API.updateUser(user.userkey, user)

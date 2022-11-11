@@ -771,7 +771,6 @@ export default {
       if (v.intervalType === 'y') {
         v.interval = this.yearlyInterval
       }
-      console.log('update', v)
       this.$emit('update:modelValue', v)
     }
   }
