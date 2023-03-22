@@ -82,7 +82,7 @@ export default {
       ],
       password2Rules: [
         val => !!val || 'Filed is required',
-        val => val === this.password || 'Passwords do not match'
+        val => val === this.newPassword || 'Passwords do not match'
       ]
     }
   },
