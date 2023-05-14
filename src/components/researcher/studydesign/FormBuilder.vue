@@ -67,7 +67,7 @@
             <!-- Question -->
             <div
               class="shadow-1 q-pa-md q-mt-lg"
-              v-for="(question, qIndex) in value.questions"
+              v-for="(question, qIndex) in formDescription.questions"
               :key="qIndex"
             >
               <div class="q-pa-sm text-bold"> Question </div>
@@ -336,7 +336,7 @@
                 </div>
                 <div class="col-6">
                   <q-btn
-                    v-if="qIndex === value.questions.length-1"
+                    v-if="qIndex === formDescription.questions.length-1"
                     label="Add a question"
                     color="primary"
                     icon="add"
@@ -344,7 +344,7 @@
                   />
                 </div>
               </div>
-              <q-separator v-if="qIndex !== value.questions.length-1" />
+              <q-separator v-if="qIndex !== formDescription.questions.length-1" />
             </div>
           </div>
         </q-card-section>
@@ -391,7 +391,7 @@ export default {
   data () {
     return {
       formDescription: this.modelValue,
-      questionsCounter: this.formDescription.questions.length,
+      questionsCounter: 0,
       questionTypeOptions: [{
         label: 'Only text (no question)',
         value: 'textOnly'
