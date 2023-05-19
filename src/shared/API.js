@@ -98,6 +98,10 @@ export default {
     const resp = await axios.get(BASE_URL + '/studies/' + studyKey, axiosConfig)
     return resp.data
   },
+  async getStudyStats (studyKey) {
+    const resp = await axios.get(BASE_URL + '/studyStats/' + studyKey, axiosConfig)
+    return resp.data
+  },
   // NEW GET STUDIES FUNCTION FOR TableStudies.vue
   async getAllStudies (countOnly, filter) {
     let queryParams = ''
