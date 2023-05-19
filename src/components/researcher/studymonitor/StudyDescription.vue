@@ -234,7 +234,7 @@
             </div>
             <div class="row q-ma-sm">
               <div class="col-2 text-bold">Name:</div>
-              <div class="col">{{ getBestLocale(task.formName) }}</div>
+              <div class="col">{{ getBestLocale(task.formName) }}</div> <!-- For a studie in the studies table doesnt exit a fil called fornName in tasks. Always is unknow -->
             </div>
           </div>
           <div class="row q-ma-sm">

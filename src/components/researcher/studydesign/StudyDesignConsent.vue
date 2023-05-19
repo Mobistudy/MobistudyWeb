@@ -208,8 +208,9 @@ export default {
                 dataType: localDatatype, scheduling: schedulingToString(task.scheduling, lang)
               })
             } else if (task.type === 'form') {
+              console.log(task.formName)
               newTaskItem.description[lang] = this.$i18n.t('consent.taskItemForm', lang, {
-                formName: task.formName[lang], scheduling: schedulingToString(task.scheduling, lang)
+                formName: task.formName && task.formName[lang] ? task.formName[lang] : undefined, scheduling: schedulingToString(task.scheduling, lang)
               })
             } else if (task.type === 'miband3') {
               newTaskItem.description[lang] = this.$i18n.t('consent.taskItemMiBand3', lang, {
@@ -282,7 +283,7 @@ export default {
         let string = this.$i18n.t('privacyPolicy.collectedData', lang)
         for (const task of this.studyDesign.tasks) {
           if (task.type === 'form') {
-            string += '\n' + this.$i18n.t('privacyPolicy.collectedDataForm', lang, { formName: task.formName[lang] })
+            string += '\n' + this.$i18n.t('privacyPolicy.collectedDataForm', lang, { formName: task.formName && task.formName[lang] ? task.formName[lang] : undefined })
           } else if (task.type === 'dataQuery') {
             const localDatatype = this.$i18n.t('healthDataTypes.' + task.dataType, lang)
             string += '\n' + this.$i18n.t('privacyPolicy.collectedDataQuery', lang, { dataType: localDatatype })
