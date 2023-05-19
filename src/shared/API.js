@@ -76,7 +76,7 @@ export default {
         firstParam = false
       }
     }
-    const URL = BASE_URL + '/getUsers' + (countOnly ? '/count' : '') + (firstParam ? '' : '?') + queryParams
+    const URL = BASE_URL + '/users' + (countOnly ? '/count' : '') + (firstParam ? '' : '?') + queryParams
     const resp = await axios.get(URL, axiosConfig)
     return resp.data
   },
