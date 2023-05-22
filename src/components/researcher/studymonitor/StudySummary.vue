@@ -1,10 +1,10 @@
 <template>
-  <q-card>
+  <q-card class="full-height">
     <q-card-section>
       <div class="text-h5 text-center q-my-sm"> Participants </div>
     </q-card-section>
     <q-card-section>
-      <div class="row justify-around">
+      <div class="row justify-around ">
         <div>
           <div class="text-h6 q-pa-sm">
             Joined

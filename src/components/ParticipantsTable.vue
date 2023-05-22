@@ -3,13 +3,13 @@
     <q-table
       ref="table"
       color="primary"
-      :rows="logs"
+      :rows="participants"
       selection="none"
       :columns="columns"
       :filter="filter"
       row-key="_key"
       v-model:pagination="pagination"
-      @request="loadLogs"
+      @request="loadParticipants"
       :loading="loading"
     >
       <template #top-right>
@@ -38,7 +38,7 @@
           debounce="500"
         />
       </template>
-      <template #body-cell-timestamp="props">
+      <template #body-cell-latestTaskResultDate="props">
         <q-td :props="props">
           {{ niceTimestamp(props.value) }}
         </q-td>
@@ -46,10 +46,8 @@
       <template #body-cell-data="props">
         <q-td :props="props">
           <q-btn
-            v-if="props.value"
             flat
             icon="open_in_new"
-            @click="showLogData(props)"
           />
         </q-td>
       </template>
@@ -138,32 +136,28 @@ export default {
   data () {
     return {
       logs: [],
-      pagination: { page: 1, rowsPerPage: 20, rowsNumber: 0, sortBy: 'timestamp', descending: true },
+      participants: [],
+      pagination: { page: 1, rowsPerPage: 20, rowsNumber: 0, sortBy: 'latestTaskResultDate', descending: true },
       columns: [
         { name: 'data', required: false, label: '', align: 'center', field: 'data', sortable: false },
-        { name: 'userEmail', required: true, label: 'User', align: 'center', field: 'userEmail', sortable: false },
-        { name: 'timestamp', required: true, label: 'Last update', align: 'center', field: 'timestamp', sortable: true },
-        { name: 'message', required: true, label: 'Message', align: 'center', field: 'message', sortable: false }
+        { name: 'participant', required: true, label: 'Name', align: 'center', field: 'participant', sortable: false },
+        { name: 'userEmail', required: true, label: 'Email', align: 'center', field: 'userEmail', sortable: false },
+        { name: 'taskResultCount', required: true, label: 'Task count', align: 'center', field: 'taskResultCount', sortable: true },
+        { name: 'latestTaskResultDate', required: true, label: 'Last task', align: 'center', field: 'latestTaskResultDate', sortable: true }
       ],
       filter: {
         after: undefined,
         before: undefined,
-        eventType: 'all',
         userEmail: undefined
       },
-      eventTypesOpts: [],
-      loading: false,
-      logDataModal: false,
-      logDataModalContent: undefined,
-      logDataType: 'raw'
+      loading: false
     }
   },
   async created () {
-    this.getLogsEventTypes()
     if (this.studyKey && this.studyKey !== -1) {
       this.filter.studyKey = this.studyKey
     }
-    this.loadLogs({
+    this.loadParticipants({
       pagination: this.pagination,
       filter: this.filter
     })
@@ -172,7 +166,7 @@ export default {
     // update the table if the study key changes
     async studyKey () {
       this.filter.studyKey = this.studyKey
-      this.loadLogs({
+      this.loadParticipants({
         pagination: this.pagination,
         filter: this.filter
       })
@@ -183,7 +177,7 @@ export default {
       return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
     },
     async updateFilters () {
-      this.loadLogs({
+      this.loadParticipants({
         filter: this.filter,
         pagination: this.pagination
       })
@@ -219,10 +213,8 @@ export default {
       this.loading = true
       this.pagination = params.pagination
       try {
-        const participants = await API.getParticipantsSummary(this.studyKey)
-        if (participants) {
-          console.log(participants)
-        }
+        this.participants = await API.getParticipantsSummary(this.studyKey)
+        console.log(this.participants)
       } catch (err) {
         this.$q.notify({
           color: 'negative',
@@ -231,28 +223,6 @@ export default {
         })
       }
       this.loading = false
-    },
-    async getLogsEventTypes () {
-      try {
-        const types = await API.getLogEventTypes()
-        if (types) {
-          this.eventTypesOpts = types.map(evt => {
-            return { label: evt, value: evt }
-          })
-        }
-        this.eventTypesOpts.unshift({ label: 'All', value: 'all' })
-      } catch (err) {
-        this.$q.notify({
-          color: 'negative',
-          message: 'Cannot retrieve logs event types',
-          icon: 'report_problem'
-        })
-      }
-    },
-    showLogData (props) {
-      this.logDataType = 'raw'
-      this.logDataModalContent = JSON.stringify(props.value, null, 2)
-      this.logDataModal = true
     }
   }
 }
@@ -268,7 +238,6 @@ export default {
 .q-table__bottom {
   border-top: 1px solid black;
 }
-
 .q-table__top {
   margin-bottom: 20px;
 }
