@@ -158,6 +158,15 @@ export default {
     }
     return resp.data
   },
+  async getParticipantsSummary (studyKey, currentStatus) {
+    let resp
+    if (currentStatus) {
+      resp = await axios.get(BASE_URL + '/participants/summary?studyKey=' + studyKey + '&currentStatus=' + currentStatus, axiosConfig)
+    } else {
+      resp = await axios.get(BASE_URL + '/participants/summary?studyKey=' + studyKey, axiosConfig)
+    }
+    return resp.data
+  },
   async deleteParticipant (participantKey) {
     const resp = await axios.delete(BASE_URL + '/participants/' + participantKey, axiosConfig)
     return resp.data

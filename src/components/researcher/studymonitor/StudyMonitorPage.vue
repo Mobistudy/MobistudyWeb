@@ -25,7 +25,7 @@
       />
       <q-tab
         name="tab-summary"
-        icon="bar_chart"
+        icon="group"
         label="Summary"
       />
       <q-tab
