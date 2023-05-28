@@ -1,9 +1,9 @@
 <template>
   <q-card class="full-height">
     <q-card-section>
-      <div class="text-h5 text-center q-my-sm"> Participants </div>
+      <div class="text-h6 q-my-sm text-secondary text-bold text-uppercase"> Participation </div>
     </q-card-section>
-    <q-card-section>
+    <q-card-section class="q-mb-md">
       <div class="row justify-around ">
         <div>
           <div class="text-h6 q-pa-sm">
@@ -42,6 +42,7 @@
         </div>
       </div>
     </q-card-section>
+    <q-separator/>
     <table-participants :studyKey="studyKey" />
   </q-card>
 </template>

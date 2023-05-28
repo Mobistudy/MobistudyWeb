@@ -2,7 +2,7 @@
   <div>
     <q-card>
       <q-card-section>
-        <div class="text-h5">
+        <div class="text-h6 text-secondary text-bold text-uppercase">
           {{ getBestLocale(studyDesign.generalities.title) }}
         </div>
       </q-card-section>
@@ -53,7 +53,7 @@
 
     <q-card class="q-mt-md">
       <q-card-section>
-        <div class="text-h5">Principal Investigators</div>
+        <div class="text-h6 text-secondary text-bold text-uppercase">Principal Investigators</div>
       </q-card-section>
       <q-card-section>
         <div
@@ -83,7 +83,7 @@
 
     <q-card class="q-mt-md">
       <q-card-section>
-        <div class="text-h5">Institutions</div>
+        <div class="text-h6 text-secondary text-bold text-uppercase">Institutions</div>
       </q-card-section>
       <q-card-section>
         <div
@@ -115,7 +115,7 @@
 
     <q-card class="q-mt-md">
       <q-card-section>
-        <div class="text-h5">Inclusion Criteria:</div>
+        <div class="text-h6 text-secondary text-bold text-uppercase">Inclusion Criteria</div>
       </q-card-section>
       <q-card-section>
         <div class="row q-ma-sm">
@@ -198,7 +198,7 @@
 
     <q-card class="q-mt-md">
       <q-card-section>
-        <div class="text-h5">Tasks:</div>
+        <div class="text-h6 text-secondary text-bold text-uppercase">Tasks</div>
       </q-card-section>
       <q-card-section>
         <div
@@ -248,7 +248,7 @@
 
     <q-card class="q-mt-md">
       <q-card-section>
-        <div class="text-h5">Consent:</div>
+        <div class="text-h6 text-secondary text-bold text-uppercase">Consent</div>
       </q-card-section>
       <q-card-section>
         <div class="row q-ma-sm">

@@ -3,6 +3,7 @@
     <q-table
       ref="table"
       color="primary"
+      flat
       :rows="participants"
       selection="none"
       :columns="columns"
@@ -12,33 +13,36 @@
       @request="loadParticipants"
       :loading="loading"
     >
-      <template #top-right>
-        <q-input
-          v-model="filter.after"
-          type="date"
-          hint="From date"
-          clearable
-          @input="updateFilters()"
-          class="q-mr-sm"
-        />
-        <q-input
-          v-model="filter.before"
-          type="date"
-          hint="To date"
-          clearable
-          @input="updateFilters()"
-          class="q-mr-sm"
-        />
-        <q-input
-          v-model="filter.userEmail"
-          type="text"
-          hint="User email"
-          clearable
-          @input="updateFilters()"
-          debounce="500"
-        />
+      <template #top-left>
+        <div class="text-h6 text-center q-my-sm text-secondary text-bold text-uppercase"> Participants </div>
       </template>
-      <template #body-cell-latestTaskResultDate="props">
+      <template #top-right>
+        <q-select
+          emit-value
+          map-options
+          outlined
+          label="Study status"
+          :options="statusTypesOpts"
+          v-model="filter.statusType"
+          @input="updateFilters()"
+          class="q-mr-md"
+          style="width: 200px"
+        />
+        <q-input
+          v-model="filter.name"
+          type="text"
+          placeholder="Search a participant"
+          clearable
+          @input="updateFilters()"
+          debounce="300"
+          style="width: 200px;"
+        >
+          <template #prepend>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </template>
+      <template #body-cell-lastTaskDate="props">
         <q-td :props="props">
           {{ niceTimestamp(props.value) }}
         </q-td>
@@ -52,74 +56,6 @@
         </q-td>
       </template>
     </q-table>
-    <q-dialog
-      v-model="logDataModal"
-      :content-css="{minWidth: '50vw'}"
-    >
-      <q-card>
-        <q-card-section class="row items-center">
-          <div class="text-h6">
-            <span v-if="logDataType == 'raw'">Data:</span>
-            <span v-if="logDataType == 'healthStoreData'"><span class="text-capitalize">{{ logDataModalContent.dataType }}</span> from Google Fit / HealthKit:</span>
-            <span v-if="logDataType == 'answers'">Answers:</span>
-          </div>
-          <q-space />
-          <q-btn
-            icon="close"
-            flat
-            round
-            dense
-            v-close-popup
-          />
-        </q-card-section>
-
-        <q-card-section>
-          <div v-if="logDataType == 'raw'">
-            <pre>
-              {{ logDataModalContent }}
-            </pre>
-          </div>
-          <div v-if="logDataType == 'healthStoreData'">
-            <div
-              v-for="(hd, index) in logDataModalContent.healthData"
-              :key="index"
-              class="q-ma-md"
-            >
-              Start: {{ niceTimestamp(hd.startDate )}}<br />
-              End: {{ niceTimestamp(hd.endDate) }}<br />
-              Value: {{ hd.value }} {{ hd.unit }}
-            </div>
-          </div>
-          <div v-if="logDataType == 'answers'">
-            <div
-              v-for="(answer, index) in logDataModalContent.responses"
-              :key="index"
-            >
-              <p class="q-title">
-                {{ answer.questionText }}
-              </p>
-              <p v-if="answer.questionType == 'freetext'">
-                {{ answer.answer }}
-              </p>
-              <p v-if="answer.questionType == 'number'">
-                {{ answer.answer }}
-              </p>
-              <p v-if="answer.questionType == 'singleChoice'">
-                {{ answer.answer.answerText }}
-              </p>
-              <div v-if="answer.questionType == 'multiChoice'">
-                <p
-                  v-for="(subanswer, index1) in answer.answer"
-                  :key="index1"
-                >
-                  {{ subanswer.answerText }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
   </div>
 </template>
 
@@ -137,19 +73,23 @@ export default {
     return {
       logs: [],
       participants: [],
-      pagination: { page: 1, rowsPerPage: 20, rowsNumber: 0, sortBy: 'latestTaskResultDate', descending: true },
+      pagination: { page: 1, rowsPerPage: 20, rowsNumber: 0, sortBy: 'lastTaskDate', descending: true },
       columns: [
         { name: 'data', required: false, label: '', align: 'center', field: 'data', sortable: false },
-        { name: 'participant', required: true, label: 'Name', align: 'center', field: 'participant', sortable: false },
+        { name: 'FullName', required: true, label: 'Full Name', align: 'center', field: 'fullName', sortable: false, format: (value, row) => `${row.name} ${row.surname}` },
+        { name: 'DOB', required: true, label: 'Birthdate', align: 'center', field: 'DOB', sortable: false },
         { name: 'userEmail', required: true, label: 'Email', align: 'center', field: 'userEmail', sortable: false },
-        { name: 'taskResultCount', required: true, label: 'Task count', align: 'center', field: 'taskResultCount', sortable: true },
-        { name: 'latestTaskResultDate', required: true, label: 'Last task', align: 'center', field: 'latestTaskResultDate', sortable: true }
+        { name: 'status', required: true, label: 'Status', align: 'center', field: 'status', sortable: false },
+        { name: 'taskResultCount', required: true, label: 'Task Count', align: 'center', field: 'taskResultCount', sortable: true },
+        { name: 'lastTaskDate', required: true, label: 'Last task', align: 'center', field: 'lastTaskDate', sortable: true }
       ],
       filter: {
-        after: undefined,
-        before: undefined,
-        userEmail: undefined
+        name: undefined,
+        statusType: 'all'
       },
+      statusTypesOpts: [
+        'all', 'accepted', 'withdrawn', 'completed', 'excluded', 'rejected'
+      ],
       loading: false
     }
   },
@@ -182,39 +122,16 @@ export default {
         pagination: this.pagination
       })
     },
-    async loadLogs (params) {
-      this.loading = true
-      this.pagination = params.pagination
-      try {
-        const queryParams = {
-          after: params.filter.after,
-          before: params.filter.before ? new Date(new Date(params.filter.before).getTime() + 24 * 60 * 60 * 1000).toISOString().substr(0, 10) : undefined, // the before must add 24 hours to include the whole day
-          eventType: params.filter.eventType === 'all' ? undefined : params.filter.eventType,
-          studyKey: params.filter.studyKey,
-          taskId: params.filter.taskId,
-          userEmail: params.filter.userEmail,
-          sortDirection: params.pagination.descending ? 'DESC' : 'ASC',
-          offset: (params.pagination.page - 1) * params.pagination.rowsPerPage,
-          rowsPerPage: params.pagination.rowsPerPage === 0 ? undefined : params.pagination.rowsPerPage
-        }
-        this.pagination.rowsNumber = await API.getLogs(true, queryParams)
-        this.logs = await API.getLogs(false, queryParams)
-        console.log(this.logs)
-      } catch (err) {
-        this.$q.notify({
-          color: 'negative',
-          message: 'Cannot retrieve audit log' + err.message,
-          icon: 'report_problem'
-        })
-      }
-      this.loading = false
-    },
     async loadParticipants (params) {
       this.loading = true
       this.pagination = params.pagination
       try {
-        this.participants = await API.getParticipantsSummary(this.studyKey)
-        console.log(this.participants)
+        const queryParams = {
+          studyKey: params.filter.studyKey,
+          participantName: params.filter.name,
+          statusType: params.filter.statusType === 'all' ? undefined : params.filter.statusType
+        }
+        this.participants = await API.getStudyStats(queryParams)
       } catch (err) {
         this.$q.notify({
           color: 'negative',
