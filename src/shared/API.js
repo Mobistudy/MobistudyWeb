@@ -76,7 +76,7 @@ export default {
         firstParam = false
       }
     }
-    const URL = BASE_URL + '/getUsers' + (countOnly ? '/count' : '') + (firstParam ? '' : '?') + queryParams
+    const URL = BASE_URL + '/users' + (countOnly ? '/count' : '') + (firstParam ? '' : '?') + queryParams
     const resp = await axios.get(URL, axiosConfig)
     return resp.data
   },
@@ -96,6 +96,10 @@ export default {
   },
   async getStudy (studyKey) {
     const resp = await axios.get(BASE_URL + '/studies/' + studyKey, axiosConfig)
+    return resp.data
+  },
+  async getStudyStats (studyKey) {
+    const resp = await axios.get(BASE_URL + '/studyStats/' + studyKey, axiosConfig)
     return resp.data
   },
   // NEW GET STUDIES FUNCTION FOR TableStudies.vue
