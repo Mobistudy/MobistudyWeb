@@ -1,1 +1,15 @@
 /* app global css */
+.full-width {
+  width: 100%;
+}
+
+.invitation-code {
+  font-weight: bold;
+  margin-left: 1.3rem;
+  font-size: 0.9rem;
+  padding: 0.5rem;
+}
+
+.full-height {
+  height: 100%;
+}

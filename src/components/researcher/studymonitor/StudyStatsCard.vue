@@ -41,6 +41,8 @@
 
       <div class="row q-ma-lg justify-around">
         <q-btn
+          color="secondary"
+          icon-right="archive"
           label="Download study data"
           @click="downloadData()"
           :loading="creatingDownload"

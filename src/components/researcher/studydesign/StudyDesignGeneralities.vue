@@ -18,18 +18,21 @@
             </div>
           </div>
           <div class="col q-pl-sm">
-            <q-field :rules="[v => studyDesign.generalities.invitational == undefined || 'Field is required']">
-              <div>
+            <q-field>
+              <div class="q-gutter-sm q-items-end">
                 <q-checkbox
                   v-model="studyDesign.invitational"
-                  @input="getInvitationCode"
+                  @click="getInvitationCode()"
                   val="true"
                   label="Yes"
                 />
-                <div v-if="studyDesign.invitationCode">{{studyDesign.invitationCode}}</div>
+                <q-badge  align="middle" v-if="studyDesign.invitationCode" class="invitation-code q-ml-auto">
+                  Invitation Code: {{ studyDesign.invitationCode }}
+                </q-badge>
               </div>
             </q-field>
           </div>
+
         </div>
         <div class="row">
           <div class="col-4 q-pt-lg">
@@ -463,6 +466,7 @@ export default {
     },
     async getInvitationCode () {
       // If the study is invitational only, generate a new invitational code.
+      console.log('El método getInvitationCode está siendo llamado')
       if (this.studyDesign.invitational && !this.studyDesign.invitationCode) {
         try {
           this.studyDesign.invitationCode = await API.getInvitationCode()
