@@ -383,7 +383,7 @@
       </q-card-section>
     </q-card>
 
-    <!-- <formbuilder
+    <formbuilder
       ref="formbuilder"
       v-model="newForm"
       @simulateForm="openFormSimulator()"
@@ -395,7 +395,7 @@
       :form='newForm'
       @closed="openFormBuilder()"
       :languages="studyDesign.generalities.languages"
-    ></formsimulator> -->
+    ></formsimulator>
   </div>
 </template>
 
@@ -406,8 +406,8 @@ import { schedulingToString } from '@shared/scheduling'
 import API from '@shared/API'
 import MultilangInput from '@components/MultilangInput'
 
-// import FormBuilder from '@components/researcher/studydesign/FormBuilder'
-// import FormSimulator from '@components/researcher/studydesign/FormSimulator'
+import FormBuilder from '@components/researcher/studydesign/FormBuilder'
+import FormSimulator from '@components/researcher/studydesign/FormSimulator'
 import HealthDataTypesEnum from '@shared/healthDataTypesEnum'
 
 const healthDataTypesEnum2String = function (type) {
@@ -441,9 +441,9 @@ const defaultScheduling = {
 export default {
   components: {
     Scheduler,
-    MultilangInput
-    // formbuilder: FormBuilder,
-    // formsimulator: FormSimulator
+    MultilangInput,
+    formbuilder: FormBuilder,
+    formsimulator: FormSimulator
   },
   name: 'StudyDesignTasks',
   // modelValue here is the whole study design

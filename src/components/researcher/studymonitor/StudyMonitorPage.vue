@@ -15,13 +15,18 @@
 
     <q-tabs
       v-model="statsTab"
-      class="bg-secondary text-white shadow-2"
+      class="bg-white text-secondary shadow-2"
       align="justify"
     >
       <q-tab
         name="tab-stats"
         icon="bar_chart"
         label="Study"
+      />
+      <q-tab
+        name="tab-summary"
+        icon="group"
+        label="Summary"
       />
       <q-tab
         name="tab-description"
@@ -33,12 +38,16 @@
       <q-tab-panels
         v-model="statsTab"
         keep-alive
+        class="full-width"
       >
         <q-tab-panel name="tab-stats">
           <study-stats :studyKey="studyKey" />
         </q-tab-panel>
+        <q-tab-panel name="tab-summary">
+          <study-summary :studyKey="studyKey" />
+        </q-tab-panel>
         <q-tab-panel name="tab-description">
-          <study-summary :studyDesign="studyDesign" />
+          <study-description :studyDesign="studyDesign" />
         </q-tab-panel>
       </q-tab-panels>
     </q-tabs>
@@ -49,6 +58,7 @@
 import API from '@shared/API.js'
 import StudyStats from '@components/researcher/studymonitor/StudyStatsCard'
 import StudySummary from '@components/researcher/studymonitor/StudySummary'
+import StudyDescription from '@components/researcher/studymonitor/StudyDescription'
 import { bestLocale } from '@mixins/bestLocale'
 
 export default {
@@ -56,7 +66,7 @@ export default {
   props: ['studyKey'],
   mixins: [bestLocale],
   components: {
-    StudyStats, StudySummary
+    StudyStats, StudySummary, StudyDescription
   },
   data () {
     return {
