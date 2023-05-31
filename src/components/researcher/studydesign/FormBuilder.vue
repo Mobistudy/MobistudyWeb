@@ -414,6 +414,10 @@ export default {
       }, {
         label: 'Multiple choice',
         value: 'multiChoice'
+      },
+      {
+        label: 'Photo',
+        value: 'photo'
       }],
       opened: false
     }
