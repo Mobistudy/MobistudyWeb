@@ -184,6 +184,11 @@ export default {
     const resp = await axios.get(BASE_URL + '/answers?studyKey=' + studyKey, axiosConfig)
     return resp.data
   },
+  // Tasks Results
+  async getTasksResults (studyKey, userKey) {
+    const resp = await axios.get(BASE_URL + '/tasksResults?studyKey=' + studyKey + '&userKey=' + userKey, axiosConfig)
+    return resp.data
+  },
   // Health Store Data
   async getHealthStoreDataOfStudy (studyKey) {
     const resp = await axios.get(BASE_URL + '/healthStoreData?studyKey=' + studyKey, axiosConfig)

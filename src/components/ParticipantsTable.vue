@@ -52,6 +52,7 @@
           <q-btn
             flat
             icon="open_in_new"
+            @click="openParticipantSummary(props.row)"
           />
         </q-td>
       </template>
@@ -66,12 +67,11 @@ import { date } from 'quasar'
 export default {
   name: 'StudyParticipantsTable',
   props: [
-    'studyKey', // if set to -1, means that logs shouldn't be loaded until they are set a different value
+    'studyKey',
     'taskId'
   ],
   data () {
     return {
-      logs: [],
       participants: [],
       pagination: { page: 1, rowsPerPage: 20, rowsNumber: 0, sortBy: 'lastTaskDate', descending: true },
       columns: [
@@ -81,7 +81,7 @@ export default {
         { name: 'userEmail', required: true, label: 'Email', align: 'center', field: 'userEmail', sortable: false },
         { name: 'status', required: true, label: 'Status', align: 'center', field: 'status', sortable: false },
         { name: 'taskResultCount', required: true, label: 'Task Count', align: 'center', field: 'taskResultCount', sortable: true },
-        { name: 'lastTaskDate', required: true, label: 'Last task', align: 'center', field: 'lastTaskDate', sortable: true }
+        { name: 'lastTaskDate', required: true, label: 'Last task', align: 'center', field: 'lastTaskDate', sortable: true, sort: (a, b) => { if (a > b) return 1; else return -1 } }
       ],
       filter: {
         name: undefined,
@@ -140,6 +140,13 @@ export default {
         })
       }
       this.loading = false
+    },
+    openParticipantSummary (row) {
+      const currentUrl = this.$route.fullPath
+      const userKey = row._key
+      console.log(userKey)
+      const urlCompleta = `${window.location.origin}/#${currentUrl}/participant/${userKey}`
+      window.open(urlCompleta, '_blank')
     }
   }
 }

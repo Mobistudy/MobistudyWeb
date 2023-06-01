@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <q-toolbar class="bg-secondary text-white">
+    <q-toolbar class="bg-secondary text-white q-pa-md">
       <q-toolbar-title>
         Statistics about <strong>{{ getBestLocale(studyDesign.generalities.title) }}</strong>
       </q-toolbar-title>
