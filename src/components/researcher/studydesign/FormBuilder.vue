@@ -64,7 +64,7 @@
             </div>
 
             <div class="text-h6"> Questions: </div>
-            <!-- Question -->
+            <!-- Start of single question editor: -->
             <div
               class="shadow-1 q-pa-md q-mt-lg"
               v-for="(question, qIndex) in formDescription.questions"
@@ -113,10 +113,8 @@
                   </div>
                 </div>
                 <div class="col q-pl-sm">
-                  <!-- TODO: use a rich text editor instead -->
-                  <multilang-input
+                  <multilang-editor
                     v-model="question.text"
-                    type="text"
                     @input="update()"
                     :languages="languages"
                     required
@@ -322,7 +320,7 @@
                     />
                   </div>
                 </div>
-              </div>
+              </div> <!-- end of single/multiple choice answer -->
 
               <div class="row q-mt-sm">
                 <div class="col-6">
@@ -345,9 +343,11 @@
                 </div>
               </div>
               <q-separator v-if="qIndex !== formDescription.questions.length-1" />
-            </div>
-          </div>
+            </div> <!-- end of single question editor -->
+          </div> <!-- end of form editor -->
         </q-card-section>
+
+        <!-- save / cancel / simulate -->
         <q-card-section>
           <div class="row">
             <div class="col">
@@ -381,12 +381,14 @@
 <script>
 import API from '@shared/API.js'
 import MultilangInput from '@components/MultilangInput'
+import MultilangEditor from '@components/MultilangEditor'
 
 export default {
   name: 'FormBuilder',
   props: ['modelValue', 'languages'],
   components: {
-    MultilangInput
+    MultilangInput,
+    MultilangEditor
   },
   data () {
     return {
@@ -411,7 +413,8 @@ export default {
       {
         label: 'Single choice',
         value: 'singleChoice'
-      }, {
+      },
+      {
         label: 'Multiple choice',
         value: 'multiChoice'
       },
