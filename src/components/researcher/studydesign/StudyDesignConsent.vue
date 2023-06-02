@@ -35,9 +35,6 @@
             </div>
           </div>
           <div class="col q-pl-sm">
-            <!-- TODO: use an html editor instead of simple text
-            complex privacy policy text does not go well with the html parser
-            -->
             <multilang-editor
               v-model="studyDesign.consent.privacyPolicy"
               :languages="studyDesign.generalities.languages"
