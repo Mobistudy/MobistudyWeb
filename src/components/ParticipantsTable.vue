@@ -8,7 +8,7 @@
       selection="none"
       :columns="columns"
       :filter="filter"
-      row-key="_key"
+      row-key="userKey"
       v-model:pagination="pagination"
       @request="loadParticipants"
       :loading="loading"
@@ -143,7 +143,7 @@ export default {
     },
     openParticipantSummary (row) {
       const currentUrl = this.$route.fullPath
-      const userKey = row._key
+      const userKey = row.userKey
       console.log(userKey)
       const urlCompleta = `${window.location.origin}/#${currentUrl}/participant/${userKey}`
       window.open(urlCompleta, '_blank')

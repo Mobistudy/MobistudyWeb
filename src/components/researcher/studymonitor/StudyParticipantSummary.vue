@@ -22,6 +22,7 @@
                   <q-btn
                     flat
                     icon="open_in_new"
+                    @click="showTaskData(props)"
                   />
                 </q-td>
               </template>
@@ -30,7 +31,6 @@
                   {{ niceTimestamp(props.row.summary.completedTS) }}
                 </q-td>
               </template>
-
               <template #body-cell-asked="props">
                 <q-td :props="props">
                   {{ props.row.summary.asked }}
@@ -43,6 +43,51 @@
                 </q-td>
               </template>
             </q-table>
+            <q-dialog v-model="taskDataModal" persistent transition-show="flip-down" transition-hide="flip-up">
+              <q-card style="min-width: 300px">
+                <q-bar class="my-q-bar">
+                  <div class="text-h6 text-secondary text-bold text-uppercase">
+                    <span>Data</span>
+                  </div>
+
+                  <q-space />
+
+                  <q-btn dense flat icon="close" v-close-popup>
+                    <q-tooltip class="bg-secondary text-white">Close</q-tooltip>
+                  </q-btn>
+                </q-bar>
+
+                <q-card-section>
+                  <div v-if="taskDataType === 'form'">
+                    <div
+                      v-for="(answer, index) in taskDataContent"
+                      :key="index"
+                    >
+                      <p class="q-title text-bold">
+                        {{ getBestLocale(answer.questionText) }}
+                      </p>
+                      <p v-if="answer.questionType == 'freetext'">
+                        {{ answer.answer }}
+                      </p>
+                      <p v-if="answer.questionType == 'number'">
+                        {{ answer.answer }}
+                      </p>
+                      <p v-if="answer.questionType == 'singleChoice'">
+                        {{ answer.answer.answerText }}
+                      </p>
+                      <div v-if="answer.questionType == 'multiChoice'">
+                        <p
+                          v-for="(subanswer, index1) in answer.answer"
+                          :key="index1"
+                        >
+                          {{ subanswer.answerText }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </q-card-section>
+              </q-card>
+            </q-dialog>
           </div>
           <div class="right-section">
             <div id="chart"></div>
@@ -56,13 +101,16 @@
 <script>
 import Highcharts from 'highcharts'
 import API from '@shared/API.js'
+import { bestLocale } from '@mixins/bestLocale'
 import { date } from 'quasar'
 
 export default {
   name: 'StudyParticipant',
   props: ['studyKey', 'userKey'],
+  mixins: [bestLocale],
   data () {
     return {
+      locale: this.$i18n.locale,
       tasks: [],
       pagination: { page: 1, rowsPerPage: 10, rowsNumber: 0, sortBy: 'createdTS', descending: true },
       columns: [
@@ -98,6 +146,9 @@ export default {
         ]
       },
       filter: {},
+      taskDataType: undefined,
+      taskDataContent: undefined,
+      taskDataModal: false,
       loading: false
     }
   },
@@ -147,6 +198,26 @@ export default {
         })
       }
       this.loading = false
+    },
+    async showTaskData (props) {
+      try {
+        const queryParams = {
+          studyKey: this.studyKey,
+          userKey: this.userKey,
+          taskId: props.row.taskId,
+          fileName: props.row.attachments[0]
+        }
+        this.taskDataContent = await API.getTaskAttachment(queryParams)
+        console.log(this.taskDataContent)
+        this.taskDataType = props.row.taskType
+        this.taskDataModal = true
+      } catch (err) {
+        this.$q.notify({
+          color: 'negative',
+          message: 'Cannot retrieve participants',
+          icon: 'report_problem'
+        })
+      }
     }
   }
 }
@@ -184,5 +255,29 @@ export default {
 .right-section {
   flex: 1;
   padding: 16px;
+}
+.my-dialog {
+  min-width: 400px;
+  max-width: 800px;
+}
+
+.my-dialog-card {
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 2px 10px rgba(0, 0, 0, 0.24);
+}
+
+.my-dialog-header {
+  background-color: #f5f5f5;
+  padding: 16px;
+  border-bottom: 1px solid #ccc;
+}
+
+.my-dialog-content {
+  padding: 16px;
+}
+.my-q-bar{
+  padding: 30px 20px 30px 20px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ccc;
 }
 </style>

@@ -189,6 +189,20 @@ export default {
     const resp = await axios.get(BASE_URL + '/tasksResults?studyKey=' + studyKey + '&userKey=' + userKey, axiosConfig)
     return resp.data
   },
+  async getTaskAttachment (filter) {
+    let queryParams = ''
+    let firstParam = true
+    for (const param in filter) {
+      if (filter[param] || filter[param] === 0) {
+        queryParams += (firstParam ? '' : '&') + param + '=' + encodeURIComponent(filter[param])
+        firstParam = false
+      }
+    }
+    const URL = BASE_URL + '/tasksResults/attachments' + (firstParam ? '' : '?') + queryParams
+    console.log(URL)
+    const resp = await axios.get(URL, axiosConfig)
+    return resp.data
+  },
   // Health Store Data
   async getHealthStoreDataOfStudy (studyKey) {
     const resp = await axios.get(BASE_URL + '/healthStoreData?studyKey=' + studyKey, axiosConfig)
