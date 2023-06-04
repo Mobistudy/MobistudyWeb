@@ -2,7 +2,7 @@
   <q-page>
     <q-card class="my-card">
       <q-card-section class="card-title">
-        <div class="text-h6 text-secondary text-bold text-uppercase">Participante {{ `${userKey}` }}</div>
+        <div class="text-h6 text-secondary text-bold text-uppercase">{{participant.name}} {{participant.surname}}</div>
       </q-card-section>
       <q-card-section class="card-content">
         <div class="page-content">
@@ -45,14 +45,14 @@
             </q-table>
             <q-dialog v-model="taskDataModal" persistent transition-show="flip-down" transition-hide="flip-up">
               <q-card style="min-width: 300px">
-                <q-bar class="my-q-bar">
-                  <div class="text-h6 text-secondary text-bold text-uppercase">
+                <q-bar class="my-q-bar bg-primary">
+                  <div class="text-h6 text-white text-bold text-uppercase">
                     <span>Data</span>
                   </div>
 
                   <q-space />
 
-                  <q-btn dense flat icon="close" v-close-popup>
+                  <q-btn dense flat icon="close" v-close-popup class="material-symbols-outlined">
                     <q-tooltip class="bg-secondary text-white">Close</q-tooltip>
                   </q-btn>
                 </q-bar>
@@ -69,6 +69,9 @@
                       <p v-if="answer.questionType == 'freetext'">
                         {{ answer.answer }}
                       </p>
+                      <p v-if="answer.questionType == 'slider'">
+                        {{ answer.answer }}
+                      </p>
                       <p v-if="answer.questionType == 'number'">
                         {{ answer.answer }}
                       </p>
@@ -83,6 +86,7 @@
                           {{ subanswer.answerText }}
                         </p>
                       </div>
+                      <q-img v-if="answer.questionType == 'photo'" :src="answer.answer" />
                     </div>
                   </div>
                 </q-card-section>
@@ -146,6 +150,7 @@ export default {
         ]
       },
       filter: {},
+      participant: '',
       taskDataType: undefined,
       taskDataContent: undefined,
       taskDataModal: false,
@@ -175,6 +180,7 @@ export default {
     }
   },
   mounted () {
+    this.getParticipant()
     Highcharts.chart('chart', this.chartOptions)
   },
   methods: {
@@ -189,11 +195,10 @@ export default {
           userKey: params.filter.userKey
         }
         this.tasks = await API.getTasksResults(queryParams.studyKey, queryParams.userKey)
-        console.log(this.tasks)
       } catch (err) {
         this.$q.notify({
           color: 'negative',
-          message: 'Cannot retrieve participants',
+          message: 'Cannot retrieve tasks',
           icon: 'report_problem'
         })
       }
@@ -208,13 +213,24 @@ export default {
           fileName: props.row.attachments[0]
         }
         this.taskDataContent = await API.getTaskAttachment(queryParams)
-        console.log(this.taskDataContent)
         this.taskDataType = props.row.taskType
         this.taskDataModal = true
+        this.getParticipant()
       } catch (err) {
         this.$q.notify({
           color: 'negative',
-          message: 'Cannot retrieve participants',
+          message: 'Cannot retrieve the task content',
+          icon: 'report_problem'
+        })
+      }
+    },
+    async getParticipant () {
+      try {
+        this.participant = await API.getOneParticipant(this.userKey)
+      } catch (err) {
+        this.$q.notify({
+          color: 'negative',
+          message: 'Cannot retrieve participant',
           icon: 'report_problem'
         })
       }
@@ -277,7 +293,15 @@ export default {
 }
 .my-q-bar{
   padding: 30px 20px 30px 20px;
-  background-color: #f5f5f5;
+  /* background-color: #f5f5f5; */
   border-bottom: 1px solid #ccc;
+}
+.material-symbols-outlined {
+  color: white;
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 48
 }
 </style>
