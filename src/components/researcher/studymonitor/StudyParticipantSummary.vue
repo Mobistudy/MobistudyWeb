@@ -26,6 +26,16 @@
                   />
                 </q-td>
               </template>
+              <template #body-cell-formName="props">
+                <q-td :props="props">
+                  <template v-if="props.row.taskType === 'form'">
+                    {{ getBestLocale(props.row.formName) }}
+                  </template>
+                  <template v-else>
+                    {{ props.row.taskType }}
+                  </template>
+                </q-td>
+              </template>
               <template #body-cell-completedTS="props">
                 <q-td :props="props">
                   {{ niceTimestamp(props.row.summary.completedTS) }}
@@ -47,7 +57,7 @@
               <q-card style="min-width: 300px">
                 <q-bar class="my-q-bar bg-primary">
                   <div class="text-h6 text-white text-bold text-uppercase">
-                    <span>Data</span>
+                    <span>{{ niceTimestamp(taskCompletedDate) }}</span>
                   </div>
 
                   <q-space />
@@ -119,7 +129,7 @@ export default {
       pagination: { page: 1, rowsPerPage: 10, rowsNumber: 0, sortBy: 'createdTS', descending: true },
       columns: [
         { name: 'data', required: false, label: '', align: 'center', field: 'data', sortable: false },
-        { name: 'taskType', required: true, label: 'Task', align: 'center', field: 'taskType' },
+        { name: 'formName', required: true, label: 'Task', align: 'center', field: 'formName' },
         { name: 'asked', required: true, label: 'Asked', align: 'center', field: 'asked', sortable: true },
         { name: 'answered', required: true, label: 'Answered', align: 'center', field: 'answered', sortable: true },
         { name: 'completedTS', required: true, label: 'Completed', align: 'center', field: 'completedTS', sortable: true }
@@ -154,6 +164,7 @@ export default {
       taskDataType: undefined,
       taskDataContent: undefined,
       taskDataModal: false,
+      taskCompletedDate: undefined,
       loading: false
     }
   },
@@ -214,6 +225,7 @@ export default {
         }
         this.taskDataContent = await API.getTaskAttachment(queryParams)
         this.taskDataType = props.row.taskType
+        this.taskCompletedDate = props.row.summary.completedTS
         this.taskDataModal = true
         this.getParticipant()
       } catch (err) {
