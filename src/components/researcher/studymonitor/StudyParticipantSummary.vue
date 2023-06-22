@@ -29,7 +29,12 @@
               <template #body-cell-formName="props">
                 <q-td :props="props">
                   <template v-if="props.row.taskType === 'form'">
-                    {{ getBestLocale(props.row.formName) }}
+                    <template v-if="getBestLocale(props.row.formName) === 'Unknown'">
+                      form
+                    </template>
+                    <template v-else>
+                      {{ getBestLocale(props.row.formName) }}
+                    </template>
                   </template>
                   <template v-else>
                     {{ props.row.taskType }}
@@ -104,7 +109,34 @@
             </q-dialog>
           </div>
           <div class="right-section">
-            <div id="chart"></div>
+            <div>
+              <q-carousel
+                swipeable
+                animated
+                arrows
+                v-model="slide"
+                v-model:fullscreen="fullscreen"
+                infinite
+              >
+                <q-carousel-slide :name="1" img-src="https://cdn.quasar.dev/img/mountains.jpg" />
+                <q-carousel-slide :name="2" img-src="https://cdn.quasar.dev/img/parallax1.jpg" />
+                <q-carousel-slide :name="3" img-src="https://cdn.quasar.dev/img/parallax2.jpg" />
+                <q-carousel-slide :name="4" img-src="https://cdn.quasar.dev/img/quasar.jpg" />
+
+                <template v-slot:control>
+                  <q-carousel-control
+                    position="bottom-right"
+                    :offset="[18, 18]"
+                  >
+                    <q-btn
+                      push round dense color="white" text-color="secondary"
+                      :icon="fullscreen ? 'fullscreen_exit' : 'fullscreen'"
+                      @click="fullscreen = !fullscreen"
+                    />
+                  </q-carousel-control>
+                </template>
+              </q-carousel>
+            </div>
           </div>
         </div>
       </q-card-section>
@@ -113,10 +145,10 @@
 </template>
 
 <script>
-import Highcharts from 'highcharts'
 import API from '@shared/API.js'
 import { bestLocale } from '@mixins/bestLocale'
 import { date } from 'quasar'
+import { ref } from 'vue'
 
 export default {
   name: 'StudyParticipant',
@@ -126,6 +158,8 @@ export default {
     return {
       locale: this.$i18n.locale,
       tasks: [],
+      slide: ref(1),
+      fullscreen: ref(false),
       pagination: { page: 1, rowsPerPage: 10, rowsNumber: 0, sortBy: 'createdTS', descending: true },
       columns: [
         { name: 'data', required: false, label: '', align: 'center', field: 'data', sortable: false },
@@ -134,31 +168,6 @@ export default {
         { name: 'answered', required: true, label: 'Answered', align: 'center', field: 'answered', sortable: true },
         { name: 'completedTS', required: true, label: 'Completed', align: 'center', field: 'completedTS', sortable: true }
       ],
-      chartOptions: {
-        chart: {
-          type: 'column'
-        },
-        title: {
-          text: 'Task Count'
-        },
-        xAxis: {
-          categories: ['John Doe', 'Jane Smith', 'Mike Johnson'], // Agrega más categorías según sea necesario
-          title: {
-            text: 'Participants'
-          }
-        },
-        yAxis: {
-          title: {
-            text: 'Count'
-          }
-        },
-        series: [
-          {
-            name: 'Task Count',
-            data: [5, 10, 8] // Agrega más datos según sea necesario
-          }
-        ]
-      },
       filter: {},
       participant: '',
       taskDataType: undefined,
@@ -192,7 +201,6 @@ export default {
   },
   mounted () {
     this.getParticipant()
-    Highcharts.chart('chart', this.chartOptions)
   },
   methods: {
     niceTimestamp (timeStamp) {
