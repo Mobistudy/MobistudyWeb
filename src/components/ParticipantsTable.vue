@@ -144,7 +144,6 @@ export default {
     openParticipantSummary (row) {
       const currentUrl = this.$route.fullPath
       const userKey = row.userKey
-      console.log(userKey)
       const urlCompleta = `${window.location.origin}/#${currentUrl}/participant/${userKey}`
       window.open(urlCompleta, '_blank')
     }

@@ -101,7 +101,12 @@
                           {{ subanswer.answerText }}
                         </p>
                       </div>
-                      <q-img v-if="answer.questionType == 'photo'" :src="answer.answer" />
+                      <q-img
+                        v-if="answer.questionType === 'photo'"
+                        :src="answer.answer"
+                        @click="toggleImageFullscreen()"
+                        class="fullscreen-image"
+                      />
                     </div>
                   </div>
                 </q-card-section>
@@ -109,33 +114,47 @@
             </q-dialog>
           </div>
           <div class="right-section">
+            <q-tabs class="bg-white text-secondary" align="justify" @change="changeTab" v-model="activeTab">
+              <q-tab name="tab-images" icon="photo_library" label="Images" @click="showImages" />
+              <q-tab name="tab-chart" icon="bar_chart" label="Chart" @click="showChart" />
+            </q-tabs>
             <div>
-              <q-carousel
-                swipeable
-                animated
-                arrows
-                v-model="slide"
-                v-model:fullscreen="fullscreen"
-                infinite
-              >
-                <q-carousel-slide :name="1" img-src="https://cdn.quasar.dev/img/mountains.jpg" />
-                <q-carousel-slide :name="2" img-src="https://cdn.quasar.dev/img/parallax1.jpg" />
-                <q-carousel-slide :name="3" img-src="https://cdn.quasar.dev/img/parallax2.jpg" />
-                <q-carousel-slide :name="4" img-src="https://cdn.quasar.dev/img/quasar.jpg" />
+              <div v-if="activeTab === 'tab-chart'">
+                <canvas id="myChart"></canvas>
+              </div>
 
-                <template v-slot:control>
-                  <q-carousel-control
-                    position="bottom-right"
-                    :offset="[18, 18]"
-                  >
-                    <q-btn
-                      push round dense color="white" text-color="secondary"
-                      :icon="fullscreen ? 'fullscreen_exit' : 'fullscreen'"
-                      @click="fullscreen = !fullscreen"
-                    />
-                  </q-carousel-control>
-                </template>
-              </q-carousel>
+              <div v-else>
+                <q-carousel
+                  swipeable
+                  animated
+                  arrows
+                  v-model="slide"
+                  v-model:fullscreen="fullscreen"
+                  infinite
+                >
+                  <q-carousel-slide :name="1" img-src="https://thumbs.dreamstime.com/z/mano-vendada-37116779.jpg"/>
+                  <q-carousel-slide :name="2" img-src="https://www.elnacional.cat/uploads/s1/11/59/28/37/de-jong-ma-inflada-atmikkykiemeney_1_630x630.jpeg" />
+                  <q-carousel-slide :name="3" img-src="https://media.istockphoto.com/id/682976484/es/foto/parte-hombre-del-cuerpo-con-la-mano-vendada.jpg?s=612x612&w=is&k=20&c=APAnkDXG4nMweVKVzH2W1uaBaNTLP2-1CZg3mWI1jDQ=" />
+                  <q-carousel-slide :name="4" img-src="https://cdn.quasar.dev/img/quasar.jpg" />
+
+                  <template v-slot:control>
+                    <q-carousel-control
+                      position="bottom-right"
+                      :offset="[18, 18]"
+                    >
+                      <q-btn
+                        push
+                        round
+                        dense
+                        color="white"
+                        text-color="secondary"
+                        :icon="fullscreen ? 'fullscreen_exit' : 'fullscreen'"
+                        @click="fullscreen = !fullscreen"
+                      />
+                    </q-carousel-control>
+                  </template>
+                </q-carousel>
+              </div>
             </div>
           </div>
         </div>
@@ -149,6 +168,7 @@ import API from '@shared/API.js'
 import { bestLocale } from '@mixins/bestLocale'
 import { date } from 'quasar'
 import { ref } from 'vue'
+import Chart from 'chart.js/auto'
 
 export default {
   name: 'StudyParticipant',
@@ -160,6 +180,7 @@ export default {
       tasks: [],
       slide: ref(1),
       fullscreen: ref(false),
+      activeTab: 'tab-chart',
       pagination: { page: 1, rowsPerPage: 10, rowsNumber: 0, sortBy: 'createdTS', descending: true },
       columns: [
         { name: 'data', required: false, label: '', align: 'center', field: 'data', sortable: false },
@@ -201,6 +222,7 @@ export default {
   },
   mounted () {
     this.getParticipant()
+    this.initializeChart()
   },
   methods: {
     niceTimestamp (timeStamp) {
@@ -253,6 +275,53 @@ export default {
           message: 'Cannot retrieve participant',
           icon: 'report_problem'
         })
+      }
+    },
+    toggleImageFullscreen () {
+      if (this.fullscreen) {
+        this.fullscreen = false
+      } else {
+        this.$nextTick(() => {
+          const element = document.querySelector('.fullscreen-image')
+          if (element) {
+            element.requestFullscreen()
+          }
+        })
+      }
+    },
+    initializeChart () {
+      const ctx = document.getElementById('myChart').getContext('2d')
+      this.chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['2023-06-04', '2023-06-07', '2023-06-19', '2023-06-25'],
+          datasets: [{
+            label: 'Pain',
+            data: [5, 3, 3, 1],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      })
+    },
+    showImages () {
+      this.activeTab = 'tab-images'
+    },
+
+    showChart () {
+      this.activeTab = 'tab-chart'
+    },
+    changeTab (tab) {
+      if (tab === 'tab-chart') {
+        this.showChart = true
+      } else if (tab === 'tab-images') {
+        this.showChart = false
       }
     }
   }
