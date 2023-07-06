@@ -5,7 +5,7 @@
         <q-form ref="loginForm">
           <q-card class="q-pa-sm loginBox">
             <q-card-section>
-              <div class="text-h4">Sign In</div>
+              <div class="text-h4">Researcher's sign in</div>
             </q-card-section>
             <q-card-section>
               <form autocomplete="on">
@@ -34,7 +34,7 @@
                 @click="login()"
               />
               <q-btn
-                label="New User"
+                label="New researcher"
                 color="secondary"
                 @click="newUser()"
               />
