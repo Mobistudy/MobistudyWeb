@@ -247,13 +247,7 @@ export default {
     },
     async showTaskData (props) {
       try {
-        const queryParams = {
-          studyKey: this.studyKey,
-          userKey: this.userKey,
-          taskId: props.row.taskId,
-          fileName: props.row.attachments[0]
-        }
-        this.taskDataContent = await API.getTaskAttachment(queryParams)
+        this.taskDataContent = await API.getTaskAttachment(this.studyKey, this.userKey, props.row.taskId, props.row.attachments[0])
         this.taskDataType = props.row.taskType
         this.taskCompletedDate = props.row.summary.completedTS
         this.taskDataModal = true
