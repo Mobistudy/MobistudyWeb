@@ -1,9 +1,9 @@
 <template>
   <div>
     <q-table
-      title="Audit logs"
       ref="table"
       color="primary"
+      flat
       :rows="logs"
       selection="none"
       :columns="columns"
@@ -13,6 +13,9 @@
       @request="loadLogs"
       :loading="loading"
     >
+      <template #top-left>
+        <div class="text-h6 text-center q-my-sm text-secondary text-bold text-uppercase"> Events </div>
+      </template>
       <template #top-right>
         <q-select
           emit-value
@@ -57,7 +60,6 @@
       <template #body-cell-data="props">
         <q-td :props="props">
           <q-btn
-            v-if="props.value"
             flat
             icon="info"
             @click="showLogData(props)"
@@ -151,11 +153,11 @@ export default {
       logs: [],
       pagination: { page: 1, rowsPerPage: 20, rowsNumber: 0, sortBy: 'timestamp', descending: true },
       columns: [
-        { name: 'timestamp', required: true, label: 'Datetime', align: 'left', field: 'timestamp', sortable: true },
-        { name: 'event', required: true, label: 'Event', align: 'left', field: 'event', sortable: false },
-        { name: 'userEmail', required: true, label: 'User', align: 'left', field: 'userEmail', sortable: false },
-        { name: 'message', required: true, label: 'Message', align: 'left', field: 'message', sortable: false },
-        { name: 'data', required: false, label: 'Data', align: 'left', field: 'data', sortable: false }
+        { name: 'timestamp', required: true, label: 'Datetime', align: 'center', field: 'timestamp', sortable: true },
+        { name: 'event', required: true, label: 'Event', align: 'center', field: 'event', sortable: false },
+        { name: 'userEmail', required: true, label: 'User', align: 'center', field: 'userEmail', sortable: false },
+        { name: 'message', required: true, label: 'Message', align: 'center', field: 'message', sortable: false },
+        { name: 'data', required: false, label: '', align: 'center', field: 'data', sortable: false }
       ],
       filter: {
         after: undefined,

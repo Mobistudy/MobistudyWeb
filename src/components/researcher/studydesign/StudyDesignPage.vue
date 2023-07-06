@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <q-toolbar class="bg-info text-black">
+    <q-toolbar class="bg-info text-black q-pa-md">
       <q-toolbar-title>
         Study Designer
       </q-toolbar-title>
