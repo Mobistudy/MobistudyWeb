@@ -1,4 +1,4 @@
-FROM node:16.18.1 as build
+FROM node:18.16.1 as build
 
 # install python (needed by some dev deps)
 #RUN apk add --no-cache --virtual .gyp \
