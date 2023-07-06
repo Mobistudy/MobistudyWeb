@@ -26,6 +26,7 @@ Denna information är nödvändig för säkerhets- och granskningssyften.
     collectedDataVocalization: '    \u2022 Din röst under vokaliseringstestet.',
     collectedDataDrawing: '    \u2022 Strecken du gör på skärmen under figurtestet.',
     collectedDataReason: ' Den insamlade datan är nödvändig för att uppnå forskningssyftet. [LÄGG TILL ANLEDNINGEN FÖR INSAMLINGEN AV SPECIFIKT DEN HÄR DATAN]',
+    legalBasis: 'Uppgifterna kommer att användas för vetenskapliga ändamål, därför är den rättsliga grunden för behandlingen av dessa uppgifter allmänt intresse (Art. 6 och Art. 89 i GDPR).',
     storage: `Var kommer min data att lagras?
 All data kommer lagras på Mobistudys egen server, vilken hanteras av Malmö Universitet i Sverige. Din telefon lagrar enbart din profil samt data om deltagande vilka studier du deltar i.
 

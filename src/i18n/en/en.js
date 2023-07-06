@@ -26,6 +26,7 @@ These are needed to study how data changes from phone to phone.
     collectedDataVocalization: '    \u2022 Your voice recorded during the vocalization test.',
     collectedDataDrawing: '    \u2022 Your drawing coordinates will be saved during the drawing test.',
     collectedDataReason: 'These data are needed to fulfil the aims of the research. [ADD REASONS FOR WHY THESE DATA ARE NEEDED IN THE SPECIFIC STUDY]',
+    legalBasis: 'The data will be used for scientific purposes, therefore the legal basis for the processing of this data is public interest (Art. 6 and Art. 89 of the GDPR).',
     storage: `Where will my data be stored?
 All these data will be stored on the Mobistudy server, which is managed by Malmö University in Sweden. Your phone will only keep your profile and data about which studies you are participating in.
 

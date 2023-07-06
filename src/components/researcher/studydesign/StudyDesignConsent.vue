@@ -313,6 +313,7 @@ export default {
           }
         }
         string += this.$i18n.t('privacyPolicy.collectedDataReason', lang)
+        string += this.$i18n.t('privacyPolicy.legalBasis', lang)
         string += '\n\n' + this.$i18n.t('privacyPolicy.storage', lang, { studyEndDate: this.studyDesign.generalities.endDate })
         string += '\n\n' + this.$i18n.t('privacyPolicy.access', lang)
         for (const institution of this.studyDesign.generalities.institutions) {
