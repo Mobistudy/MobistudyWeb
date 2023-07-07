@@ -50,7 +50,7 @@ const routes = [
       },
       {
         path: '/studyMonitor/:studyKey/participant/:userKey',
-        component: () => import('components/researcher/studymonitor/StudyParticipantSummary.vue'),
+        component: () => import('components/researcher/studymonitor/StudyParticipantSummaryPage.vue'),
         props: true
       }
     ]

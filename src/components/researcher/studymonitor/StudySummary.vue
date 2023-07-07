@@ -42,6 +42,17 @@
         </div>
       </div>
     </q-card-section>
+    <q-card-section>
+      <div class="row q-ma-lg justify-around">
+        <q-btn
+          color="secondary"
+          icon-right="archive"
+          label="Download study data"
+          @click="downloadData()"
+          :loading="creatingDownload"
+        ></q-btn>
+      </div>
+    </q-card-section>
     <q-separator/>
     <table-participants :studyKey="studyKey" />
   </q-card>
@@ -49,7 +60,7 @@
 
 <script>
 import API from '@shared/API'
-import TableParticipants from '@components/ParticipantsTable'
+import TableParticipants from '@components/researcher/studymonitor/ParticipantsTable'
 
 export default {
   name: 'StudyParticipants',
@@ -66,6 +77,23 @@ export default {
         withdrawn: 0
       },
       creatingDownload: false
+    }
+  },
+  methods: {
+    async downloadData () {
+      this.creatingDownload = true
+      try {
+        const filename = await API.downloadStudyData(this.studyKey)
+        window.open('datadownload/' + filename)
+      } catch (error) {
+        this.$q.notify({
+          color: 'negative',
+          position: 'bottom',
+          message: 'Cannot retrieve the study data. ' + error.message,
+          icon: 'report_problem'
+        })
+      }
+      this.creatingDownload = false
     }
   },
   async created () {
