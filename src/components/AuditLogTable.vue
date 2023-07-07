@@ -57,84 +57,7 @@
           {{ niceTimestamp(props.value) }}
         </q-td>
       </template>
-      <template #body-cell-data="props">
-        <q-td :props="props">
-          <q-btn
-            flat
-            icon="info"
-            @click="showLogData(props)"
-          />
-        </q-td>
-      </template>
     </q-table>
-    <q-dialog
-      v-model="logDataModal"
-      :content-css="{minWidth: '50vw'}"
-    >
-      <q-card>
-        <q-card-section class="row items-center">
-          <div class="text-h6">
-            <span v-if="logDataType == 'raw'">Data:</span>
-            <span v-if="logDataType == 'healthStoreData'"><span class="text-capitalize">{{ logDataModalContent.dataType }}</span> from Google Fit / HealthKit:</span>
-            <span v-if="logDataType == 'answers'">Answers:</span>
-          </div>
-          <q-space />
-          <q-btn
-            icon="close"
-            flat
-            round
-            dense
-            v-close-popup
-          />
-        </q-card-section>
-
-        <q-card-section>
-          <div v-if="logDataType == 'raw'">
-            <pre>
-              {{ logDataModalContent }}
-            </pre>
-          </div>
-          <div v-if="logDataType == 'healthStoreData'">
-            <div
-              v-for="(hd, index) in logDataModalContent.healthData"
-              :key="index"
-              class="q-ma-md"
-            >
-              Start: {{ niceTimestamp(hd.startDate )}}<br />
-              End: {{ niceTimestamp(hd.endDate) }}<br />
-              Value: {{ hd.value }} {{ hd.unit }}
-            </div>
-          </div>
-          <div v-if="logDataType == 'answers'">
-            <div
-              v-for="(answer, index) in logDataModalContent.responses"
-              :key="index"
-            >
-              <p class="q-title">
-                {{ answer.questionText }}
-              </p>
-              <p v-if="answer.questionType == 'freetext'">
-                {{ answer.answer }}
-              </p>
-              <p v-if="answer.questionType == 'number'">
-                {{ answer.answer }}
-              </p>
-              <p v-if="answer.questionType == 'singleChoice'">
-                {{ answer.answer.answerText }}
-              </p>
-              <div v-if="answer.questionType == 'multiChoice'">
-                <p
-                  v-for="(subanswer, index1) in answer.answer"
-                  :key="index1"
-                >
-                  {{ subanswer.answerText }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
   </div>
 </template>
 
@@ -166,10 +89,7 @@ export default {
         userEmail: undefined
       },
       eventTypesOpts: [],
-      loading: false,
-      logDataModal: false,
-      logDataModalContent: undefined,
-      logDataType: 'raw'
+      loading: false
     }
   },
   async created () {
@@ -244,11 +164,6 @@ export default {
           icon: 'report_problem'
         })
       }
-    },
-    showLogData (props) {
-      this.logDataType = 'raw'
-      this.logDataModalContent = JSON.stringify(props.value, null, 2)
-      this.logDataModal = true
     }
   }
 }
