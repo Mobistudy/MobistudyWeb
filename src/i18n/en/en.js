@@ -15,7 +15,7 @@ These are needed to study how data changes from phone to phone.
     collectedDataForm: '    \u2022 Answers given to {formName} form.',
     collectedDataQuery: '    \u2022 {dataType} from GoogleFit (Android phones) or HealthKit (iPhones).',
     collectedDataQCST: '    \u2022 Heart rate and steps collected during a Queens College Step Test.',
-    collectedDataSMWT: '    \u2022 Your geographical position, distance and steps during the 6-minute Walk Test',
+    collectedDataSMWT: '    \u2022 Your geographical position, distance and motion during the 6-minute Walk Test',
     collectedDataMiband3: '    \u2022 Your heart rate, activity level, steps and activity type collected by the MiBand3 fitness tracker.',
     collectedDataPO60: '    \u2022 Your blood oxygen saturation and heart rate measured by the pulseoximeter.',
     collectedDataPeakFlow: '    \u2022 Your peak flow measured by the smart peak flow meter.',

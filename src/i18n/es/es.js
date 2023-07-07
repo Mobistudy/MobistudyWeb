@@ -1,8 +1,8 @@
 export default {
   privacyPolicy: {
-    collectedData: `Para realizar este estudio, necesitamos recopilar algunos datos suyos utilizando la aplicación Mobistudy.
+    collectedData: `Para realizar este estudio, necesitamos recopilar algunos datos tuyos utilizando la aplicación Mobistudy.
      ¿Qué datos personales se recopilarán?
-\u2022 Su información general de perfil como dirección de correo electrónico, nombre, apellido, fecha de nacimiento, sexo, país, idioma, principales condiciones de salud, tratamientos a largo plazo, peso y altura.
+\u2022 Tu información general de perfil como dirección de correo electrónico, nombre, apellido, fecha de nacimiento, sexo, país, idioma, principales condiciones de salud, tratamientos a largo plazo, peso y altura.
 Estos son necesarios para identificarlo y crear estadísticas sobre quienes participan en este estudio.
 \u2022 Tu participación en el estudio y las veces que completas una tarea.
 Estos son necesarios para evaluar el nivel de participación en el estudio.
@@ -15,23 +15,23 @@ Estos son necesarios para la seguridad y la auditoría.
     collectedDataForm: '    \u2022 Respuestas dadas al formulario de {formName} .',
     collectedDataQuery: '    \u2022 {dataType} desde GoogleFit (Android phones) o HealthKit (iPhones).',
     collectedDataQCST: '    \u2022 Frecuencia cardíaca y pasos recopilados durante el Queens College Step Test.',
-    collectedDataSMWT: '    \u2022 Su posición geográfica, distancia y pasos durante el 6-minute Walk Test',
-    collectedDataMiband3: '    \u2022 Su frecuencia cardíaca, nivel de actividad, pasos y tipo de actividad recopilados por el reloj inteligente.',
+    collectedDataSMWT: '    \u2022 Tu posición geográfica, distancia y movimiento durante el test de caminata de seis minutos.',
+    collectedDataMiband3: '    \u2022 Tu frecuencia cardíaca, nivel de actividad, pasos y tipo de actividad recopilados por el monitor de actividad.',
     collectedDataPO60: '    \u2022 Su saturación de oxígeno en sangre y frecuencia cardíaca medida por el oxímetro de pulso.',
-    collectedDataPeakFlow: '    \u2022 Su flujo máximo medido por el medidor de flujo máximo inteligente.',
-    collectedDataPosition: '    \u2022 Su posición geográfica.',
+    collectedDataPeakFlow: '    \u2022 Tu flujo máximo medido por el medidor de flujo máximo inteligente.',
+    collectedDataPosition: '    \u2022 Tu posición geográfica.',
     collectedDataFingerTapping: '    \u2022 Los tiempos en los que tocas la pantalla durante la tarea de medición de movimiento de los dedos.',
     collectedDataTUGT: '    \u2022 La aceleración y la orientación del teléfono y los pasos recorridos durante la prueba de levantarse y avanzar.',
-    collectedDataHoldPhone: '    \u2022 La aceleración y orientación de su teléfono durante la prueba de sostener el teléfono.',
+    collectedDataHoldPhone: '    \u2022 La aceleración y orientación de tu teléfono durante la prueba de sostener el teléfono.',
     collectedDataVocalization: '    \u2022 Tu voz durante la prueba de vocalización.',
     collectedDataDrawing: '    \u2022 Los trazos que haces en la pantalla durante la prueba de dibujo.',
     collectedDataReason: 'Estos datos son necesarios para cumplir con los objetivos de la investigación. [ADD REASONS FOR WHY THESE DATA ARE NEEDED IN THE SPECIFIC STUDY]',
     legalBasis: 'Los datos serán utilizados con fines científicos, por lo que la base legal para el tratamiento de estos datos es el interés público (Art. 6 y Art. 89 del RGPD).',
     storage: `¿Dónde se almacenarán mis datos?
-Todos estos datos se almacenarán en el servidor de Mobistudy, gestionado por la Universidad de Malmö en Suecia. Su teléfono solo conservará su perfil y datos sobre los estudios en los que está participando.
+Todos estos datos se almacenarán en el servidor de Mobistudy, gestionado por la Universidad de Malmö en Suecia. Tu teléfono solo conservará tu perfil y datos sobre los estudios en los que está participando.
 
 ¿Durante cuánto tiempo se conservarán estos datos?
-Su perfil y participación en un estudio se mantendrán mientras mantenga una cuenta en Mobistudy.
+Tu perfil y participación en un estudio se mantendrán mientras mantenga una cuenta en Mobistudy.
 Los datos recopilados dentro de las tareas asignadas en este estudio se mantendrán en el servidor de Mobistudy hasta el final del estudio, en {studyEndDate}.
 Los registros técnicos se eliminarán después de 1 año de su producción.
 
@@ -42,20 +42,20 @@ Los registros técnicos se eliminarán después de 1 año de su producción.
     accessInstitution: '\u2022 {institution}',
     accessReason: ' para {reason} ({institution} is the controller of your personal information).',
     rights: `¿Cuáles son mis derechos?
-\u2022 Puede retirarse de este estudio cuando lo desee desde la sección "estudios" de la aplicación. Los datos que haya producido hasta ahora dentro del estudio se conservarán, pero si desea que también se eliminen, comuníquese con mobistudy@mau.se.
-\u2022 Puede eliminar su cuenta de Mobistudy desde la sección "perfil" de la aplicación. Esto eliminará todos sus datos recopilados por Mobistudy, excepto los registros técnicos, que se eliminarán después de 1 año. Tenga en cuenta que los datos ya descargados por las instituciones involucradas en este o en estudios anteriores aún pueden conservarse después de haber eliminado su cuenta. Si desea que también se eliminen estos datos, póngase en contacto con mobistudy@mau.se.
-\u2022 Puede solicitar que se detenga o restrinja el procesamiento de sus datos (incluso sin eliminar su cuenta). En este caso, póngase en contacto con mobistudy@mau.se.
-\u2022 Puede averiguar qué se ha registrado sobre usted y descargar los datos en un formato legible por máquina poniéndose en contacto con mobistudy@mau.se.
-\u2022 Puede solicitar la corrección de errores en sus datos. En este caso, póngase en contacto con mobistudy@mau.se.
-\u2022 Si tiene quejas que no se pueden resolver con la Universidad de Malmö, puede enviarlas a Integritetsskyddsmyndigheten.`,
-    contacts: `Si tiene preguntas sobre cómo procesa los datos cada institución involucrada en el estudio, comuníquese con:
-\u2022 Responsable de protección de datos de la Universidad de Malmö en dataskyddsombud@mau.se`,
-    piContact: '\u2022 {name} at: {contact}'
+\u2022 Puedes retirarte de este estudio cuando lo desees desde la sección "estudios" de la aplicación. Los datos que hayas producido hasta ahora dentro del estudio se conservarán, pero si deseas que también se eliminen, comunícate con mobistudy@mau.se.
+\u2022 Puedes eliminar tu cuenta de Mobistudy desde la sección "perfil" de la aplicación. Esto eliminará todos tus datos recopilados por Mobistudy, excepto los registros técnicos, que se eliminarán después de 1 año. Tengas en cuenta que los datos ya descargados por las instituciones involucradas en este o en estudios anteriores aún pueden conservarse después de haber eliminado tu cuenta. Si deseas que también se eliminen estos datos, ponte en contacto con mobistudy@mau.se.
+\u2022 Puedes solicitar que se detenga o restrinja el procesamiento de tus datos (incluso sin eliminar tu cuenta). En este caso, ponte en contacto con mobistudy@mau.se.
+\u2022 Puedes averiguar qué se ha registrado y descargar los datos en un formato legible por máquina poniéndose en contacto con mobistudy@mau.se.
+\u2022 Puedes solicitar la corrección de errores en tus datos. En este caso, ponte en contacto con mobistudy@mau.se.
+\u2022 Si tienes quejas que no se pueden resolver con la Universidad de Malmö, puedes enviarlas a Integritetsskyddsmyndigheten.`,
+    contacts: `Si tienes preguntas sobre cómo procesa los datos cada institución involucrada en el estudio, comunícate con:
+\u2022 Responsable de protección de datos de la Universidad de Malmö, dataskyddsombud@mau.se`,
+    piContact: '\u2022 {name}, {contact}'
   },
   consent: {
     taskItemDataQuery: 'Acepto enviar mis datos sobre {dataType}, {scheduling}',
     taskItemForm: 'Acepto contestar el formulario {formName}, {scheduling}',
-    taskItemMiBand3: 'Acepto enviar mis datos recopilados por el reloj inteligente, {scheduling}',
+    taskItemMiBand3: 'Acepto enviar mis datos recopilados por el monitor de actividad, {scheduling}',
     taskItemQCST: 'Acepto realizar la prueba Queen\'s College step test, {scheduling}',
     taskItemSMWT: 'Acepto realizar la prueba de caminata de seis minutos, {scheduling}',
     taskItemPO60: 'Acepto emedir mi oximetría de pulso, {scheduling}',

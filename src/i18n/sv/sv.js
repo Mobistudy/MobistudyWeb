@@ -15,7 +15,7 @@ Denna information är nödvändig för säkerhets- och granskningssyften.
     collectedDataForm: '    \u2022 Svar på {formName} formuläret.',
     collectedDataQuery: '    \u2022 {dataType} från GoogleFit (Android-telefoner) eller HealthKit (iPhones).',
     collectedDataQCST: '    \u2022 Hjärtfrekvens och stegräkning under ett Queens College Step Test.',
-    collectedDataSMWT: '    \u2022 Din geografiska position, distans och antal steg under ett 6-minuters gångtest',
+    collectedDataSMWT: '    \u2022 Din geografiska position, distans och rörelse under ett 6-minuters gångtest',
     collectedDataMiband3: '    \u2022 Hjärtfrekvens, aktivitetsnivå, steg and aktivitetstyp insamlad av en MiBand3 hälsoklocka.',
     collectedDataPO60: '    \u2022 Hjärtfrekvens och syrehalt i blodet, insamlat av en pulsoximeter.',
     collectedDataPeakFlow: '    \u2022 Ditt toppflöde mätt med den smarta toppflödesmätaren.',
