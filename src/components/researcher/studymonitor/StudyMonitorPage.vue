@@ -2,7 +2,7 @@
   <q-page>
     <q-toolbar class="bg-secondary text-white q-pa-md">
       <q-toolbar-title>
-        Statistics about <strong>{{ getBestLocale(studyDesign.generalities.title) }}</strong>
+        <strong>{{ getBestLocale(studyDesign.generalities.title) }}</strong>
       </q-toolbar-title>
       <q-btn
         class="float-right q-mr-md"
@@ -29,7 +29,7 @@
         label="Description"
       />
       <q-tab
-        name="tab-stats"
+        name="tab-log"
         icon="bar_chart"
         label="Audit log"
       />
@@ -46,7 +46,7 @@
         <q-tab-panel name="tab-description">
           <study-description :studyDesign="studyDesign" />
         </q-tab-panel>
-        <q-tab-panel name="tab-stats">
+        <q-tab-panel name="tab-log">
           <table-audit-log :studyKey="studyKey" />
         </q-tab-panel>
       </q-tab-panels>
@@ -70,7 +70,7 @@ export default {
   },
   data () {
     return {
-      statsTab: 'tab-stats',
+      statsTab: 'tab-summary',
       studyDesign: {
         generalities: {
           title: ''

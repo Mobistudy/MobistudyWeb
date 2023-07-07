@@ -1,7 +1,7 @@
 <template>
   <q-card class="full-height">
     <q-card-section>
-      <div class="text-h6 q-my-sm text-secondary text-bold text-uppercase"> Participation </div>
+      <div class="text-h6 q-my-sm text-secondary text-bold text-uppercase"> Participation statistics</div>
     </q-card-section>
     <q-card-section class="q-mb-md">
       <div class="row justify-around ">
