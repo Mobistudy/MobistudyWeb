@@ -98,16 +98,17 @@ export default {
     const resp = await axios.get(BASE_URL + '/studies/' + studyKey, axiosConfig)
     return resp.data
   },
-  async getStudyStats (filter) {
+  async getStudyStats (countOnly, filter) {
     let queryParams = ''
-    let firstParam = true
+    let hasParams = false
     for (const param in filter) {
+      // supported params for this API: studyKey, participantName, statusType
       if (filter[param] || filter[param] === 0) {
-        queryParams += (firstParam ? '' : '&') + param + '=' + encodeURIComponent(filter[param])
-        firstParam = false
+        queryParams += (!hasParams ? '' : '&') + param + '=' + encodeURIComponent(filter[param])
+        hasParams = true
       }
     }
-    const URL = BASE_URL + '/studyStats' + (firstParam ? '' : '?') + queryParams
+    const URL = BASE_URL + '/studyStats' + (countOnly ? '/count' : '') + (hasParams ? '?' : '') + queryParams
     const resp = await axios.get(URL, axiosConfig)
     return resp.data
   },

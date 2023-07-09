@@ -1,7 +1,7 @@
 <template>
   <q-card class="full-height">
     <q-card-section>
-      <div class="text-h6 q-my-sm text-secondary text-bold text-uppercase"> Participation statistics</div>
+      <div class="text-h6 q-my-sm text-secondary text-bold text-uppercase"> Participants statistics</div>
     </q-card-section>
     <q-card-section class="q-mb-md">
       <div class="row justify-around ">
@@ -60,7 +60,7 @@
 
 <script>
 import API from '@shared/API'
-import TableParticipants from '@components/researcher/studymonitor/ParticipantsTable'
+import TableParticipants from '@components/researcher/studymonitor/StudyParticipantsSummaryTable'
 
 export default {
   name: 'StudyParticipants',

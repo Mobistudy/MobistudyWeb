@@ -9,8 +9,7 @@
       <q-card-section>
         <div class="row q-ma-sm">
           <div class="col-2 text-bold">Description:</div>
-          <div class="col">
-            {{ getBestLocale(studyDesign.generalities.longDescription) }}
+          <div class="col" v-html= "getBestLocale(studyDesign.generalities.longDescription)">
           </div>
         </div>
         <q-separator />
@@ -229,7 +228,7 @@
           </div>
           <div v-if="task.type == 'form'">
             <div class="row q-ma-sm">
-              <div class="col-2 text-bold">Key:</div>
+              <div class="col-2 text-bold">Form Key:</div>
               <div class="col">{{ task.formKey }}</div>
             </div>
             <div class="row q-ma-sm">
@@ -306,7 +305,7 @@
               </div>
               <div class="row q-ma-sm">
                 <div class="col-2 text-bold">Description:</div>
-                <div class="col">{{ extItem.description }}</div>
+                <div class="col">{{ getBestLocale(extItem.description) }}</div>
               </div>
               <div class="row q-ma-sm">
                 <div class="col-2 text-bold">Optional:</div>

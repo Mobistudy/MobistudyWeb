@@ -1,20 +1,20 @@
 <template>
-  <div>
     <q-table
       ref="table"
       color="primary"
       flat
       :rows="participants"
-      selection="none"
       :columns="columns"
-      :filter="filter"
+      binary-state-sort
+      selection="none"
       row-key="userKey"
+      :loading="loading"
+      :filter="filter"
       v-model:pagination="pagination"
       @request="loadParticipants"
-      :loading="loading"
     >
       <template #top-left>
-        <div class="text-h6 text-center q-my-sm text-secondary text-bold text-uppercase"> Participants </div>
+        <div class="text-h6 text-center q-my-sm text-secondary text-bold text-uppercase"> Participants Summary </div>
       </template>
       <template #top-right>
         <q-select
@@ -24,7 +24,7 @@
           label="Study status"
           :options="statusTypesOpts"
           v-model="filter.statusType"
-          @input="updateFilters()"
+          @input="updateFilter()"
           class="q-mr-md"
           style="width: 200px"
         />
@@ -33,7 +33,7 @@
           type="text"
           placeholder="Search a participant"
           clearable
-          @input="updateFilters()"
+          @input="updateFilter()"
           debounce="300"
           style="width: 200px;"
         >
@@ -57,7 +57,6 @@
         </q-td>
       </template>
     </q-table>
-  </div>
 </template>
 
 <script>
@@ -65,7 +64,7 @@ import API from '@shared/API.js'
 import { date } from 'quasar'
 
 export default {
-  name: 'StudyParticipantsTable',
+  name: 'StudyParticipantsSummaryTable',
   props: [
     'studyKey',
     'taskId'
@@ -73,19 +72,25 @@ export default {
   data () {
     return {
       participants: [],
-      pagination: { page: 1, rowsPerPage: 20, rowsNumber: 0, sortBy: 'lastTaskDate', descending: true },
       columns: [
         { name: 'data', required: false, label: '', align: 'center', field: 'data', sortable: false },
         { name: 'FullName', required: true, label: 'Full Name', align: 'center', field: 'fullName', sortable: false, format: (value, row) => `${row.name} ${row.surname}` },
         { name: 'DOB', required: true, label: 'Birthdate', align: 'center', field: 'DOB', sortable: false },
         { name: 'userEmail', required: true, label: 'Email', align: 'center', field: 'userEmail', sortable: false },
         { name: 'status', required: true, label: 'Status', align: 'center', field: 'status', sortable: false },
-        { name: 'taskResultCount', required: true, label: 'Task Count', align: 'center', field: 'taskResultCount', sortable: true },
-        { name: 'lastTaskDate', required: true, label: 'Last task', align: 'center', field: 'lastTaskDate', sortable: true, sort: (a, b) => { if (a > b) return 1; else return -1 } }
+        { name: 'taskResultCount', required: true, label: 'Task Count', align: 'center', field: 'taskResultCount', sortable: false },
+        { name: 'lastTaskDate', required: true, label: 'Last task', align: 'center', field: 'lastTaskDate', sortable: false }
       ],
       filter: {
         name: undefined,
         statusType: 'all'
+      },
+      pagination: {
+        sortBy: 'lastTaskDate',
+        descending: true,
+        page: 1,
+        rowsPerPage: 10,
+        rowsNumber: 0
       },
       statusTypesOpts: [
         'all', 'accepted', 'withdrawn', 'completed', 'excluded', 'rejected'
@@ -95,44 +100,45 @@ export default {
   },
   async created () {
     if (this.studyKey && this.studyKey !== -1) {
-      this.filter.studyKey = this.studyKey
+      console.log('created with studykey')
+      this.loadParticipants()
     }
-    this.loadParticipants({
-      pagination: this.pagination,
-      filter: this.filter
-    })
   },
   watch: {
     // update the table if the study key changes
     async studyKey () {
-      this.filter.studyKey = this.studyKey
-      this.loadParticipants({
-        pagination: this.pagination,
-        filter: this.filter
-      })
+      console.log('study key changed')
+      this.loadParticipants()
     }
   },
   methods: {
     niceTimestamp (timeStamp) {
       return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
     },
-    async updateFilters () {
-      this.loadParticipants({
-        filter: this.filter,
-        pagination: this.pagination
-      })
+    async updateFilter () {
+      console.log('update filters')
+      return this.loadParticipants()
     },
     async loadParticipants (params) {
+      console.log('load called with args', params)
+      console.log('pagination', this.pagination)
       this.loading = true
-      this.pagination = params.pagination
+      if (params) this.pagination = params.pagination
       try {
+        // supported params for this API: studyKey, participantName, statusType, offset, rowsPerPage
         const queryParams = {
-          studyKey: params.filter.studyKey,
-          participantName: params.filter.name,
-          statusType: params.filter.statusType === 'all' ? undefined : params.filter.statusType
+          studyKey: this.studyKey,
+          participantName: this.filter.name,
+          statusType: this.filter.statusType === 'all' ? undefined : this.filter.statusType,
+          offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
+          count: this.pagination.rowsPerPage
         }
-        this.participants = await API.getStudyStats(queryParams)
+        console.log('query params', queryParams)
+        const stats = await API.getStudyStats(false, queryParams)
+        this.participants = stats.subset
+        this.pagination.rowsNumber = stats.totalCount
       } catch (err) {
+        console.error(err)
         this.$q.notify({
           color: 'negative',
           message: 'Cannot retrieve participants',
