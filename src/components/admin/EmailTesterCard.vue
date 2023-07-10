@@ -3,7 +3,7 @@
   <q-card>
     <q-form ref="emailTesterForm">
       <q-card-section>
-        <div class="text-h5">Send email from server</div>
+        <div class="text-h5">Send an email</div>
       </q-card-section>
       <q-card-section>
         <div class="row q-ma-sm">

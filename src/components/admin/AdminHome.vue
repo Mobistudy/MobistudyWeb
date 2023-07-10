@@ -56,7 +56,7 @@
       </q-tab-panel>
 
       <q-tab-panel name="tab-tester">
-        <h4>Testing tools</h4>
+        <h4>Admin and test tools</h4>
         <email-tester-card />
       </q-tab-panel>
     </q-tab-panels>

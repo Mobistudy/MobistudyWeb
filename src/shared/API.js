@@ -236,6 +236,6 @@ export default {
   },
   // Test stuff
   async sendTestEmail (email, subject, content) {
-    return axios.post(BASE_URL + '/tester/sendemail/', { address: email, subject, content }, axiosConfig)
+    return axios.post(BASE_URL + '/techadmin/sendemail/', { address: email, subject, content }, axiosConfig)
   }
 }
