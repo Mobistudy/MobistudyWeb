@@ -98,7 +98,7 @@ export default {
     const resp = await axios.get(BASE_URL + '/studies/' + studyKey, axiosConfig)
     return resp.data
   },
-  async getStudyStats (countOnly, filter) {
+  async getStudyStats (filter) {
     let queryParams = ''
     let hasParams = false
     for (const param in filter) {
@@ -108,7 +108,7 @@ export default {
         hasParams = true
       }
     }
-    const URL = BASE_URL + '/studyStats' + (countOnly ? '/count' : '') + (hasParams ? '?' : '') + queryParams
+    const URL = BASE_URL + '/studyStats' + (hasParams ? '?' : '') + queryParams
     const resp = await axios.get(URL, axiosConfig)
     return resp.data
   },

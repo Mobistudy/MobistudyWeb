@@ -128,7 +128,7 @@ export default {
           offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
           count: this.pagination.rowsPerPage
         }
-        const stats = await API.getStudyStats(false, queryParams)
+        const stats = await API.getStudyStats(queryParams)
         this.participants = stats.subset
         this.pagination.rowsNumber = stats.totalCount
       } catch (err) {
