@@ -100,14 +100,12 @@ export default {
   },
   async created () {
     if (this.studyKey && this.studyKey !== -1) {
-      console.log('created with studykey')
       this.loadParticipants()
     }
   },
   watch: {
     // update the table if the study key changes
     async studyKey () {
-      console.log('study key changed')
       this.loadParticipants()
     }
   },
@@ -116,12 +114,9 @@ export default {
       return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
     },
     async updateFilter () {
-      console.log('update filters')
       return this.loadParticipants()
     },
     async loadParticipants (params) {
-      console.log('load called with args', params)
-      console.log('pagination', this.pagination)
       this.loading = true
       if (params) this.pagination = params.pagination
       try {
@@ -133,7 +128,6 @@ export default {
           offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
           count: this.pagination.rowsPerPage
         }
-        console.log('query params', queryParams)
         const stats = await API.getStudyStats(false, queryParams)
         this.participants = stats.subset
         this.pagination.rowsNumber = stats.totalCount
