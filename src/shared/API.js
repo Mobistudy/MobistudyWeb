@@ -206,16 +206,17 @@ export default {
     const resp = await axios.get(BASE_URL + '/auditlog/eventTypes', axiosConfig)
     return resp.data
   },
-  async getLogs (countOnly, filter) {
+  async getLogs (filter) {
     let queryParams = ''
-    let firstParam = true
+    let hasParams = false
     for (const param in filter) {
+      // supported params for this API: studyKey, participantName, statusType
       if (filter[param] || filter[param] === 0) {
-        queryParams += (firstParam ? '' : '&') + param + '=' + encodeURIComponent(filter[param])
-        firstParam = false
+        queryParams += (!hasParams ? '' : '&') + param + '=' + encodeURIComponent(filter[param])
+        hasParams = true
       }
     }
-    const URL = BASE_URL + '/auditlog' + (countOnly ? '/count' : '') + (firstParam ? '' : '?') + queryParams
+    const URL = BASE_URL + '/auditlog' + (hasParams ? '?' : '') + queryParams
     const resp = await axios.get(URL, axiosConfig)
     /* EXAMPLE RESPONSE DATA
       obj: Object

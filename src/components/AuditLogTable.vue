@@ -12,6 +12,7 @@
       v-model:pagination="pagination"
       @request="loadLogs"
       :loading="loading"
+      binary-state-sort
     >
       <template #top-left>
         <div class="text-h6 text-center q-my-sm text-secondary text-bold text-uppercase"> Events </div>
@@ -135,10 +136,11 @@ export default {
           userEmail: params.filter.userEmail,
           sortDirection: params.pagination.descending ? 'DESC' : 'ASC',
           offset: (params.pagination.page - 1) * params.pagination.rowsPerPage,
-          rowsPerPage: params.pagination.rowsPerPage === 0 ? undefined : params.pagination.rowsPerPage
+          count: params.pagination.rowsPerPage === 0 ? undefined : params.pagination.rowsPerPage
         }
-        this.pagination.rowsNumber = await API.getLogs(true, queryParams)
-        this.logs = await API.getLogs(false, queryParams)
+        const auditInfo = await API.getLogs(queryParams)
+        this.pagination.rowsNumber = auditInfo.totalCount
+        this.logs = auditInfo.subset
       } catch (err) {
         this.$q.notify({
           color: 'negative',
