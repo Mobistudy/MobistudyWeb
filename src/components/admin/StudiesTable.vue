@@ -139,7 +139,7 @@ export default {
           studyTitle: params.filter.studyTitle,
           sortDirection: params.pagination.descending ? 'DESC' : 'ASC',
           offset: (params.pagination.page - 1) * params.pagination.rowsPerPage,
-          rowsPerPage: params.pagination.rowsPerPage
+          count: params.pagination.rowsPerPage
         }
         this.pagination.rowsNumber = await API.getAllStudies(true, queryParams)
         this.studies = await API.getAllStudies(false, queryParams)
