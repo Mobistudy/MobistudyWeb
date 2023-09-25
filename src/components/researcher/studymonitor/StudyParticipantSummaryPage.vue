@@ -104,9 +104,12 @@
                       <q-img
                         v-if="answer.questionType === 'photo'"
                         :src="answer.answer"
-                        @click="toggleImageFullscreen()"
-                        class="fullscreen-image"
+                        @click="showImage"
                       />
+                      <div v-show="isImageVisible" class="fullscreen-image">
+                        <span class="close-btn" @click="hideImage">&times;</span>
+                        <img :src="answer.answer" alt="Full screen Image" />
+                      </div>
                     </div>
                   </div>
                 </q-card-section>
@@ -130,7 +133,6 @@
                   arrows
                   v-model="slide"
                   v-model:fullscreen="fullscreen"
-                  infinite
                 >
                   <q-carousel-slide :name="1" img-src="https://thumbs.dreamstime.com/z/mano-vendada-37116779.jpg"/>
                   <q-carousel-slide :name="2" img-src="https://www.elnacional.cat/uploads/s1/11/59/28/37/de-jong-ma-inflada-atmikkykiemeney_1_630x630.jpeg" />
@@ -179,6 +181,7 @@ export default {
       locale: this.$i18n.locale,
       tasks: [],
       slide: ref(1),
+      isImageVisible: false,
       fullscreen: ref(false),
       activeTab: 'tab-chart',
       pagination: { page: 1, rowsPerPage: 10, rowsNumber: 0, sortBy: 'createdTS', descending: true },
@@ -271,17 +274,13 @@ export default {
         })
       }
     },
-    toggleImageFullscreen () {
-      if (this.fullscreen) {
-        this.fullscreen = false
-      } else {
-        this.$nextTick(() => {
-          const element = document.querySelector('.fullscreen-image')
-          if (element) {
-            element.requestFullscreen()
-          }
-        })
-      }
+    showImage () {
+      this.isImageVisible = true
+      document.body.style.overflow = 'hidden'
+    },
+    hideImage () {
+      this.isImageVisible = false
+      document.body.style.overflow = 'auto'
     },
     initializeChart () {
       const ctx = document.getElementById('myChart').getContext('2d')
@@ -325,6 +324,34 @@ export default {
 <style scoped>
 .full-width {
   width: 100%;
+}
+
+.fullscreen-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.fullscreen-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.close-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 2rem;
+  color: white;
+  cursor: pointer;
 }
 
 .card-title {
