@@ -268,7 +268,7 @@ export default {
           userKey: params.filter.userKey
         }
         this.tasks = await API.getTasksResults(queryParams.studyKey, queryParams.userKey)
-              } catch (err) {
+      } catch (err) {
         this.$q.notify({
           color: 'negative',
           message: 'Cannot retrieve tasks',
@@ -279,7 +279,7 @@ export default {
     },
     async showTaskData (props) {
       try {
-                this.taskDataContent = await API.getTaskAttachment(this.studyKey, this.userKey, props.row.taskId, props.row.attachments[0])
+        this.taskDataContent = await API.getTaskAttachment(this.studyKey, this.userKey, props.row.taskId, props.row.attachments[0])
         this.taskDataType = props.row.taskType
         this.taskCompletedDate = props.row.summary.completedTS
         this.taskDataModal = true
