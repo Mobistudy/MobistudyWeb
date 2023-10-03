@@ -208,6 +208,9 @@ export default {
         'https://www.elnacional.cat/uploads/s1/11/59/28/37/de-jong-ma-inflada-atmikkykiemeney_1_630x630.jpeg',
         'https://media.istockphoto.com/id/682976484/es/foto/parte-hombre-del-cuerpo-con-la-mano-vendada.jpg?s=612x612&w=is&k=20&c=APAnkDXG4nMweVKVzH2W1uaBaNTLP2-1CZg3mWI1jDQ='
       ],
+      tasksToLoad: [],
+      images: {},
+      currentIndex: 0,
       tasks: [],
       slide: ref(1),
       isImageVisible: false,
@@ -250,6 +253,14 @@ export default {
         pagination: this.pagination,
         filter: this.filter
       })
+    },
+    tasks: {
+      immediate: true, // Carga la primera imagen cuando `tasks` cambia por primera vez
+      handler (newTasks) {
+        if (newTasks.length > 0) {
+          this.loadFirstImage()
+        }
+      }
     }
   },
   mounted () {
@@ -268,6 +279,7 @@ export default {
           userKey: params.filter.userKey
         }
         this.tasks = await API.getTasksResults(queryParams.studyKey, queryParams.userKey)
+        console.log(this.tasks)
       } catch (err) {
         this.$q.notify({
           color: 'negative',
@@ -301,6 +313,42 @@ export default {
           message: 'Cannot retrieve participant',
           icon: 'report_problem'
         })
+      }
+    },
+    async loadFirstImage () {
+      // Verifica si hay tareas disponibles
+      if (this.tasks.length > 0) {
+        const firstTaskToLoad = this.tasks[0]
+        console.log('primera imagen')
+        this.tasksToLoad.push(firstTaskToLoad)
+        await this.loadNextImage()
+      }
+    },
+
+    async loadNextImage () {
+      if (this.currentIndex < this.tasksToLoad.length) {
+        const taskToLoad = this.tasksToLoad[this.currentIndex]
+        const taskId = taskToLoad.taskId
+        const jsonId = taskToLoad.attachments[0]
+        try {
+          const response = await fetch(`/api/tasksuploads/studykey/userkey/${taskId}/${jsonId}`)
+          if (response.ok) {
+            const imageUrl = await response.json()
+            this.images[`${taskId}-${jsonId}`] = imageUrl
+            this.currentIndex++
+          } else {
+            this.images[`${taskId}-${jsonId}`] = 'imagen-de-marcador-de-posicion.jpg'
+          }
+        } catch (error) {
+          console.error('Error al cargar la imagen:', error)
+        }
+      }
+    },
+    handleChange (index) {
+      if (index >= this.images.length) {
+        const taskToLoad = this.tasks[index] // Suponiendo que `tasks` contiene las tareas con ID de tarea y JSON ID
+        this.tasksToLoad.push(taskToLoad) // Agrega el objeto que contiene los IDs de tarea y JSON
+        this.loadNextImage() // Inicia la carga de la próxima imagen
       }
     },
     showImage () {
