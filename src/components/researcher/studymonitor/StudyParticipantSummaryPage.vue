@@ -127,10 +127,10 @@
               </div>
 
               <div v-else>
-                <Carousel :current="currentIndex" @change="handleChange">
+                <Carousel :current="currentIndex">
                   <Slide v-for="(imageUrl, index) in images" :key="index">
                     <div class="carousel__item">
-                      <img :src="imageUrl" alt="Image" />
+                      <img :src="imageUrl" alt="Image" @click="handleChange(index)"/>
                     </div>
                   </Slide>
                   <template #addons>
@@ -200,7 +200,7 @@ export default {
     return {
       locale: this.$i18n.locale,
       tasksToLoad: [],
-      images: {},
+      images: [],
       currentIndex: 0,
       tasks: [],
       slide: ref(1),
@@ -330,7 +330,6 @@ export default {
             this.images[this.currentIndex] = imageUrl
             console.log(this.images)
             this.currentIndex++
-            this.loadNextImage()
           } else {
             console.error('No se encontró una pregunta de tipo "photo" en los datos.')
           }
@@ -340,7 +339,8 @@ export default {
       }
     },
     handleChange (index) {
-      if (index === this.currentIndex) {
+      console.log(index)
+      if (index === this.currentIndex - 1) {
         const taskToLoad = this.tasks[this.currentIndex]
         this.tasksToLoad.push(taskToLoad)
         this.loadNextImage()
