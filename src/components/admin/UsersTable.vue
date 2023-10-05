@@ -94,7 +94,7 @@ export default {
           userEmail: params.filter.userEmail,
           sortDirection: params.pagination.descending ? 'DESC' : 'ASC',
           offset: (params.pagination.page - 1) * params.pagination.rowsPerPage,
-          rowsPerPage: params.pagination.rowsPerPage === 0 ? undefined : params.pagination.rowsPerPage
+          count: params.pagination.rowsPerPage === 0 ? undefined : params.pagination.rowsPerPage
         }
         this.pagination.rowsNumber = await API.getAllUsers(true, queryParams)
         this.users = await API.getAllUsers(false, queryParams)

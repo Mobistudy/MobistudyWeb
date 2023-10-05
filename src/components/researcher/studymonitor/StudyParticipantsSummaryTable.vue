@@ -120,7 +120,7 @@ export default {
       this.loading = true
       if (params) this.pagination = params.pagination
       try {
-        // supported params for this API: studyKey, participantName, statusType, offset, rowsPerPage
+        // supported params for this API: studyKey, participantName, statusType, offset, count
         const queryParams = {
           studyKey: this.studyKey,
           participantName: this.filter.name,
