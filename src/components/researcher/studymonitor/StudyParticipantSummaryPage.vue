@@ -104,9 +104,12 @@
                       <q-img
                         v-if="answer.questionType === 'photo'"
                         :src="answer.answer"
-                        @click="toggleImageFullscreen()"
-                        class="fullscreen-image"
+                        @click="showImage"
                       />
+                      <div v-show="isImageVisible" class="fullscreen-image">
+                        <span class="close-btn" @click="hideImage">&times;</span>
+                        <img :src="answer.answer" alt="Full screen Image" />
+                      </div>
                     </div>
                   </div>
                 </q-card-section>
@@ -124,13 +127,24 @@
               </div>
 
               <div v-else>
-                <q-carousel
+                <Carousel :current="currentIndex">
+                  <Slide v-for="(imageUrl, index) in images" :key="index">
+                    <div class="carousel__item">
+                      <img :src="imageUrl" alt="Image" @click="handleChange(index)"/>
+                    </div>
+                  </Slide>
+                  <template #addons>
+                    <Navigation />
+                    <Pagination />
+                  </template>
+                </Carousel>
+                <!-- <q-carousel
                   swipeable
                   animated
                   arrows
+                  draggable="false"
                   v-model="slide"
                   v-model:fullscreen="fullscreen"
-                  infinite
                 >
                   <q-carousel-slide :name="1" img-src="https://thumbs.dreamstime.com/z/mano-vendada-37116779.jpg"/>
                   <q-carousel-slide :name="2" img-src="https://www.elnacional.cat/uploads/s1/11/59/28/37/de-jong-ma-inflada-atmikkykiemeney_1_630x630.jpeg" />
@@ -153,7 +167,7 @@
                       />
                     </q-carousel-control>
                   </template>
-                </q-carousel>
+                </q-carousel> -->
               </div>
             </div>
           </div>
@@ -169,16 +183,28 @@ import { bestLocale } from '@mixins/bestLocale'
 import { date } from 'quasar'
 import { ref } from 'vue'
 import Chart from 'chart.js/auto'
+import 'vue3-carousel/dist/carousel.css'
+import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 
 export default {
   name: 'StudyParticipant',
   props: ['studyKey', 'userKey'],
   mixins: [bestLocale],
+  components: {
+    Carousel,
+    Slide,
+    Pagination,
+    Navigation
+  },
   data () {
     return {
       locale: this.$i18n.locale,
+      tasksToLoad: [],
+      images: [],
+      currentIndex: 0,
       tasks: [],
       slide: ref(1),
+      isImageVisible: false,
       fullscreen: ref(false),
       activeTab: 'tab-chart',
       pagination: { page: 1, rowsPerPage: 10, rowsNumber: 0, sortBy: 'createdTS', descending: true },
@@ -218,6 +244,14 @@ export default {
         pagination: this.pagination,
         filter: this.filter
       })
+    },
+    tasks: {
+      immediate: true, // Carga la primera imagen cuando `tasks` cambia por primera vez
+      handler (newTasks) {
+        if (newTasks.length > 0) {
+          this.loadFirstImage()
+        }
+      }
     }
   },
   mounted () {
@@ -236,6 +270,7 @@ export default {
           userKey: params.filter.userKey
         }
         this.tasks = await API.getTasksResults(queryParams.studyKey, queryParams.userKey)
+        console.log(this.tasks)
       } catch (err) {
         this.$q.notify({
           color: 'negative',
@@ -271,17 +306,53 @@ export default {
         })
       }
     },
-    toggleImageFullscreen () {
-      if (this.fullscreen) {
-        this.fullscreen = false
-      } else {
-        this.$nextTick(() => {
-          const element = document.querySelector('.fullscreen-image')
-          if (element) {
-            element.requestFullscreen()
-          }
-        })
+    async loadFirstImage () {
+      // Verifica si hay tareas disponibles
+      if (this.tasks.length > 0) {
+        const firstTaskToLoad = this.tasks[0]
+        console.log('primera imagen')
+        this.tasksToLoad.push(firstTaskToLoad)
+        await this.loadNextImage()
       }
+    },
+
+    async loadNextImage () {
+      if (this.currentIndex < this.tasksToLoad.length) {
+        const taskToLoad = this.tasksToLoad[this.currentIndex]
+        const taskId = taskToLoad.taskId
+        const jsonId = taskToLoad.attachments[0]
+        try {
+          const response = await API.getTaskAttachment(this.studyKey, this.userKey, taskId, jsonId)
+          console.log(response)
+          const photo = response.find(item => item.questionType === 'photo')
+          if (photo) {
+            const imageUrl = photo.answer
+            this.images[this.currentIndex] = imageUrl
+            console.log(this.images)
+            this.currentIndex++
+          } else {
+            console.error('No se encontró una pregunta de tipo "photo" en los datos.')
+          }
+        } catch (error) {
+          console.error('Error al cargar la imagen:', error)
+        }
+      }
+    },
+    handleChange (index) {
+      console.log(index)
+      if (index === this.currentIndex - 1) {
+        const taskToLoad = this.tasks[this.currentIndex]
+        this.tasksToLoad.push(taskToLoad)
+        this.loadNextImage()
+      }
+    },
+    showImage () {
+      this.isImageVisible = true
+      document.body.style.overflow = 'hidden'
+    },
+    hideImage () {
+      this.isImageVisible = false
+      document.body.style.overflow = 'auto'
     },
     initializeChart () {
       const ctx = document.getElementById('myChart').getContext('2d')
@@ -325,6 +396,35 @@ export default {
 <style scoped>
 .full-width {
   width: 100%;
+}
+.full-height {
+  height: 100%;
+}
+.fullscreen-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.fullscreen-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.close-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 2rem;
+  color: white;
+  cursor: pointer;
 }
 
 .card-title {
@@ -386,5 +486,32 @@ export default {
   'wght' 400,
   'GRAD' 0,
   'opsz' 48
+}
+
+.carousel__item {
+  height: 100%;
+  width: 100%;
+  color: var(--vc-clr-white);
+  font-size: 20px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carousel__item > img{
+  max-width:100% !important ;
+  max-height: 900px !important ;
+}
+
+.carousel__slide {
+  padding: 10px;
+}
+
+.carousel__prev,
+.carousel__next {
+  box-sizing: content-box;
+  border: 5px solid white;
+  color: #ccc;
 }
 </style>
