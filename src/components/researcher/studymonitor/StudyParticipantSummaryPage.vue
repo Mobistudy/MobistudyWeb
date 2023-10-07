@@ -340,7 +340,7 @@ export default {
     },
     handleChange (index) {
       console.log(index)
-      if (index === this.currentIndex - 1) {
+      if (index === this.currentIndex - 1 && this.tasks[this.currentIndex]) {
         const taskToLoad = this.tasks[this.currentIndex]
         this.tasksToLoad.push(taskToLoad)
         this.loadNextImage()
