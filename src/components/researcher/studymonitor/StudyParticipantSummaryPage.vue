@@ -133,12 +133,8 @@
                       <img :src="slides[current]" alt="Image" class="slide-image"/>
                     </div>
                   </transition-group>
-                  <div class="btn btn-prev" aria-label="Previous slide" @click="slide(-1)">
-                    Prev
-                  </div>
-                  <div class="btn btn-next" aria-label="Next slide" @click="slide(1)">
-                    Next
-                  </div>
+                  <q-btn class="btn btn-prev" round color="secondary" icon="navigate_before" aria-label="Previous slide" @click="slide(-1)" />
+                  <q-btn  class="btn btn-next" round color="secondary" icon="navigate_next" aria-label="Next slide" @click="slide(1)"/>
                 </div>
               </div>
             </div>
@@ -503,6 +499,7 @@ export default {
 /* SLIDES CLASSES */
 
 #slider {
+  margin-top: 5px;
   width: 100%;
   position: relative;
 }
@@ -523,12 +520,9 @@ export default {
 .btn {
   z-index: 10;
   cursor: pointer;
-  border: 3px solid #fff;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 70px;
-  height: 70px;
   position: absolute;
   top: calc(50% - 35px);
   left: 1%;
