@@ -155,7 +155,6 @@ import { bestLocale } from '@mixins/bestLocale'
 import { date } from 'quasar'
 import { ref } from 'vue'
 import Chart from 'chart.js/auto'
-import 'vue3-carousel/dist/carousel.css'
 
 export default {
   name: 'StudyParticipant',
