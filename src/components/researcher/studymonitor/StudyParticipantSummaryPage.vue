@@ -133,10 +133,14 @@
                       There are no images available in the tasks.
                     </div>
                     <div v-else :key="current" class="slide">
-                      <img :src="slides[current]" alt="Image" class="slide-image"/>
+                      <q-img :src="slides[current].imageUrl" alt="Image" class="slide-image">
+                        <div class="absolute-bottom text-subtitle1 text-center">
+                          <span>{{ niceTimestamp(slides[current].date) }}</span>
+                        </div>
+                      </q-img>
                     </div>
                   </transition-group>
-                  <q-btn v-if="slides.length > 0" class="btn btn-prev" round color="secondary" icon="navigate_before" aria-label="Previous slide" @click="slide(-1)" />
+                  <q-btn v-if="slides.length > 0" class="btn btn-prev" round color="secondary" icon="navigate_before" aria-label="Previous slide" @click="slide(-1)"/>
                   <q-btn v-if="slides.length > 0" class="btn btn-next" round color="secondary" icon="navigate_next" aria-label="Next slide" @click="slide(1)"/>
                 </div>
               </div>
@@ -293,8 +297,11 @@ export default {
           console.log(response)
           const photo = response.find(item => item.questionType === 'photo')
           if (photo) {
-            const imageUrl = photo.answer
-            this.slides[this.currentIndex] = imageUrl
+            const slide = {
+              date: photo.timeStamp,
+              imageUrl: photo.answer
+            }
+            this.slides.push(slide)
             console.log(this.slides)
             this.currentIndex++
           } else {
@@ -456,7 +463,6 @@ export default {
 }
 .my-q-bar{
   padding: 30px 20px 30px 20px;
-  /* background-color: #f5f5f5; */
   border-bottom: 1px solid #ccc;
 }
 .material-symbols-outlined {
@@ -467,6 +473,7 @@ export default {
   'GRAD' 0,
   'opsz' 48
 }
+
 /* CAROUSEL */
 
 /* FADE IN */
@@ -502,13 +509,11 @@ export default {
 }
 
 /* SLIDES CLASSES */
-
 #slider {
   margin-top: 5px;
   width: 100%;
   position: relative;
 }
-
 .slide {
   width: 100%;
   top: 0;
@@ -544,6 +549,7 @@ export default {
   transform: scale(1.1);
 }
 
+/* CAROUSEL FALLBACK */
 .no-images-message {
   display: flex;
   justify-content: center;
@@ -557,7 +563,6 @@ export default {
   margin: 20px; /* Márgenes alrededor del mensaje */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Sombra, ajusta según tus preferencias */
 }
-
 .no-images-message:hover {
   background-color: #f5c6cb; /* Cambiar color de fondo al pasar el cursor */
   transition: background-color 0.3s ease-in-out;
