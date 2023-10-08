@@ -129,12 +129,15 @@
               <div v-else>
                 <div id="slider">
                   <transition-group tag="div" :name="transitionName" class="slides-group">
-                    <div v-if="show" :key="current" class="slide">
+                    <div v-if="slides.length === 0" class="no-images-message">
+                      There are no images available in the tasks.
+                    </div>
+                    <div v-else :key="current" class="slide">
                       <img :src="slides[current]" alt="Image" class="slide-image"/>
                     </div>
                   </transition-group>
-                  <q-btn class="btn btn-prev" round color="secondary" icon="navigate_before" aria-label="Previous slide" @click="slide(-1)" />
-                  <q-btn  class="btn btn-next" round color="secondary" icon="navigate_next" aria-label="Next slide" @click="slide(1)"/>
+                  <q-btn v-if="slides.length > 0" class="btn btn-prev" round color="secondary" icon="navigate_before" aria-label="Previous slide" @click="slide(-1)" />
+                  <q-btn v-if="slides.length > 0" class="btn btn-next" round color="secondary" icon="navigate_next" aria-label="Next slide" @click="slide(1)"/>
                 </div>
               </div>
             </div>
@@ -295,6 +298,8 @@ export default {
             console.log(this.slides)
             this.currentIndex++
           } else {
+            this.currentIndex++
+            this.handleChange()
             console.error('No se encontró una pregunta de tipo "photo" en los datos.')
           }
         } catch (error) {
@@ -537,5 +542,24 @@ export default {
 
 .btn:hover {
   transform: scale(1.1);
+}
+
+.no-images-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 500px; /* Ajusta la altura según tus preferencias */
+  font-size: 1.5rem;
+  color: #f00; /* Color de texto rojo, puedes cambiarlo a tu preferencia */
+  background-color: #fff; /* Color de fondo blanco, puedes cambiarlo según tu diseño */
+  border: 1px solid #f00; /* Borde rojo, puedes cambiarlo según tu diseño */
+  border-radius: 4px; /* Borde redondeado, ajusta según tus preferencias */
+  margin: 20px; /* Márgenes alrededor del mensaje */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Sombra, ajusta según tus preferencias */
+}
+
+.no-images-message:hover {
+  background-color: #f5c6cb; /* Cambiar color de fondo al pasar el cursor */
+  transition: background-color 0.3s ease-in-out;
 }
 </style>
