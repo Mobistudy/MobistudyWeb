@@ -130,7 +130,7 @@
                 <div id="slider">
                   <transition-group tag="div" :name="transitionName" class="slides-group">
                     <div v-if="show" :key="current" class="slide">
-                      <img :src="slides[current]" alt="Image"/>
+                      <img :src="slides[current]" alt="Image" class="slide-image"/>
                     </div>
                   </transition-group>
                   <div class="btn btn-prev" aria-label="Previous slide" @click="slide(-1)">
@@ -502,18 +502,6 @@ export default {
 
 /* SLIDES CLASSES */
 
-.blue {
-  background: #4a69bd;
-}
-
-.red {
-  background: #e55039;
-}
-
-.yellow {
-  background: #f6b93b;
-}
-
 #slider {
   width: 100%;
   position: relative;
@@ -528,6 +516,10 @@ export default {
   justify-content: center;
 }
 
+.slide-image {
+  max-width: 100%;
+  max-height: 100%;
+}
 .btn {
   z-index: 10;
   cursor: pointer;
