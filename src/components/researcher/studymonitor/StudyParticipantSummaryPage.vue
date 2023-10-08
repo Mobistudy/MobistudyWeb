@@ -127,47 +127,19 @@
               </div>
 
               <div v-else>
-                <Carousel :current="currentIndex">
-                  <Slide v-for="(imageUrl, index) in images" :key="index">
-                    <div class="carousel__item">
-                      <img :src="imageUrl" alt="Image" @click="handleChange(index)"/>
+                <div id="slider">
+                  <transition-group tag="div" :name="transitionName" class="slides-group">
+                    <div v-if="show" :key="current" class="slide">
+                      <img :src="slides[current]" alt="Image"/>
                     </div>
-                  </Slide>
-                  <template #addons>
-                    <Navigation />
-                    <Pagination />
-                  </template>
-                </Carousel>
-                <!-- <q-carousel
-                  swipeable
-                  animated
-                  arrows
-                  draggable="false"
-                  v-model="slide"
-                  v-model:fullscreen="fullscreen"
-                >
-                  <q-carousel-slide :name="1" img-src="https://thumbs.dreamstime.com/z/mano-vendada-37116779.jpg"/>
-                  <q-carousel-slide :name="2" img-src="https://www.elnacional.cat/uploads/s1/11/59/28/37/de-jong-ma-inflada-atmikkykiemeney_1_630x630.jpeg" />
-                  <q-carousel-slide :name="3" img-src="https://media.istockphoto.com/id/682976484/es/foto/parte-hombre-del-cuerpo-con-la-mano-vendada.jpg?s=612x612&w=is&k=20&c=APAnkDXG4nMweVKVzH2W1uaBaNTLP2-1CZg3mWI1jDQ=" />
-                  <q-carousel-slide :name="4" img-src="https://cdn.quasar.dev/img/quasar.jpg" />
-
-                  <template v-slot:control>
-                    <q-carousel-control
-                      position="bottom-right"
-                      :offset="[18, 18]"
-                    >
-                      <q-btn
-                        push
-                        round
-                        dense
-                        color="white"
-                        text-color="secondary"
-                        :icon="fullscreen ? 'fullscreen_exit' : 'fullscreen'"
-                        @click="fullscreen = !fullscreen"
-                      />
-                    </q-carousel-control>
-                  </template>
-                </q-carousel> -->
+                  </transition-group>
+                  <div class="btn btn-prev" aria-label="Previous slide" @click="slide(-1)">
+                    Prev
+                  </div>
+                  <div class="btn btn-next" aria-label="Next slide" @click="slide(1)">
+                    Next
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -184,26 +156,22 @@ import { date } from 'quasar'
 import { ref } from 'vue'
 import Chart from 'chart.js/auto'
 import 'vue3-carousel/dist/carousel.css'
-import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 
 export default {
   name: 'StudyParticipant',
   props: ['studyKey', 'userKey'],
   mixins: [bestLocale],
-  components: {
-    Carousel,
-    Slide,
-    Pagination,
-    Navigation
-  },
   data () {
     return {
       locale: this.$i18n.locale,
+      current: 0,
+      direction: 1,
+      transitionName: 'fade',
+      show: false,
+      slides: [],
       tasksToLoad: [],
-      images: [],
       currentIndex: 0,
       tasks: [],
-      slide: ref(1),
       isImageVisible: false,
       fullscreen: ref(false),
       activeTab: 'tab-chart',
@@ -257,6 +225,7 @@ export default {
   mounted () {
     this.getParticipant()
     this.initializeChart()
+    this.show = true
   },
   methods: {
     niceTimestamp (timeStamp) {
@@ -327,8 +296,8 @@ export default {
           const photo = response.find(item => item.questionType === 'photo')
           if (photo) {
             const imageUrl = photo.answer
-            this.images[this.currentIndex] = imageUrl
-            console.log(this.images)
+            this.slides[this.currentIndex] = imageUrl
+            console.log(this.slides)
             this.currentIndex++
           } else {
             console.error('No se encontró una pregunta de tipo "photo" en los datos.')
@@ -338,13 +307,24 @@ export default {
         }
       }
     },
-    handleChange (index) {
-      console.log(index)
-      if (index === this.currentIndex - 1 && this.tasks[this.currentIndex]) {
+    async handleChange () {
+      if (this.tasks[this.currentIndex]) {
         const taskToLoad = this.tasks[this.currentIndex]
         this.tasksToLoad.push(taskToLoad)
-        this.loadNextImage()
+        await this.loadNextImage()
       }
+    },
+    async slide (dir) {
+      this.direction = dir
+      if (dir === 1 && !this.slides[this.current + dir]) {
+        console.log('load more images..')
+        await this.handleChange()
+      }
+      dir === 1
+        ? (this.transitionName = 'slide-next')
+        : (this.transitionName = 'slide-prev')
+      const len = this.slides.length
+      this.current = (this.current + dir % len + len) % len
     },
     showImage () {
       this.isImageVisible = true
@@ -487,31 +467,90 @@ export default {
   'GRAD' 0,
   'opsz' 48
 }
+/* CAROUSEL */
 
-.carousel__item {
-  height: 100%;
+/* FADE IN */
+.fade-enter-active {
+  transition: opacity 1s;
+}
+.fade-enter {
+  opacity: 0;
+}
+
+/* GO TO NEXT SLIDE */
+.slide-next-enter-active,
+.slide-next-leave-active {
+  transition: transform 0.5s ease-in-out;
+}
+.slide-next-enter {
+  transform: translate(100%);
+}
+.slide-next-leave-to {
+  transform: translate(-100%);
+}
+
+/* GO TO PREVIOUS SLIDE */
+.slide-prev-enter-active,
+.slide-prev-leave-active {
+  transition: transform 0.5s ease-in-out;
+}
+.slide-prev-enter {
+  transform: translate(-100%);
+}
+.slide-prev-leave-to {
+  transform: translate(100%);
+}
+
+/* SLIDES CLASSES */
+
+.blue {
+  background: #4a69bd;
+}
+
+.red {
+  background: #e55039;
+}
+
+.yellow {
+  background: #f6b93b;
+}
+
+#slider {
   width: 100%;
-  color: var(--vc-clr-white);
-  font-size: 20px;
-  border-radius: 8px;
+  position: relative;
+}
+
+.slide {
+  width: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn {
+  z-index: 10;
+  cursor: pointer;
+  border: 3px solid #fff;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 70px;
+  height: 70px;
+  position: absolute;
+  top: calc(50% - 35px);
+  left: 1%;
+  transition: transform 0.3s ease-in-out;
+  user-select: none;
 }
 
-.carousel__item > img{
-  max-width:100% !important ;
-  max-height: 900px !important ;
+.btn-next {
+  left: auto;
+  right: 1%;
 }
 
-.carousel__slide {
-  padding: 10px;
-}
-
-.carousel__prev,
-.carousel__next {
-  box-sizing: content-box;
-  border: 5px solid white;
-  color: #ccc;
+.btn:hover {
+  transform: scale(1.1);
 }
 </style>
