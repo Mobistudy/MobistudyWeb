@@ -123,7 +123,11 @@
             </q-tabs>
             <div>
               <div v-if="activeTab === 'tab-chart'">
-                <canvas id="myChart"></canvas>
+                <Bar
+                  id="my-chart-id"
+                  :options="chartOptions"
+                  :data="chartData"
+                />
               </div>
 
               <div v-else>
@@ -157,11 +161,15 @@ import API from '@shared/API.js'
 import { bestLocale } from '@mixins/bestLocale'
 import { date } from 'quasar'
 import { ref } from 'vue'
-import Chart from 'chart.js/auto'
+import { Bar } from 'vue-chartjs'
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 export default {
   name: 'StudyParticipant',
   props: ['studyKey', 'userKey'],
+  components: { Bar },
   mixins: [bestLocale],
   data () {
     return {
@@ -191,7 +199,14 @@ export default {
       taskDataContent: undefined,
       taskDataModal: false,
       taskCompletedDate: undefined,
-      loading: false
+      loading: false,
+      chartData: {
+        labels: ['January', 'February', 'March'],
+        datasets: [{ data: [40, 20, 12] }]
+      },
+      chartOptions: {
+        responsive: true
+      }
     }
   },
   async created () {
@@ -226,7 +241,6 @@ export default {
   },
   mounted () {
     this.getParticipant()
-    this.initializeChart()
     this.show = true
   },
   methods: {
@@ -340,27 +354,6 @@ export default {
     hideImage () {
       this.isImageVisible = false
       document.body.style.overflow = 'auto'
-    },
-    initializeChart () {
-      const ctx = document.getElementById('myChart').getContext('2d')
-      this.chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['2023-06-04', '2023-06-07', '2023-06-19', '2023-06-25'],
-          datasets: [{
-            label: 'Pain',
-            data: [5, 3, 3, 1],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      })
     },
     showImages () {
       this.activeTab = 'tab-images'
