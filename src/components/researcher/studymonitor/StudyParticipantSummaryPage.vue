@@ -214,11 +214,6 @@ export default {
         responsive: true,
         scales: {
           x: {
-            type: 'time', // Set the x-axis to display time values
-            time: {
-              unit: 'day', // Adjust the time unit as needed
-              tooltipFormat: 'YYYY-MM-DD' // Format for tooltip display
-            },
             title: {
               display: true,
               text: 'Timestamp'
@@ -402,12 +397,12 @@ export default {
       }
       console.log(chartData)
       // Update the chartData object
-      this.chartData.labels = chartData.map(item => item.timestamp)
+      this.chartData.labels = chartData.map(item => this.niceTimestamp(item.timestamp))
       this.chartData.datasets[0].data = chartData.map(item => item.value)
 
-      // You may want to sort the data by timestamp to ensure it's in chronological order
-      this.chartData.labels.sort()
-      this.chartData.datasets[0].data.sort()
+      // this.chartData.labels.sort()
+      // this.chartData.datasets[0].data.sort()
+      console.log(this.chartData)
     },
     showImage () {
       this.isImageVisible = true
