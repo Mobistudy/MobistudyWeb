@@ -385,6 +385,7 @@ export default {
             return item.questionType === 'number' || item.questionType === 'slider'
           }).map(item => {
             return {
+              type: this.getBestLocale(item.questionText),
               timestamp: item.timeStamp,
               value: item.answer
             }
@@ -399,9 +400,6 @@ export default {
       // Update the chartData object
       this.chartData.labels = chartData.map(item => this.niceTimestamp(item.timestamp))
       this.chartData.datasets[0].data = chartData.map(item => item.value)
-
-      // this.chartData.labels.sort()
-      // this.chartData.datasets[0].data.sort()
       console.log(this.chartData)
     },
     showImage () {
