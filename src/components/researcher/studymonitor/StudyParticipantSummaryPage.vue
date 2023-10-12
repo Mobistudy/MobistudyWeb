@@ -162,9 +162,10 @@ import { bestLocale } from '@mixins/bestLocale'
 import { date } from 'quasar'
 import { ref } from 'vue'
 import { Bar } from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, TimeScale } from 'chart.js'
+import 'chartjs-adapter-date-fns'
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, TimeScale)
 
 export default {
   name: 'StudyParticipant',
@@ -201,11 +202,35 @@ export default {
       taskCompletedDate: undefined,
       loading: false,
       chartData: {
-        labels: ['January', 'February', 'March'],
-        datasets: [{ data: [40, 20, 12] }]
+        labels: [],
+        datasets: [
+          {
+            backgroundColor: '#71bbcd',
+            data: []
+          }
+        ]
       },
       chartOptions: {
-        responsive: true
+        responsive: true,
+        scales: {
+          x: {
+            type: 'time', // Set the x-axis to display time values
+            time: {
+              unit: 'day', // Adjust the time unit as needed
+              tooltipFormat: 'YYYY-MM-DD' // Format for tooltip display
+            },
+            title: {
+              display: true,
+              text: 'Timestamp'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Value'
+            }
+          }
+        }
       }
     }
   },
@@ -235,6 +260,7 @@ export default {
       handler (newTasks) {
         if (newTasks.length > 0) {
           this.loadFirstImage()
+          this.updateChartData()
         }
       }
     }
@@ -346,6 +372,42 @@ export default {
         : (this.transitionName = 'slide-prev')
       const len = this.slides.length
       this.current = (this.current + dir % len + len) % len
+    },
+    async updateChartData () {
+      const chartData = []
+
+      // Iterate through the tasks
+      for (const task of this.tasks) {
+        const taskId = task.taskId
+        const jsonId = task.attachments[0]
+
+        try {
+          // Fetch the task attachment data
+          const taskAttachment = await API.getTaskAttachment(this.studyKey, this.userKey, taskId, jsonId)
+
+          // Filter and process data for "number" and "slider" question types
+          const filteredData = taskAttachment.filter(item => {
+            return item.questionType === 'number' || item.questionType === 'slider'
+          }).map(item => {
+            return {
+              timestamp: item.timeStamp,
+              value: item.answer
+            }
+          })
+          // Add the filtered data to the chart data array
+          chartData.push(...filteredData)
+        } catch (error) {
+          console.error('Error fetching task attachment:', error)
+        }
+      }
+      console.log(chartData)
+      // Update the chartData object
+      this.chartData.labels = chartData.map(item => item.timestamp)
+      this.chartData.datasets[0].data = chartData.map(item => item.value)
+
+      // You may want to sort the data by timestamp to ensure it's in chronological order
+      this.chartData.labels.sort()
+      this.chartData.datasets[0].data.sort()
     },
     showImage () {
       this.isImageVisible = true
