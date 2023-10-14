@@ -205,8 +205,14 @@ export default {
         labels: [],
         datasets: [
           {
-            backgroundColor: '#71bbcd',
-            data: []
+            label: 'Pain',
+            backgroundColor: 'rgba(255, 0, 0, 0.5)', // Red color with transparency
+            data: [] // Pain data values
+          },
+          {
+            label: 'Temperature',
+            backgroundColor: 'rgba(0, 0, 255, 0.5)', // Blue color with transparency
+            data: [] // Temperature data values
           }
         ]
       },
@@ -397,10 +403,33 @@ export default {
         }
       }
       console.log(chartData)
+      // Group timestamps by day
+      const uniqueDates = [...new Set(chartData.map(item => this.getDateForChart(item.timestamp)))]
+
+      // Initialize datasets with empty arrays
+      const painData = Array(uniqueDates.length).fill(0)
+      const temperatureData = Array(uniqueDates.length).fill(0)
+
+      // Update dataset values based on the data
+      chartData.forEach(item => {
+        const dateIndex = uniqueDates.indexOf(this.getDateForChart(item.timestamp))
+        if (item.type === 'Pain') {
+          painData[dateIndex] += item.value
+        } else if (item.type === 'Temperature') {
+          temperatureData[dateIndex] += item.value
+        }
+      })
+
       // Update the chartData object
-      this.chartData.labels = chartData.map(item => this.niceTimestamp(item.timestamp))
-      this.chartData.datasets[0].data = chartData.map(item => item.value)
+      this.chartData.labels = uniqueDates
+      this.chartData.datasets[0].data = painData
+      this.chartData.datasets[1].data = temperatureData
+
       console.log(this.chartData)
+    },
+    getDateForChart (timeStamp) {
+      const date = new Date(timeStamp)
+      return date.toISOString().split('T')[0]
     },
     showImage () {
       this.isImageVisible = true
