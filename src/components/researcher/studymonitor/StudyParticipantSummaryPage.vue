@@ -124,6 +124,7 @@
             <div>
               <div v-if="activeTab === 'tab-chart'">
                 <Bar
+                  v-if="chartLoaded"
                   id="my-chart-id"
                   :options="chartOptions"
                   :data="chartData"
@@ -201,18 +202,19 @@ export default {
       taskDataModal: false,
       taskCompletedDate: undefined,
       loading: false,
+      chartLoaded: false,
       chartData: {
         labels: [],
         datasets: [
           {
             label: 'Pain',
-            backgroundColor: 'rgba(255, 0, 0, 0.5)', // Red color with transparency
-            data: [] // Pain data values
+            backgroundColor: 'rgba(255, 0, 0, 0.5)',
+            data: []
           },
           {
             label: 'Temperature',
-            backgroundColor: 'rgba(0, 0, 255, 0.5)', // Blue color with transparency
-            data: [] // Temperature data values
+            backgroundColor: 'rgba(0, 0, 255, 0.5)',
+            data: []
           }
         ]
       },
@@ -222,7 +224,7 @@ export default {
           x: {
             title: {
               display: true,
-              text: 'Timestamp'
+              text: 'Date'
             }
           },
           y: {
@@ -246,6 +248,7 @@ export default {
       pagination: this.pagination,
       filter: this.filter
     })
+    this.loadChartData()
   },
   watch: {
     // update the table if the study key changes
@@ -377,16 +380,13 @@ export default {
     async updateChartData () {
       const chartData = []
 
-      // Iterate through the tasks
       for (const task of this.tasks) {
         const taskId = task.taskId
         const jsonId = task.attachments[0]
 
         try {
-          // Fetch the task attachment data
           const taskAttachment = await API.getTaskAttachment(this.studyKey, this.userKey, taskId, jsonId)
 
-          // Filter and process data for "number" and "slider" question types
           const filteredData = taskAttachment.filter(item => {
             return item.questionType === 'number' || item.questionType === 'slider'
           }).map(item => {
@@ -396,7 +396,6 @@ export default {
               value: item.answer
             }
           })
-          // Add the filtered data to the chart data array
           chartData.push(...filteredData)
         } catch (error) {
           console.error('Error fetching task attachment:', error)
@@ -426,6 +425,7 @@ export default {
       this.chartData.datasets[1].data = temperatureData
 
       console.log(this.chartData)
+      this.chartLoaded = true
     },
     getDateForChart (timeStamp) {
       const date = new Date(timeStamp)
