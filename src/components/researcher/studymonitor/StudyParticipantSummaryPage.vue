@@ -644,4 +644,10 @@ export default {
   background-color: #f5c6cb; /* Cambiar color de fondo al pasar el cursor */
   transition: background-color 0.3s ease-in-out;
 }
+
+/* CHART */
+
+#my-chart-id {
+  margin-top: 5px;
+}
 </style>
