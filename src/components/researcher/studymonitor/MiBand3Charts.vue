@@ -68,7 +68,7 @@
 <script>
 /* eslint-disable no-new */
 import miband3 from 'modules/miband3/miband3'
-import Chart from 'chart.js'
+import { Chart } from 'chart.js'
 import { getStringIdentifier } from 'modules/miband3/miband3ActivityTypeEnum.js'
 import db from 'modules/db'
 import userinfo from 'modules/userinfo'
@@ -93,10 +93,10 @@ const chartColors = [
 
 // holder of all the stored data, this is kept outside of Vue for efficiency
 let storedData = []
-let minimumDataRequired = 30 // 30 minutes of data is required at a minimum to upload the data
+const minimumDataRequired = 30 // 30 minutes of data is required at a minimum to upload the data
 
 // pie chart configuration
-let pieChartConfig = {
+const pieChartConfig = {
   type: 'doughnut',
   data: {
     labels: [],
@@ -123,7 +123,7 @@ let pieChartConfig = {
 }
 
 // holder of the line chart data
-var lineChart = {
+const lineChart = {
   hrs: [],
   steps: [],
   intensities: [],
@@ -220,7 +220,7 @@ export default {
     },
     async storeDownloadDate (date) {
       // Update task
-      let consentedTask = await db.getStudyParticipationTaskItemConsent(this.studyKey, this.taskId)
+      const consentedTask = await db.getStudyParticipationTaskItemConsent(this.studyKey, this.taskId)
       consentedTask.lastMiband3SampleTS = date
       await db.setStudyParticipationTaskItemConsent(this.studyKey, this.taskId, consentedTask)
       return consentedTask
@@ -234,20 +234,20 @@ export default {
      */
     async getDateToUseForDownload () {
       let startDate
-      let consentedTask = await db.getStudyParticipationTaskItemConsent(this.studyKey, this.taskId)
-      let latestSampleTS = consentedTask.lastMiband3SampleTS
+      const consentedTask = await db.getStudyParticipationTaskItemConsent(this.studyKey, this.taskId)
+      const latestSampleTS = consentedTask.lastMiband3SampleTS
       if (latestSampleTS) {
         startDate = new Date(latestSampleTS)
       } else {
         const taskDescription = await db.getTaskDescription(this.studyKey, this.taskId)
-        let lastExecuted = taskDescription.lastExecuted
+        const lastExecuted = taskDescription.lastExecuted
         if (lastExecuted) {
           startDate = new Date(lastExecuted)
         } else {
           // use the scheduling information
           startDate = moment()
-          let intervalType = taskDescription.scheduling.intervalType
-          let interval = taskDescription.scheduling.interval
+          const intervalType = taskDescription.scheduling.intervalType
+          const interval = taskDescription.scheduling.interval
           if (intervalType === 'd') {
             startDate.subtract(interval, 'days')
           } else if (intervalType === 'w') {
@@ -270,13 +270,13 @@ export default {
     */
     renderLineChart (startTime, endTime) {
       lineChart.reset()
-      let startIndexInMinutes = startTime * 60
+      const startIndexInMinutes = startTime * 60
       let endIndexInMinutes = endTime * 60 - 1
       if (endIndexInMinutes >= storedData.length) {
         endIndexInMinutes = storedData.length - 1
       }
       for (let i = startIndexInMinutes; i <= endIndexInMinutes; i++) {
-        let data = storedData[i]
+        const data = storedData[i]
         this.addToLineChart(data.hr, data.intensity, data.steps, data.date)
       }
       this.updateLineChartReferences()
@@ -327,22 +327,22 @@ export default {
     createPieChart () {
       // create the configuration object
       for (const datapoint of storedData) {
-        let activityType = datapoint.activityType
-        let name = getStringIdentifier(activityType)
+        const activityType = datapoint.activityType
+        const name = getStringIdentifier(activityType)
         if (pieChartConfig.indexes[name] === undefined) {
           pieChartConfig.maxIndex++
-          let index = pieChartConfig.maxIndex
+          const index = pieChartConfig.maxIndex
           pieChartConfig.indexes[name] = index
           pieChartConfig.data.datasets[0].data[index] = 1
           pieChartConfig.data.datasets[0].backgroundColor[index] = chartColors[index]
           pieChartConfig.data.labels.push(this.$t('studies.tasks.miband3.activityTypes.' + name))
         } else {
-          let index = pieChartConfig.indexes[name]
+          const index = pieChartConfig.indexes[name]
           pieChartConfig.data.datasets[0].data[index]++
         }
       }
       // create the chart
-      let pieCtx = this.$refs.pieChart
+      const pieCtx = this.$refs.pieChart
       new Chart(pieCtx, pieChartConfig)
     },
 
@@ -355,7 +355,7 @@ export default {
     },
 
     createActivityLineChart () {
-      let lineCtx = this.$refs.lineChart
+      const lineCtx = this.$refs.lineChart
       this.lineChart = new Chart.Scatter(lineCtx, {
         type: 'scatter',
         data: {
@@ -445,7 +445,7 @@ export default {
       try {
         await API.sendTasksResults(this.report)
         await this.storeDownloadDate(this.getLatestDownloadedSampleDate())
-        let newTaskItemConsent = await this.storeDownloadDate(this.getLatestDownloadedSampleDate())
+        const newTaskItemConsent = await this.storeDownloadDate(this.getLatestDownloadedSampleDate())
         await API.updateTaskItemConsent(this.report.studyKey, this.report.taskId, newTaskItemConsent)
 
         await db.setTaskCompletion(
