@@ -113,7 +113,11 @@
                     </div>
                   </div>
                   <div v-else-if="taskDataType === 'miband3'">
-                    <mi-band-3-charts :studyKey="studyKey"></mi-band-3-charts>
+                    <mi-band-3-charts
+                      :studyKey="studyKey"
+                      :userKey="userKey"
+                      :taskDataContent="taskDataContent"
+                    ></mi-band-3-charts>
                   </div>
                 </q-card-section>
               </q-card>
@@ -252,7 +256,6 @@ export default {
       pagination: this.pagination,
       filter: this.filter
     })
-    this.loadChartData()
   },
   watch: {
     // update the table if the study key changes
@@ -289,7 +292,6 @@ export default {
           userKey: params.filter.userKey
         }
         this.tasks = await API.getTasksResults(queryParams.studyKey, queryParams.userKey)
-        console.log(this.tasks)
       } catch (err) {
         this.$q.notify({
           color: 'negative',
@@ -329,7 +331,6 @@ export default {
       // Verifica si hay tareas disponibles
       if (this.tasks.length > 0) {
         const firstTaskToLoad = this.tasks[0]
-        console.log('primera imagen')
         this.tasksToLoad.push(firstTaskToLoad)
         await this.loadNextImage()
       }
@@ -342,7 +343,6 @@ export default {
         const jsonId = taskToLoad.attachments[0]
         try {
           const response = await API.getTaskAttachment(this.studyKey, this.userKey, taskId, jsonId)
-          console.log(response)
           const photo = response.find(item => item.questionType === 'photo')
           if (photo) {
             const slide = {
@@ -350,7 +350,6 @@ export default {
               imageUrl: photo.answer
             }
             this.slides.push(slide)
-            console.log(this.slides)
             this.currentIndex++
           } else {
             this.currentIndex++
@@ -405,7 +404,6 @@ export default {
           console.error('Error fetching task attachment:', error)
         }
       }
-      console.log(chartData)
       // Group timestamps by day
       const uniqueDates = [...new Set(chartData.map(item => this.getDateForChart(item.timestamp)))]
 
@@ -428,7 +426,6 @@ export default {
       this.chartData.datasets[0].data = painData
       this.chartData.datasets[1].data = temperatureData
 
-      console.log(this.chartData)
       this.chartLoaded = true
     },
     getDateForChart (timeStamp) {

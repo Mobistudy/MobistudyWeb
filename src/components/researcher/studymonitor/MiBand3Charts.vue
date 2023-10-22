@@ -133,7 +133,8 @@ export default {
   name: 'MiBand3Charts',
   props: {
     studyKey: String,
-    taskId: Number
+    userKey: String,
+    taskDataContent: Object
   },
   data () {
     return {
@@ -150,29 +151,24 @@ export default {
     }
   },
   async mounted () {
+    console.log('Received studyKey:', this.studyKey)
+    console.log('Received userKey:', this.userKey)
+    console.log('Received taskDataContent:', this.taskDataContent)
     this.createActivityLineChart()
     await this.downloadData()
-  },
-  async beforeUnmount () {
-    try {
-      await miband3.disconnect()
-    } catch (err) {
-      // doesn't matter if it fails here, but let's print out a message on console
-      console.error('cannot disconnect miband3', err)
-    }
   },
   methods: {
     async downloadData () {
       this.isDownloading = true
 
       this.report = {
-        userKey: userinfo.user._key,
-        participantKey: userinfo.user.participantKey,
+        userKey: this.userKey,
+        // participantKey: userinfo.user.participantKey,
         studyKey: this.studyKey,
         taskId: Number(this.taskId),
         createdTS: new Date(),
         taskType: 'miband3',
-        phone: phone.device,
+        // phone: phone.device,
         summary: {
           startedTS: new Date(),
           completedTS: new Date()
@@ -184,17 +180,11 @@ export default {
       pieChartConfig.reset()
       lineChart.reset()
 
-      this.startDate = await this.getDateToUseForDownload()
+      // this.startDate = await this.getDateToUseForDownload()
       try {
-        this.deviceInfo = await miband3.getDeviceInfo()
-        await miband3.getStoredData(this.startDate, this.dataCallback)
+        // this.deviceInfo = await miband3.getDeviceInfo()
+        // await miband3.getStoredData(this.startDate, this.dataCallback)
         console.log(storedData)
-        try {
-          await miband3.disconnect()
-        } catch (err) {
-          // doesn't matter if it fails here, but let's print out a message on console
-          console.error('cannot disconnect miband3', err)
-        }
 
         if (storedData.length < minimumDataRequired) { // If less than 30 minutes of data exists, show page which describes to little data is found, wait and come back next time.
           await this.storeDownloadDate(this.startDate) // by storing this, we make sure to retrieve the data from the time the data was not enough instead of from today - period (which depends on when the user performs the task)
@@ -226,36 +216,37 @@ export default {
      * Retreives the latest date the data was downloaded
      * or if it's the first time it uses the scheduling information
      */
-    async getDateToUseForDownload () {
-      let startDate
-      const consentedTask = await db.getStudyParticipationTaskItemConsent(this.studyKey, this.taskId)
-      const latestSampleTS = consentedTask.lastMiband3SampleTS
-      if (latestSampleTS) {
-        startDate = new Date(latestSampleTS)
-      } else {
-        const taskDescription = await db.getTaskDescription(this.studyKey, this.taskId)
-        const lastExecuted = taskDescription.lastExecuted
-        if (lastExecuted) {
-          startDate = new Date(lastExecuted)
-        } else {
-          // use the scheduling information
-          startDate = moment()
-          const intervalType = taskDescription.scheduling.intervalType
-          const interval = taskDescription.scheduling.interval
-          if (intervalType === 'd') {
-            startDate.subtract(interval, 'days')
-          } else if (intervalType === 'w') {
-            startDate.subtract(interval, 'weeks')
-          } else if (intervalType === 'm') {
-            startDate.subtract(interval, 'months')
-          } else if (intervalType === 'y') {
-            startDate.subtract(interval, 'years')
-          }
-          startDate = startDate.toDate()
-        }
-      }
-      return startDate
-    },
+
+    // async getDateToUseForDownload () {
+    //   let startDate
+    //   const consentedTask = await db.getStudyParticipationTaskItemConsent(this.studyKey, this.taskId)
+    //   const latestSampleTS = consentedTask.lastMiband3SampleTS
+    //   if (latestSampleTS) {
+    //     startDate = new Date(latestSampleTS)
+    //   } else {
+    //     const taskDescription = await db.getTaskDescription(this.studyKey, this.taskId)
+    //     const lastExecuted = taskDescription.lastExecuted
+    //     if (lastExecuted) {
+    //       startDate = new Date(lastExecuted)
+    //     } else {
+    //       // use the scheduling information
+    //       startDate = moment()
+    //       const intervalType = taskDescription.scheduling.intervalType
+    //       const interval = taskDescription.scheduling.interval
+    //       if (intervalType === 'd') {
+    //         startDate.subtract(interval, 'days')
+    //       } else if (intervalType === 'w') {
+    //         startDate.subtract(interval, 'weeks')
+    //       } else if (intervalType === 'm') {
+    //         startDate.subtract(interval, 'months')
+    //       } else if (intervalType === 'y') {
+    //         startDate.subtract(interval, 'years')
+    //       }
+    //       startDate = startDate.toDate()
+    //     }
+    //   }
+    //   return startDate
+    // },
     /**
     * Renders the line chart data between the two specific parameters, end and start in hours.
     * The parameters are converted to minutes. And because there is a stored sample
@@ -311,7 +302,7 @@ export default {
       // create the configuration object
       for (const datapoint of storedData) {
         const activityType = datapoint.activityType
-        const name = getStringIdentifier(activityType)
+        const name = this.getStringIdentifier(activityType)
         if (pieChartConfig.indexes[name] === undefined) {
           pieChartConfig.maxIndex++
           const index = pieChartConfig.maxIndex
@@ -421,6 +412,37 @@ export default {
         this.disablePlus = true
       } else {
         this.disablePlus = false
+      }
+    },
+    getStringIdentifier (index) {
+      switch (index) {
+        case 1:
+        case 16:
+          return 'walk'
+        case 3:
+          return 'not_worn'
+        case 6:
+          return 'charging'
+        case 80:
+        case 90:
+        case 89:
+        case 91:
+        case 92:
+        case 96:
+          return 'sedentary'
+        case 98:
+        case 82:
+          return 'running'
+        case 17:
+          return 'activity_high'
+        case 106:
+        case 112:
+        case 121:
+        case 122:
+        case 123:
+          return 'sleep'
+        default:
+          return 'unknown'
       }
     }
   }
