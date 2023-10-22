@@ -67,14 +67,7 @@
 
 <script>
 /* eslint-disable no-new */
-import miband3 from 'modules/miband3/miband3'
 import { Chart } from 'chart.js'
-import { getStringIdentifier } from 'modules/miband3/miband3ActivityTypeEnum.js'
-import db from 'modules/db'
-import userinfo from 'modules/userinfo'
-import API from 'modules/API/API'
-import moment from 'moment'
-import phone from 'modules/phone/phone'
 
 // a bunch of colors that nicely fit together on a multi-line or bar chart
 // if there are more than 10 colors, we are in trouble
@@ -137,7 +130,7 @@ const lineChart = {
 }
 
 export default {
-  name: 'MiBand3DataDownloadPage',
+  name: 'MiBand3Charts',
   props: {
     studyKey: String,
     taskId: Number
@@ -156,7 +149,18 @@ export default {
       report: {}
     }
   },
-
+  async mounted () {
+    this.createActivityLineChart()
+    await this.downloadData()
+  },
+  async beforeUnmount () {
+    try {
+      await miband3.disconnect()
+    } catch (err) {
+      // doesn't matter if it fails here, but let's print out a message on console
+      console.error('cannot disconnect miband3', err)
+    }
+  },
   methods: {
     async downloadData () {
       this.isDownloading = true
@@ -217,16 +221,6 @@ export default {
         console.error('cannot download data', err)
         this.showErrorDialog() // TODO: Retry if the device is disconnected? The retry won't accomplish anything in this case and is confusing from a user perspective. ?? Retry moves to Connect page, make sure i am disconnected.
       }
-    },
-    async storeDownloadDate (date) {
-      // Update task
-      const consentedTask = await db.getStudyParticipationTaskItemConsent(this.studyKey, this.taskId)
-      consentedTask.lastMiband3SampleTS = date
-      await db.setStudyParticipationTaskItemConsent(this.studyKey, this.taskId, consentedTask)
-      return consentedTask
-    },
-    getLatestDownloadedSampleDate () {
-      return storedData[storedData.length - 1].date
     },
     /**
      * Retreives the latest date the data was downloaded
@@ -297,17 +291,6 @@ export default {
         // cancel and go home
         this.cancelTask()
       })
-    },
-
-    async cancelTask () {
-      // disconnects and go home
-      try {
-        await miband3.disconnect()
-      } catch (err) {
-        // doesn't matter if it fails here, but let's print out a message on console
-        console.error('cannot disconnect miband3', err)
-      }
-      this.$router.push({ name: 'tasker' })
     },
     dataCallback (data) {
       // collects data from the miband and prepares the charts
@@ -439,59 +422,6 @@ export default {
       } else {
         this.disablePlus = false
       }
-    },
-
-    async saveAndLeave () {
-      try {
-        await API.sendTasksResults(this.report)
-        await this.storeDownloadDate(this.getLatestDownloadedSampleDate())
-        const newTaskItemConsent = await this.storeDownloadDate(this.getLatestDownloadedSampleDate())
-        await API.updateTaskItemConsent(this.report.studyKey, this.report.taskId, newTaskItemConsent)
-
-        await db.setTaskCompletion(
-          this.report.studyKey,
-          this.report.taskId,
-          new Date()
-        )
-        this.$router.push({ name: 'home' })
-      } catch (error) {
-        this.sending = false
-        console.error(error)
-        this.$q.notify({
-          color: 'negative',
-          message: this.$t('errors.connectionError') + ' ' + error.message,
-          icon: 'report_problem'
-        })
-      }
-      console.log(this.report)
-    },
-    async send () {
-      this.sending = true
-      this.report.discarded = false
-
-      return this.saveAndLeave()
-    },
-    async discard () {
-      this.sending = true
-
-      // delete data and set flag
-      this.report.discarded = true
-      delete this.report.summary
-      delete this.report.data
-
-      return this.saveAndLeave()
-    }
-  },
-  async mounted () {
-    this.createActivityLineChart()
-    await this.downloadData()
-  },
-  async beforeDestroy () {
-    try {
-      await miband3.disconnect()
-    } catch (err) {
-      // doesn't matter if it fails here, but let's print out a message on console
-      console.error('cannot disconnect miband3', err)
     }
   }
 }

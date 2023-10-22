@@ -112,6 +112,9 @@
                       </div>
                     </div>
                   </div>
+                  <div v-else-if="taskDataType === 'miband3'">
+                    <mi-band-3-charts :studyKey="studyKey"></mi-band-3-charts>
+                  </div>
                 </q-card-section>
               </q-card>
             </q-dialog>
@@ -159,6 +162,7 @@
 
 <script>
 import API from '@shared/API.js'
+import MiBand3Charts from '@components/researcher/studymonitor/MiBand3Charts'
 import { bestLocale } from '@mixins/bestLocale'
 import { date } from 'quasar'
 import { ref } from 'vue'
@@ -171,7 +175,7 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,
 export default {
   name: 'StudyParticipant',
   props: ['studyKey', 'userKey'],
-  components: { Bar },
+  components: { Bar, MiBand3Charts },
   mixins: [bestLocale],
   data () {
     return {
