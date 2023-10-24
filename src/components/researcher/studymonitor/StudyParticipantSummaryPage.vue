@@ -64,53 +64,14 @@
                   <div class="text-h6 text-white text-bold text-uppercase">
                     <span>{{ niceTimestamp(taskCompletedDate) }}</span>
                   </div>
-
                   <q-space />
-
                   <q-btn dense flat icon="close" v-close-popup class="material-symbols-outlined">
                     <q-tooltip class="bg-secondary text-white">Close</q-tooltip>
                   </q-btn>
                 </q-bar>
-
                 <q-card-section>
-                  <div v-if="taskDataType === 'form'">
-                    <div
-                      v-for="(answer, index) in taskDataContent"
-                      :key="index"
-                    >
-                      <p class="q-title text-bold">
-                        {{ getBestLocale(answer.questionText) }}
-                      </p>
-                      <p v-if="answer.questionType == 'freetext'">
-                        {{ answer.answer }}
-                      </p>
-                      <p v-if="answer.questionType == 'slider'">
-                        {{ answer.answer }}
-                      </p>
-                      <p v-if="answer.questionType == 'number'">
-                        {{ answer.answer }}
-                      </p>
-                      <p v-if="answer.questionType == 'singleChoice'">
-                        {{ answer.answer.answerText }}
-                      </p>
-                      <div v-if="answer.questionType == 'multiChoice'">
-                        <p
-                          v-for="(subanswer, index1) in answer.answer"
-                          :key="index1"
-                        >
-                          {{ subanswer.answerText }}
-                        </p>
-                      </div>
-                      <q-img
-                        v-if="answer.questionType === 'photo'"
-                        :src="answer.answer"
-                        @click="showImage"
-                      />
-                      <div v-show="isImageVisible" class="fullscreen-image">
-                        <span class="close-btn" @click="hideImage">&times;</span>
-                        <img :src="answer.answer" alt="Full screen Image" />
-                      </div>
-                    </div>
+                  <div v-if="taskDataType === 'fingerTapping'">
+                    <FingerTapping :data="taskDataContent" />
                   </div>
                 </q-card-section>
               </q-card>
@@ -158,11 +119,15 @@ import { bestLocale } from '@mixins/bestLocale'
 import { date } from 'quasar'
 import { ref } from 'vue'
 import Chart from 'chart.js/auto'
+import FingerTapping from '../taskvisualizations/FingerTapping.vue'
 
 export default {
   name: 'StudyParticipant',
   props: ['studyKey', 'userKey'],
   mixins: [bestLocale],
+  components: {
+    FingerTapping
+  },
   data () {
     return {
       locale: this.$i18n.locale,
