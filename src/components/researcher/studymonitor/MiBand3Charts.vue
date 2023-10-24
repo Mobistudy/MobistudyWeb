@@ -67,7 +67,9 @@
 
 <script>
 /* eslint-disable no-new */
-import { Chart } from 'chart.js'
+import Chart from 'chart.js/auto'
+import { ScatterController, LineElement, PointElement, CategoryScale, LinearScale } from 'chart.js'
+Chart.register(ScatterController, LineElement, PointElement, CategoryScale, LinearScale)
 
 // a bunch of colors that nicely fit together on a multi-line or bar chart
 // if there are more than 10 colors, we are in trouble
@@ -330,7 +332,7 @@ export default {
 
     createActivityLineChart () {
       const lineCtx = this.$refs.lineChart
-      this.lineChart = new Chart.Scatter(lineCtx, {
+      this.lineChart = new Chart(lineCtx, {
         type: 'scatter',
         data: {
           labels: lineChart.labels,
@@ -342,6 +344,7 @@ export default {
               borderColor: '#C74038',
               borderWidth: 0,
               pointRadius: 1,
+              pointHoverRadius: 3,
               fill: false,
               lineTension: 0
             },
@@ -352,6 +355,7 @@ export default {
               borderColor: '#4038C7',
               borderWidth: 0,
               pointRadius: 1,
+              pointHoverRadius: 3,
               fill: false,
               lineTension: 0
             },
@@ -362,6 +366,7 @@ export default {
               borderColor: '#38C740',
               borderWidth: 0,
               pointRadius: 1,
+              pointHoverRadius: 3,
               fill: false,
               lineTension: 0
             }
@@ -369,28 +374,46 @@ export default {
         },
         options: {
           responsive: true,
-          title: {
-            display: false
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              mode: 'nearest',
+              intersect: false,
+              callbacks: {
+                label: function (context) {
+                  let label = context.dataset.label || ''
+                  if (label) {
+                    label += ': '
+                  }
+                  if (context.parsed.y !== null) {
+                    label += context.parsed.y
+                  }
+                  return label
+                }
+              }
+            }
           },
           scales: {
-            xAxes: [{
+            x: {
               type: 'time',
               time: {
                 displayFormats: {
                   quarter: 'HH:MM:SS'
                 }
               },
-              scaleLabel: {
+              title: {
                 display: true,
-                lineChartLabelstring: 'Date'
+                text: 'Date'
               }
-            }],
-            yAxes: [{
-              scaleLabel: {
+            },
+            y: {
+              title: {
                 display: true,
-                lineChartLabelstring: 'value'
+                text: 'value'
               }
-            }]
+            }
           }
         }
       })
