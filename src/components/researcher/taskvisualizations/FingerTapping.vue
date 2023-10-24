@@ -1,11 +1,20 @@
 <template>
-<p>{{data}}</p>
+  <p>{{data}}</p>
 </template>
 
 <script>
 export default {
-  props: ['data']
+  props: ['data'],
+  mounted () {
+    this.initializeChart()
+  },
+  methods: {
+    initializeChart () {
+      console.log('hello')
+    }
+  }
 }
+
 </script>
 
 <style>
