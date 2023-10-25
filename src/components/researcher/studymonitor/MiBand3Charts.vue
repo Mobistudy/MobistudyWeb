@@ -184,9 +184,10 @@ export default {
 
       // this.startDate = await this.getDateToUseForDownload()
       try {
-        // this.deviceInfo = await miband3.getDeviceInfo()
-        // await miband3.getStoredData(this.startDate, this.dataCallback)
+        this.deviceInfo = this.taskDataContent.device
+        storedData = this.taskDataContent.activity
         console.log(storedData)
+        console.log(storedData.length)
 
         if (storedData.length < minimumDataRequired) { // If less than 30 minutes of data exists, show page which describes to little data is found, wait and come back next time.
           await this.storeDownloadDate(this.startDate) // by storing this, we make sure to retrieve the data from the time the data was not enough instead of from today - period (which depends on when the user performs the task)
@@ -311,7 +312,7 @@ export default {
           pieChartConfig.indexes[name] = index
           pieChartConfig.data.datasets[0].data[index] = 1
           pieChartConfig.data.datasets[0].backgroundColor[index] = chartColors[index]
-          pieChartConfig.data.labels.push(this.$t('studies.tasks.miband3.activityTypes.' + name))
+          pieChartConfig.data.labels.push(name)
         } else {
           const index = pieChartConfig.indexes[name]
           pieChartConfig.data.datasets[0].data[index]++
@@ -327,7 +328,8 @@ export default {
       this.lineChart.data.datasets[1].data = lineChart.intensities
       this.lineChart.data.datasets[2].data = lineChart.steps
       this.lineChart.data.labels = lineChart.labels
-      this.lineChart.update()
+      console.log('DEBUGGEADOR')
+      // this.lineChart.update()
     },
 
     createActivityLineChart () {
@@ -338,7 +340,7 @@ export default {
           labels: lineChart.labels,
           datasets: [
             {
-              label: this.$t('studies.tasks.miband3.hrs'),
+              label: 'heart rate',
               data: lineChart.hrs,
               backgroundColor: '#C74038',
               borderColor: '#C74038',
@@ -349,7 +351,7 @@ export default {
               lineTension: 0
             },
             {
-              label: this.$t('studies.tasks.miband3.intensities'),
+              label: 'intensity',
               data: lineChart.intensities,
               backgroundColor: '#4038C7',
               borderColor: '#4038C7',
@@ -360,7 +362,7 @@ export default {
               lineTension: 0
             },
             {
-              label: this.$t('studies.tasks.miband3.steps'),
+              label: 'steps',
               data: lineChart.steps,
               backgroundColor: '#38C740',
               borderColor: '#38C740',
@@ -417,7 +419,8 @@ export default {
           }
         }
       })
-      this.lineChart.update()
+      console.log(this.lineChart)
+      // this.lineChart.update()
     },
     lineChartAdd (amount) {
       this.currentStartHour += amount
