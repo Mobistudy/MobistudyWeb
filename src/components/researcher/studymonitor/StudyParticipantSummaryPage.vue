@@ -71,7 +71,19 @@
                 </q-bar>
                 <q-card-section>
                   <div v-if="taskDataType === 'fingerTapping'">
-                    <FingerTapping :data="taskDataContent" />
+                    <FingerTappingDrawingVisualization :data="taskDataContent" />
+                  </div>
+                  <div v-if="taskDataType === 'holdPhone'">
+                    <HoldPhoneVisualization :data="taskDataContent" />
+                  </div>
+                  <div v-if="taskDataType === 'drawing'">
+                    <DrawingVisualization :data="taskDataContent" />
+                  </div>
+                  <div v-if="taskDataType === 'tugt'">
+                    <TugtVisualization :data="taskDataContent" />
+                  </div>
+                  <div v-if="taskDataType === 'vocalization'">
+                    <VocalizationVisualization :data="taskDataContent" />
                   </div>
                 </q-card-section>
               </q-card>
@@ -119,14 +131,22 @@ import { bestLocale } from '@mixins/bestLocale'
 import { date } from 'quasar'
 import { ref } from 'vue'
 import Chart from 'chart.js/auto'
-import FingerTapping from '../taskvisualizations/FingerTapping.vue'
+import FingerTappingDrawingVisualization from '../taskvisualizations/FingerTappingDrawingVisualization.vue'
+import HoldPhoneVisualization from '../taskvisualizations/HoldPhoneVisualization.vue'
+import DrawingVisualization from '../taskvisualizations/DrawingVisualization.vue'
+import TugtVisualization from '../taskvisualizations/TugtVisualization.vue'
+import VocalizationVisualization from '../taskvisualizations/VocalizationVisualization.vue'
 
 export default {
   name: 'StudyParticipant',
   props: ['studyKey', 'userKey'],
   mixins: [bestLocale],
   components: {
-    FingerTapping
+    FingerTappingDrawingVisualization,
+    HoldPhoneVisualization,
+    DrawingVisualization,
+    TugtVisualization,
+    VocalizationVisualization
   },
   data () {
     return {

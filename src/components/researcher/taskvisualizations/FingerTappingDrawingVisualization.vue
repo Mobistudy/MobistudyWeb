@@ -1,5 +1,5 @@
 <template>
-  <p>{{data}}</p>
+  <p>{{ data }}</p>
 </template>
 
 <script>
@@ -10,11 +10,10 @@ export default {
   },
   methods: {
     initializeChart () {
-      console.log('hello')
+      console.log('FingerTapping chart...')
     }
   }
 }
-
 </script>
 
 <style>
