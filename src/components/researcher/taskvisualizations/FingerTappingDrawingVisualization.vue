@@ -131,4 +131,5 @@ export default {
 
 <style>
 canvas {width: 500px; height:500px;}
+p {text-align: center;}
 </style>
