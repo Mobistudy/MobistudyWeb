@@ -1,9 +1,11 @@
 <template>
-  <div><canvas id="fingerTappingChart"></canvas></div>
+  <div>
+    <canvas id="fingerTappingChart"></canvas>
+  </div>
 </template>
 
 <script>
-/*eslint-disable*/
+/* eslint-disable */
 import { Chart } from 'chart.js/auto';
 
 export default {
@@ -15,33 +17,47 @@ export default {
     initializeChart() {
       const ctx = document.getElementById('fingerTappingChart').getContext('2d');
       const config = {
-        type: 'line',
+        type: 'scatter', 
         data: {
-          labels: this.getLabels(),
           datasets: [
             {
               label: 'Left finger',
               data: this.getLeft(),
               borderColor: 'red',
-              backgroundColor: 'rgba(255, 0, 0, 0.5)',
+              backgroundColor: 'red',
+              pointStyle: 'rectRot',
+              radius: 5,
             },
             {
               label: 'Right finger',
               data: this.getRight(),
               borderColor: 'blue',
-              backgroundColor: 'rgba(0, 0, 255, 0.5)',
+              backgroundColor: 'blue',
+              pointStyle: 'rectRot',
+              radius: 5,
             },
           ],
         },
         options: {
           responsive: true,
+          scales: {
+            x: {
+              type: 'linear',
+              position: 'bottom',
+              beginAtZero: true,
+            },
+            y: {
+              type: 'linear',
+              beginAtZero: true,
+            },
+          },
           plugins: {
             legend: {
               position: 'top',
             },
             title: {
               display: true,
-              text: 'Comparison of Left Finger and Right Finger',
+              text: 'Finger Tapping Comparison',
             },
           },
         },
@@ -52,25 +68,18 @@ export default {
   
     getLeft() {
       const leftTaps = this.data.filter(item => item.side === 'left');
-      return leftTaps.map(item => item.msFromStart);
+      return leftTaps.map(item => ({
+        x: item.msFromStart,
+        y: 1, 
+      }));
     },
     getRight() {
       const rightTaps = this.data.filter(item => item.side === 'right');
-      return rightTaps.map(item => item.msFromStart);
+      return rightTaps.map(item => ({
+        x: item.msFromStart,
+        y: 2, 
+      }));
     },
-    getLabels() {
-      let seconds = 20;
-      let secondsArray = [];
-
-      for (let i = 0; i <= seconds; i++) { // Changed to <= to include 20
-        secondsArray.push(i + 's');
-      }
-      return secondsArray;
-    },
-  }
-}
+  },
+};
 </script>
-
-<style>
-/* Add your styles here if needed */
-</style>
