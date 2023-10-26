@@ -10,7 +10,15 @@ export default {
   },
   methods: {
     initializeChart () {
-      console.log('FingerTapping chart...')
+      console.log(this.getRight())
+    },
+    getLeft () {
+      const leftTaps = this.data.filter(item => item.side === 'left')
+      return leftTaps.map(item => item.msFromStart)
+    },
+    getRight () {
+      const leftTaps = this.data.filter(item => item.side === 'right')
+      return leftTaps.map(item => item.msFromStart)
     }
   }
 }
