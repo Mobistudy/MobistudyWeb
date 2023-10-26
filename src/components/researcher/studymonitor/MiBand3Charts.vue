@@ -1,9 +1,9 @@
 <template>
   <q-page id="main">
     <div v-show="!isDownloading">
-      <p class="q-pa-md mobitxt1">{{ $t('studies.tasks.miband3.chartsIntro') }}</p>
+      <p class="q-pa-md mobitxt1">{{ $t('miband3.chartsIntro') }}</p>
       <div class="text-center text-h6">
-        {{ $t('studies.tasks.miband3.lineChart') }}
+        {{ $t('miband3.lineChart') }}
       </div>
       <div class="q-pa-md">
         <canvas
@@ -13,13 +13,13 @@
         />
         <div class="row justify-around">
           <q-btn
-            :label="'-12 ' + $t('studies.tasks.miband3.hours')"
+            :label="'-12 ' + $t('miband3.hours')"
             color="secondary"
             :disable="disableMinus"
             @click="lineChartAdd((-12))"
           />
           <q-btn
-            :label="'+12 ' + $t('studies.tasks.miband3.hours')"
+            :label="'+12 ' + $t('miband3.hours')"
             color="secondary"
             :disable="disablePlus"
             @click="lineChartAdd((12))"
@@ -28,7 +28,7 @@
       </div>
       <q-separator></q-separator>
       <div class="text-center text-h6">
-        {{ $t('studies.tasks.miband3.pieChart') }}
+        {{ $t('miband3.pieChart') }}
       </div>
       <div class="q-pa-md">
         <canvas
@@ -56,7 +56,7 @@
     </div>
 
     <q-inner-loading :showing="isDownloading">
-      <div class="mobitxt2">{{ $t('studies.tasks.miband3.dataDownload') }}</div>
+      <div class="mobitxt2">{{ $t('miband3.dataDownload') }}</div>
       <q-spinner-dots
         size="50px"
         color="primary"
@@ -312,7 +312,7 @@ export default {
           pieChartConfig.indexes[name] = index
           pieChartConfig.data.datasets[0].data[index] = 1
           pieChartConfig.data.datasets[0].backgroundColor[index] = chartColors[index]
-          pieChartConfig.data.labels.push(name)
+          pieChartConfig.data.labels.push(this.$t('miband3.activityTypes.' + name))
         } else {
           const index = pieChartConfig.indexes[name]
           pieChartConfig.data.datasets[0].data[index]++
@@ -340,7 +340,7 @@ export default {
           labels: lineChart.labels,
           datasets: [
             {
-              label: 'heart rate',
+              label: this.$t('miband3.hrs'),
               data: lineChart.hrs,
               backgroundColor: '#C74038',
               borderColor: '#C74038',
@@ -351,7 +351,7 @@ export default {
               lineTension: 0
             },
             {
-              label: 'intensity',
+              label: this.$t('miband3.intensities'),
               data: lineChart.intensities,
               backgroundColor: '#4038C7',
               borderColor: '#4038C7',
@@ -362,7 +362,7 @@ export default {
               lineTension: 0
             },
             {
-              label: 'steps',
+              label: this.$t('miband3.steps'),
               data: lineChart.steps,
               backgroundColor: '#38C740',
               borderColor: '#38C740',

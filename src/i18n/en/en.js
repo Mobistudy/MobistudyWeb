@@ -117,5 +117,28 @@ Technical logs will be deleted after 1 year they are produced.
     heart_rate_variability: 'Heart rate variability',
     calories: 'Calories',
     distance: 'Distance walked or run'
+  },
+  miband3: {
+    dataDownload: 'Downloading data',
+    dataDownloadError: 'Could not retrieve data from the band, please retry or cancel.',
+    dataSending: 'Sending data',
+    chartsIntro: 'The following charts summarize the data that have been retrieved from the band. Tap on "Send" to share these data with the research team or tap on "Discard" to avoid sending these data.',
+    lineChart: 'Activity over time',
+    hrs: 'heart rate',
+    intensities: 'intensity',
+    steps: 'steps',
+    pieChart: 'Time spent in each activity',
+    hours: 'hours',
+    activityTypes: {
+      walk: 'Walking',
+      charging: 'Charging',
+      not_worn: 'Not worn',
+      sedentary: 'Sedentary',
+      running: 'Running',
+      activity_high: 'Intense activity',
+      activity_low: 'Low activity',
+      sleep: 'Sleeping',
+      unknown: 'Unknown'
+    }
   }
 }
