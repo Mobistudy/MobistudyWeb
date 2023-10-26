@@ -36,23 +36,6 @@
           height="270"
         ></canvas>
       </div>
-      <q-separator></q-separator>
-      <div class="row justify-around q-my-lg">
-        <q-btn
-          class="mobibtn"
-          color="negative"
-          :loading="sending"
-          :label="$t('common.discard')"
-          @click="discard()"
-        />
-        <q-btn
-          class="mobibtn"
-          color="primary"
-          :loading="sending"
-          :label="$t('common.send')"
-          @click="send()"
-        />
-      </div>
     </div>
 
     <q-inner-loading :showing="isDownloading">
