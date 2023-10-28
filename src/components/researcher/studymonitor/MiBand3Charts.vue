@@ -50,6 +50,7 @@
 
 <script>
 /* eslint-disable no-new */
+import { date } from 'quasar'
 import Chart from 'chart.js/auto'
 import { ScatterController, LineElement, PointElement, CategoryScale, LinearScale } from 'chart.js'
 Chart.register(ScatterController, LineElement, PointElement, CategoryScale, LinearScale)
@@ -143,6 +144,9 @@ export default {
     await this.downloadData()
   },
   methods: {
+    niceTimestamp (timeStamp) {
+      return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
+    },
     async downloadData () {
       this.isDownloading = true
 
@@ -240,7 +244,7 @@ export default {
       }
       lineChart.intensities.push({ x: date, y: intensity })
       lineChart.steps.push({ x: date, y: steps })
-      lineChart.labels.push(date)
+      lineChart.labels.push(this.niceTimestamp(date))
     },
 
     createPieChart () {
