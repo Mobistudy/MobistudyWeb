@@ -198,47 +198,6 @@ export default {
         this.showErrorDialog() // TODO: Retry if the device is disconnected? The retry won't accomplish anything in this case and is confusing from a user perspective. ?? Retry moves to Connect page, make sure i am disconnected.
       }
     },
-    /**
-     * Retreives the latest date the data was downloaded
-     * or if it's the first time it uses the scheduling information
-     */
-
-    // async getDateToUseForDownload () {
-    //   let startDate
-    //   const consentedTask = await db.getStudyParticipationTaskItemConsent(this.studyKey, this.taskId)
-    //   const latestSampleTS = consentedTask.lastMiband3SampleTS
-    //   if (latestSampleTS) {
-    //     startDate = new Date(latestSampleTS)
-    //   } else {
-    //     const taskDescription = await db.getTaskDescription(this.studyKey, this.taskId)
-    //     const lastExecuted = taskDescription.lastExecuted
-    //     if (lastExecuted) {
-    //       startDate = new Date(lastExecuted)
-    //     } else {
-    //       // use the scheduling information
-    //       startDate = moment()
-    //       const intervalType = taskDescription.scheduling.intervalType
-    //       const interval = taskDescription.scheduling.interval
-    //       if (intervalType === 'd') {
-    //         startDate.subtract(interval, 'days')
-    //       } else if (intervalType === 'w') {
-    //         startDate.subtract(interval, 'weeks')
-    //       } else if (intervalType === 'm') {
-    //         startDate.subtract(interval, 'months')
-    //       } else if (intervalType === 'y') {
-    //         startDate.subtract(interval, 'years')
-    //       }
-    //       startDate = startDate.toDate()
-    //     }
-    //   }
-    //   return startDate
-    // },
-    /**
-    * Renders the line chart data between the two specific parameters, end and start in hours.
-    * The parameters are converted to minutes. And because there is a stored sample
-    * minute by minute in the storedData, the start and end time are re-calculated in minutes
-    * and this will be the indexes of the corresponding samples.
-    */
     renderLineChart (startTime, endTime) {
       lineChart.reset()
       const startIndexInMinutes = startTime * 60
@@ -402,7 +361,8 @@ export default {
           }
         }
       })
-      console.log(this.lineChart)
+      console.log('LABELS')
+      console.log(this.lineChart.data.labels)
       // this.lineChart.update()
     },
     lineChartAdd (amount) {
