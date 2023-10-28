@@ -140,7 +140,6 @@ export default {
     console.log('Received studyKey:', this.studyKey)
     console.log('Received userKey:', this.userKey)
     console.log('Received taskDataContent:', this.taskDataContent)
-    this.createActivityLineChart()
     await this.downloadData()
   },
   methods: {
@@ -213,6 +212,7 @@ export default {
         const data = storedData[i]
         this.addToLineChart(data.hr, data.intensity, data.steps, data.date)
       }
+      this.createActivityLineChart()
       this.updateLineChartReferences()
       this.updatePlusMinusButtons() // Could be placed somewhere else but is needed at start in case data size < 12 hours worth
     },
@@ -279,6 +279,9 @@ export default {
     },
 
     createActivityLineChart () {
+      if (this.lineChart) {
+        this.lineChart.destroy()
+      }
       const lineCtx = this.$refs.lineChart
       this.lineChart = new Chart(lineCtx, {
         type: 'scatter',
