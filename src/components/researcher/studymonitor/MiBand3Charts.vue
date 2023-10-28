@@ -137,9 +137,6 @@ export default {
     }
   },
   async mounted () {
-    console.log('Received studyKey:', this.studyKey)
-    console.log('Received userKey:', this.userKey)
-    console.log('Received taskDataContent:', this.taskDataContent)
     await this.downloadData()
   },
   methods: {
@@ -151,12 +148,10 @@ export default {
 
       this.report = {
         userKey: this.userKey,
-        // participantKey: userinfo.user.participantKey,
         studyKey: this.studyKey,
         taskId: Number(this.taskId),
         createdTS: new Date(),
         taskType: 'miband3',
-        // phone: phone.device,
         summary: {
           startedTS: new Date(),
           completedTS: new Date()
@@ -168,12 +163,9 @@ export default {
       pieChartConfig.reset()
       lineChart.reset()
 
-      // this.startDate = await this.getDateToUseForDownload()
       try {
         this.deviceInfo = this.taskDataContent.device
         storedData = this.taskDataContent.activity
-        console.log(storedData)
-        console.log(storedData.length)
 
         if (storedData.length < minimumDataRequired) { // If less than 30 minutes of data exists, show page which describes to little data is found, wait and come back next time.
           await this.storeDownloadDate(this.startDate) // by storing this, we make sure to retrieve the data from the time the data was not enough instead of from today - period (which depends on when the user performs the task)
@@ -193,7 +185,6 @@ export default {
           device: this.deviceInfo,
           activity: storedData
         }
-        console.log(this.report)
 
         this.isDownloading = false
       } catch (err) {
@@ -220,7 +211,7 @@ export default {
     showErrorDialog () {
       this.$q.dialog({
         title: this.$t('errors.error'),
-        message: this.$t('studies.tasks.miband3.dataDownloadError'),
+        message: this.$t('miband3.dataDownloadError'),
         cancel: this.$t('common.cancel'),
         ok: this.$t('common.retry'),
         persistent: true
@@ -274,8 +265,6 @@ export default {
       this.lineChart.data.datasets[1].data = lineChart.intensities
       this.lineChart.data.datasets[2].data = lineChart.steps
       this.lineChart.data.labels = lineChart.labels
-      console.log('DEBUGGEADOR')
-      // this.lineChart.update()
     },
 
     createActivityLineChart () {
@@ -327,7 +316,7 @@ export default {
           responsive: true,
           plugins: {
             legend: {
-              display: false
+              display: true
             },
             tooltip: {
               mode: 'nearest',
@@ -368,9 +357,6 @@ export default {
           }
         }
       })
-      console.log('LABELS')
-      console.log(this.lineChart.data.labels)
-      // this.lineChart.update()
     },
     lineChartAdd (amount) {
       this.currentStartHour += amount
