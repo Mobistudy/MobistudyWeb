@@ -335,26 +335,34 @@ export default {
         await this.loadNextImage()
       }
     },
-
     async loadNextImage () {
+      console.log(this.currentIndex)
       if (this.currentIndex < this.tasksToLoad.length) {
         const taskToLoad = this.tasksToLoad[this.currentIndex]
         const taskId = taskToLoad.taskId
         const jsonId = taskToLoad.attachments[0]
         try {
           const response = await API.getTaskAttachment(this.studyKey, this.userKey, taskId, jsonId)
-          const photo = response.find(item => item.questionType === 'photo')
-          if (photo) {
-            const slide = {
-              date: photo.timeStamp,
-              imageUrl: photo.answer
+          console.log(response)
+          if (Array.isArray(response)) { // Comprueba si response es un array
+            const photo = response.find(item => item.questionType === 'photo')
+            if (photo && photo.answer) {
+              const slide = {
+                date: photo.timeStamp,
+                imageUrl: photo.answer
+              }
+              this.slides.push(slide)
+              this.currentIndex++
+            } else {
+              // La tarea actual es de tipo "photo", pero no tiene respuesta.
+              this.currentIndex++
+              this.handleChange()
             }
-            this.slides.push(slide)
-            this.currentIndex++
           } else {
+            // En caso de que response no sea un array
+            console.error('La respuesta no es un array válido.')
             this.currentIndex++
             this.handleChange()
-            console.error('No se encontró una pregunta de tipo "photo" en los datos.')
           }
         } catch (error) {
           console.error('Error al cargar la imagen:', error)
@@ -363,6 +371,7 @@ export default {
     },
     async handleChange () {
       if (this.tasks[this.currentIndex]) {
+        console.log('handleChange')
         const taskToLoad = this.tasks[this.currentIndex]
         this.tasksToLoad.push(taskToLoad)
         await this.loadNextImage()
