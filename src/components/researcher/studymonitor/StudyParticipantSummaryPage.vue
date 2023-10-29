@@ -102,9 +102,13 @@
                         </p>
                       </div>
                       <q-img
-                        v-if="answer.questionType === 'photo'"
+                        v-if="answer.questionType === 'photo' && answer.answer"
                         :src="answer.answer"
                         @click="showImage"
+                      />
+                      <q-img
+                        v-if="answer.questionType === 'photo' && !answer.answer"
+                        :src="photoUrl"
                       />
                       <div v-show="isImageVisible" class="fullscreen-image">
                         <span class="close-btn" @click="hideImage">&times;</span>
@@ -184,6 +188,7 @@ export default {
   data () {
     return {
       locale: this.$i18n.locale,
+      photoUrl: ref('https://excelautomationinc.com/wp-content/uploads/2021/07/No-Photo-Available.jpg'),
       current: 0,
       direction: 1,
       transitionName: 'fade',
