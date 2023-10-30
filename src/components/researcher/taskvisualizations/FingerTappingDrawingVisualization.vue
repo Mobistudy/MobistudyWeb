@@ -4,7 +4,7 @@
   </div>
     <div id="fingerTappingResult">
       <p>Total Taps: {{ this.data.length }}</p>
-      <p>Average Tap Time: {{ this.getAverageTapTime() }}</p>
+      <p>Average Tap Time Difference: {{ this.getAverageTapTime() }}</p>
     </div>
   <div>
     <canvas id="fingerTappingDelayChart"></canvas>
