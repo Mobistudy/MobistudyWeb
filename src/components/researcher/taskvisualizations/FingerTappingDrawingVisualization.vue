@@ -1,9 +1,11 @@
 <template>
   <div>
     <canvas id="fingerTappingChart"></canvas>
-    <p>Average time left: {{ getAverageLeft() }}ms </p>
-    <p>Average time right: {{ getAverageRight() }}ms</p>
   </div>
+    <div id="fingerTappingResult">
+      <p>Total Taps: {{ this.data.length }}</p>
+      <p>Average Tap Time: {{ this.getAverageTapTime() }}</p>
+    </div>
   <div>
     <canvas id="fingerTappingDelayChart"></canvas>
   </div>
@@ -27,17 +29,17 @@ export default {
           datasets: [
             {
               label: 'Left',
-              data: this.getLeft(),
-              borderColor: 'red',
-              backgroundColor: 'red',
+              data: this.getLeftTaps(),
+              borderColor: '#459399',
+              backgroundColor: '#459399',
               pointStyle: 'rectRot',
               radius: 4
             },
             {
               label: 'Right',
-              data: this.getRight(),
-              borderColor: 'blue',
-              backgroundColor: 'blue',
+              data: this.getRightTaps(),
+              borderColor: '#71bbcd',
+              backgroundColor: '#71bbcd',
               pointStyle: 'rectRot',
               radius: 4
             }
@@ -52,7 +54,8 @@ export default {
               beginAtZero: true,
               title: {
                 display: true,
-                text: 'Time (seconds)'
+                text: 'Time (seconds)',
+                color: '#459399'
               },
               ticks: {
                 stepSize: 1000,
@@ -80,7 +83,8 @@ export default {
             },
             title: {
               display: true,
-              text: 'Finger Tapping'
+              text: 'Finger Tapping',
+              color: '#459399'
             }
           }
         }
@@ -91,14 +95,15 @@ export default {
     initializeFingerTappingDelayChart () {
       const ctx = document.getElementById('fingerTappingDelayChart').getContext('2d')
       const config = {
-        type: 'scatter',
+        type: 'line',
         data: {
           datasets: [
             {
               type: 'line',
-              label: 'Time Delay',
-              data: this.getTimeDelays(),
-              borderColor: 'gray',
+              label: 'Time Difference',
+              data: this.getTapTimeDifference(),
+              borderColor: '#459399',
+              backgroundColor: '#459399',
               fill: false,
               borderWidth: 1,
               pointRadius: 0
@@ -114,7 +119,8 @@ export default {
               beginAtZero: true,
               title: {
                 display: true,
-                text: 'Milliseconds'
+                text: 'Milliseconds',
+                color: '#459399'
               }
             },
             y: {
@@ -122,51 +128,44 @@ export default {
               beginAtZero: true,
               title: {
                 display: true,
-                text: 'Time Delay'
+                text: 'Time Difference',
+                color: '#459399'
               }
             }
           },
           plugins: {
             title: {
               display: true,
-              text: 'Finger Tapping'
+              text: 'Inter Tapping Time',
+              color: '#459399'
             }
           }
         }
       }
       this.chart = new Chart(ctx, config)
     },
-    getTimeDelays () {
-      /* eslint-disable-next-line */
-      const sortedData = this.data.sort((a, b) => a.msFromStart - b.msFromStart)
-      const timeDelays = []
-
-      for (let i = 1; i < sortedData.length; i++) {
-        const delay = sortedData[i].msFromStart - sortedData[i - 1].msFromStart
-        timeDelays.push({ x: sortedData[i].msFromStart, y: delay })
-      }
-      return timeDelays
-    },
-    getLeft () {
-      const leftTaps = this.data.filter(item => item.side === 'left')
-      return leftTaps.map(item => ({
-        x: item.msFromStart,
+    getLeftTaps () {
+      const leftTaps = this.data.filter(tap => tap.side === 'left')
+      return leftTaps.map(tap => ({
+        x: tap.msFromStart,
         y: 1
       }))
     },
-    getRight () {
-      const rightTaps = this.data.filter(item => item.side === 'right')
-      return rightTaps.map(item => ({
-        x: item.msFromStart,
+    getRightTaps () {
+      const rightTaps = this.data.filter(tap => tap.side === 'right')
+      return rightTaps.map(tap => ({
+        x: tap.msFromStart,
         y: 2
       }))
     },
-    getAverageLeft () {
-      const leftTaps = this.getLeft()
+    getAverageTapTime () {
+      const taps = this.data.map(tap => ({
+        x: tap.msFromStart
+      }))
       const timeDifferences = []
-      for (let i = 1; i < leftTaps.length; i++) {
-        const timeDifference = leftTaps[i].x - leftTaps[i - 1].x
-        timeDifferences.push(timeDifference)
+
+      for (let i = 1; i < taps.length; i++) {
+        timeDifferences.push(taps[i].x - taps[i - 1].x)
       }
       if (timeDifferences.length > 0) {
         const sum = timeDifferences.reduce((acc, timeDiff) => acc + timeDiff, 0)
@@ -174,18 +173,17 @@ export default {
         return averageTime
       }
     },
-    getAverageRight () {
-      const leftTaps = this.getRight()
-      const timeDifferences = []
-      for (let i = 1; i < leftTaps.length; i++) {
-        const timeDifference = leftTaps[i].x - leftTaps[i - 1].x
-        timeDifferences.push(timeDifference)
+    getTapTimeDifference () {
+      // create variable to avoid mutation of the "data" prop
+      const data = this.data
+      const sortedTaps = data.sort((firstTap, secondTap) => firstTap.msFromStart - secondTap.msFromStart)
+      const tapTimeDifference = []
+
+      for (let i = 1; i < sortedTaps.length; i++) {
+        const difference = sortedTaps[i].msFromStart - sortedTaps[i - 1].msFromStart
+        tapTimeDifference.push({ x: sortedTaps[i].msFromStart, y: difference })
       }
-      if (timeDifferences.length > 0) {
-        const sum = timeDifferences.reduce((acc, timeDiff) => acc + timeDiff, 0)
-        const averageTime = Math.round(sum / timeDifferences.length)
-        return averageTime
-      }
+      return tapTimeDifference
     }
   }
 }
@@ -193,5 +191,11 @@ export default {
 
 <style>
 canvas {width: 500px; height:500px;}
-p {text-align: center;}
+p {
+  margin: 1%;
+}
+#fingerTappingResult {
+  text-align: center;
+  margin: 2% 0 6% 0;
+}
 </style>

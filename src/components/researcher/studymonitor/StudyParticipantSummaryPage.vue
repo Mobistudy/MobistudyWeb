@@ -226,7 +226,6 @@ export default {
           userKey: params.filter.userKey
         }
         this.tasks = await API.getTasksResults(queryParams.studyKey, queryParams.userKey)
-        console.log(this.tasks)
       } catch (err) {
         this.$q.notify({
           color: 'negative',
@@ -266,7 +265,6 @@ export default {
       // Verifica si hay tareas disponibles
       if (this.tasks.length > 0) {
         const firstTaskToLoad = this.tasks[0]
-        console.log('primera imagen')
         this.tasksToLoad.push(firstTaskToLoad)
         await this.loadNextImage()
       }
@@ -279,7 +277,6 @@ export default {
         const jsonId = taskToLoad.attachments[0]
         try {
           const response = await API.getTaskAttachment(this.studyKey, this.userKey, taskId, jsonId)
-          console.log(response)
           const photo = response.find(item => item.questionType === 'photo')
           if (photo) {
             const slide = {
