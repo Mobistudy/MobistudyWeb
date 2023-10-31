@@ -67,7 +67,7 @@ export default {
     return resp.data
   },
   // NEW GET USERS FUNCTION
-  async getAllUsers (countOnly, filter) {
+  async getAllUsers (filter) {
     let queryParams = ''
     let firstParam = true
     for (const param in filter) {
@@ -76,7 +76,7 @@ export default {
         firstParam = false
       }
     }
-    const URL = BASE_URL + '/users' + (countOnly ? '/count' : '') + (firstParam ? '' : '?') + queryParams
+    const URL = BASE_URL + '/users' + (firstParam ? '' : '?') + queryParams
     const resp = await axios.get(URL, axiosConfig)
     return resp.data
   },
