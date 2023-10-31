@@ -3,16 +3,24 @@
     <canvas id="fingerTappingChart"></canvas>
   </div>
     <div id="fingerTappingResult">
+      <div class="resetChart">
+        <q-btn @click="fingerTapping.resetZoom()">Reset Finger Tapping Chart</q-btn>
+      </div>
       <p>Total Taps: {{ this.data.length }}</p>
       <p>Average Tap Time Difference: {{ this.getAverageTapTime() }}</p>
     </div>
   <div>
     <canvas id="fingerTappingDelayChart"></canvas>
+    <div class="resetChart">
+      <q-btn @click="interTapping.resetZoom()">Reset Inter Tapping Chart</q-btn>
+    </div>
   </div>
 </template>
 
 <script>
 import { Chart } from 'chart.js/auto'
+import zoomPlugin from 'chartjs-plugin-zoom'
+Chart.register(zoomPlugin)
 
 export default {
   props: ['data'],
@@ -85,11 +93,25 @@ export default {
               display: true,
               text: 'Finger Tapping',
               color: '#459399'
+            },
+            zoom: {
+              zoom: {
+                wheel: {
+                  enabled: true
+                },
+                pinch: {
+                  enabled: true
+                },
+                mode: 'x',
+                limits: {
+                  x: { min: 0, max: 100 }
+                }
+              }
             }
           }
         }
       }
-      this.chart = new Chart(ctx, config)
+      this.fingerTapping = new Chart(ctx, config)
     },
 
     initializeFingerTappingDelayChart () {
@@ -138,11 +160,22 @@ export default {
               display: true,
               text: 'Inter Tapping Time',
               color: '#459399'
+            },
+            zoom: {
+              zoom: {
+                wheel: {
+                  enabled: true
+                },
+                pinch: {
+                  enabled: true
+                },
+                mode: 'x'
+              }
             }
           }
         }
       }
-      this.chart = new Chart(ctx, config)
+      this.interTapping = new Chart(ctx, config)
     },
     getLeftTaps () {
       const leftTaps = this.data.filter(tap => tap.side === 'left')
@@ -197,5 +230,21 @@ p {
 #fingerTappingResult {
   text-align: center;
   margin: 2% 0 6% 0;
+}
+button {
+  margin: 10px 0;
+}
+#fingerTappingResult {
+  text-align: center;
+  margin: auto;
+}
+.resetChart {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+.resetChart * {
+  color: white;
+  background-color: #71bbcd;
 }
 </style>
