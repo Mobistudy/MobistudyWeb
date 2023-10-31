@@ -10,7 +10,14 @@ export default {
   },
   methods: {
     initializeChart () {
-      console.log('Tugt chart...')
+      console.log(this.getMotionObjects())
+      console.log(this.getOrientationObjects())
+    },
+    getMotionObjects () {
+      return this.data.motion
+    },
+    getOrientationObjects () {
+      return this.data.orientation
     }
   }
 }
