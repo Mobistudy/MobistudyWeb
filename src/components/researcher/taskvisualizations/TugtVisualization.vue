@@ -47,6 +47,11 @@ export default {
               }
             },
             y: {
+              ticks: {
+                stepSize: 0.2
+              },
+              suggestedMin: 0.1,
+              suggestedMax: 1,
               type: 'linear',
               beginAtZero: true,
               title: {
