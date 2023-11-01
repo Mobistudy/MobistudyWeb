@@ -16,7 +16,6 @@ export default {
   methods: {
     initializeChart () {
       const ctx = document.getElementById('tugtChart').getContext('2d')
-      console.log(this.getXYZ())
       const config = {
         type: 'line',
         data: {
@@ -90,18 +89,15 @@ export default {
       return JSON.parse(JSON.stringify(this.data.orientation))
     },
     getXYZ () {
-      const sum = []
-      let index = 0
-      const dataAccg = JSON.parse(JSON.stringify(this.data.motion.map(obj => obj.accG))) 
-      for (const accXYZ of dataAccg) {
-        index++
-        sum.push({
-          x: index,
-          y: Math.sqrt((accXYZ.x * accXYZ.x), (accXYZ.y * accXYZ.y), (accXYZ.z * accXYZ.z))
+      const vectors = []
+      const accGArr = JSON.parse(JSON.stringify(this.data.motion.map(obj => obj.accG)))
+      for (let i = 0; i < accGArr.length; i++) {
+        vectors.push({
+          x: i,
+          y: Math.sqrt((accGArr[i].x * accGArr[i].x), (accGArr[i].y * accGArr[i].y), (accGArr[i].z * accGArr[i].z))
         }) 
-      }  
-      // console.log(sum)
-      return sum
+      }
+      return vectors
     }
   }
 }
