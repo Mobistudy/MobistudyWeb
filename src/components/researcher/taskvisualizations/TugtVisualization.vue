@@ -19,7 +19,6 @@ export default {
   mounted () {
     this.initializeRotarChart()
     this.initializeVectorChart()
-    console.log(this.getroter())
   },
   methods: {
     initializeRotarChart () {
