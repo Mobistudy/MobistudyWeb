@@ -14,10 +14,10 @@ export default {
       console.log(this.getOrientationObjects())
     },
     getMotionObjects () {
-      return this.data.motion
+      return JSON.parse(JSON.stringify(this.data.motion))
     },
     getOrientationObjects () {
-      return this.data.orientation
+      return JSON.parse(JSON.stringify(this.data.orientation))
     }
   }
 }
