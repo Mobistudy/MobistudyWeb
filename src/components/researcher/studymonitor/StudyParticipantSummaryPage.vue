@@ -123,6 +123,13 @@
                       :taskDataContent="taskDataContent"
                     ></mi-band-3-charts>
                   </div>
+                  <div v-else-if="taskDataType === 'smwt'">
+                    <s-m-w-t-map
+                      :studyKey="studyKey"
+                      :userKey="userKey"
+                      :taskDataContent="taskDataContent"
+                    ></s-m-w-t-map>
+                  </div>
                 </q-card-section>
               </q-card>
             </q-dialog>
@@ -171,6 +178,7 @@
 <script>
 import API from '@shared/API.js'
 import MiBand3Charts from '@components/researcher/studymonitor/MiBand3Charts'
+import SMWTMap from '@components/researcher/studymonitor/SMWTMap'
 import { bestLocale } from '@mixins/bestLocale'
 import { date } from 'quasar'
 import { ref } from 'vue'
@@ -183,7 +191,7 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,
 export default {
   name: 'StudyParticipant',
   props: ['studyKey', 'userKey'],
-  components: { Bar, MiBand3Charts },
+  components: { Bar, MiBand3Charts, SMWTMap },
   mixins: [bestLocale],
   data () {
     return {
