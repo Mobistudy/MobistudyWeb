@@ -21,6 +21,11 @@
       </l-marker>
 
       <l-polyline
+        :lat-lngs="getMarkerCoordinates()"
+        color="green"
+      ></l-polyline>
+
+      <l-polyline
         :lat-lngs="[
           [47.334852, -1.509485],
           [47.342596, -1.328731],
@@ -99,7 +104,7 @@ export default {
   },
   data () {
     return {
-      zoom: 10,
+      zoom: 15,
       iconWidth: 25,
       iconHeight: 40
     }
@@ -121,6 +126,11 @@ export default {
     }
   },
   methods: {
+    getMarkerCoordinates () {
+      return this.taskDataContent.positions.map((position) => {
+        return [position.coords.latitude, position.coords.longitude]
+      })
+    }
   }
 }
 </script>
