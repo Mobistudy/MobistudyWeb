@@ -3,7 +3,7 @@
     <l-map
       v-model="zoom"
       v-model:zoom="zoom"
-      :center="[47.41322, -1.219482]"
+      :center="centerCoordinates"
     >
       <l-tile-layer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -99,7 +99,7 @@ export default {
   },
   data () {
     return {
-      zoom: 2,
+      zoom: 10,
       iconWidth: 25,
       iconHeight: 40
     }
@@ -108,11 +108,16 @@ export default {
     console.log(this.taskDataContent)
   },
   computed: {
-    iconUrl () {
-      return `https://placekitten.com/${this.iconWidth}/${this.iconHeight}`
-    },
-    iconSize () {
-      return [this.iconWidth, this.iconHeight]
+    centerCoordinates () {
+      // Choose the marker you want to use for centering the map, e.g., the first marker.
+      const chosenMarker = this.taskDataContent.positions[0] // Change the index as needed.
+
+      if (chosenMarker) {
+        return [chosenMarker.coords.latitude, chosenMarker.coords.longitude]
+      } else {
+        // Fallback coordinates in case the chosen marker doesn't exist or has invalid data.
+        return [47.41322, -1.219482]
+      }
     }
   },
   methods: {
