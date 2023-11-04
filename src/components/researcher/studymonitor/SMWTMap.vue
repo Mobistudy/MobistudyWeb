@@ -10,13 +10,21 @@
       ></l-tile-layer>
       <l-control-layers />
 
+      <!-- Display a l-marker for the first position -->
       <l-marker
-        v-for="(position, index) in taskDataContent.positions"
-        :key="index"
-        :lat-lng="[position.coords.latitude, position.coords.longitude]"
+        :lat-lng="[taskDataContent.positions[0].coords.latitude, taskDataContent.positions[0].coords.longitude]"
       >
         <l-tooltip>
-          {{ new Date(position.timestamp).toLocaleString() }}
+          {{ new Date(taskDataContent.positions[0].timestamp).toLocaleString() }}
+        </l-tooltip>
+      </l-marker>
+
+      <!-- Display a l-marker for the last position -->
+      <l-marker
+        :lat-lng="[taskDataContent.positions[taskDataContent.positions.length - 1].coords.latitude, taskDataContent.positions[taskDataContent.positions.length - 1].coords.longitude]"
+      >
+        <l-tooltip>
+          {{ new Date(taskDataContent.positions[taskDataContent.positions.length - 1].timestamp).toLocaleString() }}
         </l-tooltip>
       </l-marker>
 
@@ -24,48 +32,6 @@
         :lat-lngs="getMarkerCoordinates()"
         color="green"
       ></l-polyline>
-
-      <l-polyline
-        :lat-lngs="[
-          [47.334852, -1.509485],
-          [47.342596, -1.328731],
-          [47.241487, -1.190568],
-          [47.234787, -1.358337],
-        ]"
-        color="green"
-      ></l-polyline>
-      <l-polygon
-        :lat-lngs="[
-          [46.334852, -1.509485],
-          [46.342596, -1.328731],
-          [46.241487, -1.190568],
-          [46.234787, -1.358337],
-        ]"
-        color="#41b782"
-        :fill="true"
-        :fillOpacity="0.5"
-        fillColor="#41b782"
-      />
-      <l-rectangle
-        :lat-lngs="[
-          [46.334852, -1.509485],
-          [46.342596, -1.328731],
-          [46.241487, -1.190568],
-          [46.234787, -1.358337],
-        ]"
-        :fill="true"
-        color="#35495d"
-      />
-      <l-rectangle
-        :bounds="[
-          [46.334852, -1.190568],
-          [46.241487, -1.090357],
-        ]"
-      >
-        <l-popup>
-          lol
-        </l-popup>
-      </l-rectangle>
     </l-map>
   </div>
 </template>
@@ -77,10 +43,7 @@ import {
   LMarker,
   LControlLayers,
   LTooltip,
-  LPopup,
-  LPolyline,
-  LPolygon,
-  LRectangle
+  LPolyline
 } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
 
@@ -97,10 +60,7 @@ export default {
     LMarker,
     LControlLayers,
     LTooltip,
-    LPopup,
-    LPolyline,
-    LPolygon,
-    LRectangle
+    LPolyline
   },
   data () {
     return {
