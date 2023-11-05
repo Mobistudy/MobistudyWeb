@@ -135,7 +135,7 @@
                         Distance
                       </p>
                       <p>
-                        {{ smwtDistance }}
+                        {{ smwtDistance }} m
                       </p>
                     </div>
                     <s-m-w-t-map
@@ -338,7 +338,8 @@ export default {
         this.taskCompletedDate = props.row.summary.completedTS
         if (this.taskDataType === 'smwt') {
           this.smwtSteps = props.row.summary.steps
-          this.smwtDistance = props.row.summary.distance
+          const smwtDistanceDecimals = props.row.summary.distance
+          this.smwtDistance = Math.round(smwtDistanceDecimals)
         }
         this.taskDataModal = true
         this.getParticipant()

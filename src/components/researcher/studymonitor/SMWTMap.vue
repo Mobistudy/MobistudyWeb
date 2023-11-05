@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 60vh; width: 50vw;">
+  <div class="map">
     <l-map
       v-model="zoom"
       v-model:zoom="zoom"
@@ -101,3 +101,11 @@ export default {
   }
 }
 </script>
+<style scoped>
+
+.map {
+  width: 50vw;
+  height: 60vh;
+  max-width: 100%;
+}
+</style>
