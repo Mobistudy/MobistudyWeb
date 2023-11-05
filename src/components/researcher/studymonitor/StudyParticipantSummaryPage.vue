@@ -124,6 +124,20 @@
                     ></mi-band-3-charts>
                   </div>
                   <div v-else-if="taskDataType === 'smwt'">
+                    <div>
+                      <p class="q-title text-bold">
+                        Steps
+                      </p>
+                      <p>
+                        {{ smwtSteps }}
+                      </p>
+                      <p class="q-title text-bold">
+                        Distance
+                      </p>
+                      <p>
+                        {{ smwtDistance }}
+                      </p>
+                    </div>
                     <s-m-w-t-map
                       :studyKey="studyKey"
                       :userKey="userKey"
@@ -222,6 +236,8 @@ export default {
       taskDataContent: undefined,
       taskDataModal: false,
       taskCompletedDate: undefined,
+      smwtDistance: undefined,
+      smwtSteps: undefined,
       loading: false,
       chartLoaded: false,
       chartData: {
@@ -305,6 +321,7 @@ export default {
           userKey: params.filter.userKey
         }
         this.tasks = await API.getTasksResults(queryParams.studyKey, queryParams.userKey)
+        console.log(this.tasks)
       } catch (err) {
         this.$q.notify({
           color: 'negative',
@@ -319,6 +336,10 @@ export default {
         this.taskDataContent = await API.getTaskAttachment(this.studyKey, this.userKey, props.row.taskId, props.row.attachments[0])
         this.taskDataType = props.row.taskType
         this.taskCompletedDate = props.row.summary.completedTS
+        if (this.taskDataType === 'smwt') {
+          this.smwtSteps = props.row.summary.steps
+          this.smwtDistance = props.row.summary.distance
+        }
         this.taskDataModal = true
         this.getParticipant()
       } catch (err) {

@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 75vh; width: 50vw;">
+  <div style="height: 60vh; width: 50vw;">
     <l-map
       v-model="zoom"
       v-model:zoom="zoom"
@@ -22,7 +22,8 @@
       <!-- Display a l-marker for the last position -->
       <l-marker
         :lat-lng="[taskDataContent.positions[taskDataContent.positions.length - 1].coords.latitude, taskDataContent.positions[taskDataContent.positions.length - 1].coords.longitude]"
-      >
+        :icon="finishIcon"
+        >
         <l-tooltip>
           {{ new Date(taskDataContent.positions[taskDataContent.positions.length - 1].timestamp).toLocaleString() }}
         </l-tooltip>
@@ -30,7 +31,7 @@
 
       <l-polyline
         :lat-lngs="getMarkerCoordinates()"
-        color="green"
+        color="#459399"
       ></l-polyline>
     </l-map>
   </div>
@@ -46,6 +47,7 @@ import {
   LPolyline
 } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
+import L from 'leaflet'
 
 export default {
   name: 'SMWTMap',
@@ -66,7 +68,12 @@ export default {
     return {
       zoom: 15,
       iconWidth: 25,
-      iconHeight: 40
+      iconHeight: 40,
+      finishIcon: L.icon({
+        iconUrl: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/finish-line-flag-3414667-2846251.png?f=webp',
+        iconSize: [50, 50],
+        iconAnchor: [15, 45]
+      })
     }
   },
   mounted () {
