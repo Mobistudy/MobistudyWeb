@@ -85,6 +85,9 @@
                   <div v-if="taskDataType === 'vocalization'">
                     <VocalizationVisualization :data="taskDataContent" />
                   </div>
+                  <div v-if="taskDataType === 'smwt'">
+                    <SmwtVisualization :data="taskDataContent" />
+                  </div>
                 </q-card-section>
               </q-card>
             </q-dialog>
@@ -136,6 +139,7 @@ import HoldPhoneVisualization from '../taskvisualizations/HoldPhoneVisualization
 import DrawingVisualization from '../taskvisualizations/DrawingVisualization.vue'
 import TugtVisualization from '../taskvisualizations/TugtVisualization.vue'
 import VocalizationVisualization from '../taskvisualizations/VocalizationVisualization.vue'
+import SmwtVisualization from '../taskvisualizations/SmwtVisualization.vue'
 
 export default {
   name: 'StudyParticipant',
@@ -146,7 +150,8 @@ export default {
     HoldPhoneVisualization,
     DrawingVisualization,
     TugtVisualization,
-    VocalizationVisualization
+    VocalizationVisualization,
+    SmwtVisualization
   },
   data () {
     return {
