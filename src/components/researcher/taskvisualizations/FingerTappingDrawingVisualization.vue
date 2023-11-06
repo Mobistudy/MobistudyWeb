@@ -62,14 +62,8 @@ export default {
               beginAtZero: true,
               title: {
                 display: true,
-                text: 'Time (seconds)',
+                text: 'Milliseconds',
                 color: '#459399'
-              },
-              ticks: {
-                stepSize: 1000,
-                callback: function (value) {
-                  return (value / 1000) + 's'
-                }
               }
             },
             y: {
