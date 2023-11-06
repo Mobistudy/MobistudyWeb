@@ -26,6 +26,7 @@ export default {
   mounted () {
     this.initializeRotarChart()
     this.initializeVectorChart()
+    console.log(this.getAccG('x'))
   },
   data () {
     return {
@@ -42,7 +43,7 @@ export default {
           datasets: [
             {
               label: 'Rotation',
-              data: this.getroter(),
+              data: this.getRoter(),
               borderColor: '#459399',
               backgroundColor: '#459399',
               fill: false,
@@ -181,6 +182,17 @@ export default {
     getOrientationObjects () {
       return JSON.parse(JSON.stringify(this.data.orientation))
     },
+    getAccG (axis) {
+      const accGArr = []
+      const accGObjArr = this.getMotionObjects().map(obj => obj.accG)
+      for (let i = 0; i < accGObjArr.length; i++) {
+        accGArr.push({
+          x: i,
+          y: Math.sqrt((accGObjArr[i][axis] * accGObjArr[i][axis]))
+        })
+      }
+      return accGArr
+    },
     getXYZ () {
       const vectors = []
       const accGArr = JSON.parse(JSON.stringify(this.data.motion.map(obj => obj.accG)))
@@ -192,7 +204,7 @@ export default {
       }
       return vectors
     },
-    getroter () {
+    getRoter () {
       const vectors = []
       const roter = JSON.parse(JSON.stringify(this.data.motion.map(obj => obj.rotRate)))
       for (let i = 0; i < roter.length; i++) {
