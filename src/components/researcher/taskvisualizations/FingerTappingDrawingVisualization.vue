@@ -1,20 +1,23 @@
 <template>
   <div>
-    <canvas id="fingerTappingChart"></canvas>
+    <p class="taskVisualizationHeader">Completed: {{ completed }}</p>
   </div>
-    <div class="resetChart">
-      <q-btn @click="fingerTapping.resetZoom()">Reset Finger Tapping Chart</q-btn>
+    <div>
+      <canvas id="fingerTappingChart"></canvas>
     </div>
-    <div id="fingerTappingResult">
-      <p>Total Taps: {{ this.data.length }}</p>
-      <p>Average Tap Time Difference: {{ this.getAverageTapTime() }}</p>
+      <div class="resetChart">
+        <q-btn @click="fingerTapping.resetZoom()">Reset Zoom</q-btn>
+      </div>
+      <div id="fingerTappingResult">
+        <p>Total Taps: {{ this.data.length }}</p>
+        <p>Average Tap Time Difference: {{ this.getAverageTapTime() }}</p>
+      </div>
+    <div>
+      <canvas id="fingerTappingDelayChart"></canvas>
     </div>
-  <div>
-    <canvas id="fingerTappingDelayChart"></canvas>
-  </div>
-    <div class="resetChart">
-      <q-btn @click="interTapping.resetZoom()">Reset Inter Tapping Chart</q-btn>
-    </div>
+      <div class="resetChart">
+        <q-btn @click="interTapping.resetZoom()">Reset Zoom</q-btn>
+      </div>
 </template>
 
 <script>
@@ -23,7 +26,7 @@ import zoomPlugin from 'chartjs-plugin-zoom'
 Chart.register(zoomPlugin)
 
 export default {
-  props: ['data'],
+  props: ['data', 'completed'],
   mounted () {
     this.initializeFingerTappingChart()
     this.initializeFingerTappingDelayChart()

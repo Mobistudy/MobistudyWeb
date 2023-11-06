@@ -1,17 +1,20 @@
 <template>
   <div>
+    <p class="taskVisualizationHeader">Completed: {{ completed }}</p>
+  </div>
+  <div>
     <q-toggle v-model="isFTCombined">{{ isFTCombined ? 'Module' : 'XYZ' }}</q-toggle>
     <canvas id="tugtVectorChart"></canvas>
   </div>
     <div class="resetChart">
-      <q-btn @click="tugtVectorChart.resetZoom()">Reset Acceleration Gravity</q-btn>
+      <q-btn @click="tugtVectorChart.resetZoom()">Reset Zoom</q-btn>
     </div>
   <div>
     <q-toggle v-model="isITTCombined">{{ isITTCombined ? 'Module' : 'XYZ' }}</q-toggle>
     <canvas id="tugtRotarChart"></canvas>
   </div>
     <div class="resetChart">
-      <q-btn @click="tugtRotarChart.resetZoom()">Reset Rotation</q-btn>
+      <q-btn @click="tugtRotarChart.resetZoom()">Reset Zoom</q-btn>
     </div>
 </template>
 
@@ -22,7 +25,7 @@ import zoomPlugin from 'chartjs-plugin-zoom'
 Chart.register(zoomPlugin)
 
 export default {
-  props: ['data'],
+  props: ['data', 'completed'],
   mounted () {
     this.initializeRotarChart()
     this.initializeVectorChart()
@@ -35,79 +38,6 @@ export default {
     }
   },
   methods: {
-    initializeRotarChart () {
-      const ctx = document.getElementById('tugtRotarChart').getContext('2d')
-      const config = {
-        type: 'line',
-        data: {
-          datasets: [
-            {
-              label: 'Rotation',
-              data: this.getRoter(),
-              borderColor: '#459399',
-              backgroundColor: '#459399',
-              fill: false,
-              borderWidth: 1,
-              pointRadius: 0
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            x: {
-              type: 'linear',
-              position: 'bottom',
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: 'Milliseconds',
-                color: '#459399'
-              }
-            },
-            y: {
-              ticks: {
-                stepSize: 0.2
-              },
-              suggestedMin: 0.1,
-              suggestedMax: 1,
-              type: 'linear',
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: 'Rotation',
-                color: '#459399'
-              }
-            }
-          },
-          plugins: {
-            legend: {
-              display: false
-            },
-            title: {
-              display: true,
-              text: 'Rotation',
-              color: '#459399',
-              font: {
-                size: 16
-              }
-            },
-            zoom: {
-              zoom: {
-                wheel: {
-                  enabled: true
-                },
-                pinch: {
-                  enabled: true
-                },
-                mode: 'x'
-              }
-            }
-          }
-        }
-      }
-      this.tugtRotarChart = new Chart(ctx, config)
-    },
     initializeVectorChart () {
       const ctx = document.getElementById('tugtVectorChart').getContext('2d')
       const config = {
@@ -182,6 +112,79 @@ export default {
       }
       this.tugtVectorChart = new Chart(ctx, config)
     },
+    initializeRotarChart () {
+      const ctx = document.getElementById('tugtRotarChart').getContext('2d')
+      const config = {
+        type: 'line',
+        data: {
+          datasets: [
+            {
+              label: 'Rotation',
+              data: this.getRoter(),
+              borderColor: '#459399',
+              backgroundColor: '#459399',
+              fill: false,
+              borderWidth: 1,
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              type: 'linear',
+              position: 'bottom',
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Milliseconds',
+                color: '#459399'
+              }
+            },
+            y: {
+              ticks: {
+                stepSize: 0.2
+              },
+              suggestedMin: 0.1,
+              suggestedMax: 1,
+              type: 'linear',
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Rotation',
+                color: '#459399'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            title: {
+              display: true,
+              text: 'Rotation',
+              color: '#459399',
+              font: {
+                size: 16
+              }
+            },
+            zoom: {
+              zoom: {
+                wheel: {
+                  enabled: true
+                },
+                pinch: {
+                  enabled: true
+                },
+                mode: 'x'
+              }
+            }
+          }
+        }
+      }
+      this.tugtRotarChart = new Chart(ctx, config)
+    },
     getMotionObjects () {
       return JSON.parse(JSON.stringify(this.data.motion))
     },
@@ -226,5 +229,9 @@ export default {
 </script>
 
 <style>
-
+.taskVisualizationHeader {
+  text-align: center;
+  font-weight: bold;
+  color: #459399;
+}
 </style>

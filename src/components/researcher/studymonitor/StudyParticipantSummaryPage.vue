@@ -62,7 +62,7 @@
               <q-card style="min-width: 300px">
                 <q-bar class="my-q-bar bg-primary">
                   <div class="text-h6 text-white text-bold text-uppercase">
-                    <span>{{ niceTimestamp(taskCompletedDate) }}</span>
+                    <span>{{ taskDataType }}</span>
                   </div>
                   <q-space />
                   <q-btn dense flat icon="close" v-close-popup class="material-symbols-outlined">
@@ -71,22 +71,22 @@
                 </q-bar>
                 <q-card-section>
                   <div v-if="taskDataType === 'fingerTapping'">
-                    <FingerTappingDrawingVisualization :data="taskDataContent" />
+                    <FingerTappingDrawingVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
                   </div>
                   <div v-if="taskDataType === 'holdPhone'">
-                    <HoldPhoneVisualization :data="taskDataContent" />
+                    <HoldPhoneVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
                   </div>
                   <div v-if="taskDataType === 'drawing'">
-                    <DrawingVisualization :data="taskDataContent" />
+                    <DrawingVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
                   </div>
                   <div v-if="taskDataType === 'tugt'">
-                    <TugtVisualization :data="taskDataContent" />
+                    <TugtVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
                   </div>
                   <div v-if="taskDataType === 'vocalization'">
-                    <VocalizationVisualization :data="taskDataContent" />
+                    <VocalizationVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
                   </div>
                   <div v-if="taskDataType === 'peakFlow'">
-                    <PeakFlowVisualization :data="taskDataContent" />
+                    <PeakFlowVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
                   </div>
                 </q-card-section>
               </q-card>
