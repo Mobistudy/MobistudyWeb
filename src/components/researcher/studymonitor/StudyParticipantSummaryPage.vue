@@ -85,9 +85,6 @@
                   <div v-if="taskDataType === 'vocalization'">
                     <VocalizationVisualization :data="taskDataContent" />
                   </div>
-                  <div v-if="taskDataType === 'smwt'">
-                    <SmwtVisualization :data="taskDataContent" />
-                  </div>
                   <div v-if="taskDataType === 'peakFlow'">
                     <PeakFlowVisualization :data="taskDataContent" />
                   </div>
@@ -142,7 +139,6 @@ import HoldPhoneVisualization from '../taskvisualizations/HoldPhoneVisualization
 import DrawingVisualization from '../taskvisualizations/DrawingVisualization.vue'
 import TugtVisualization from '../taskvisualizations/TugtVisualization.vue'
 import VocalizationVisualization from '../taskvisualizations/VocalizationVisualization.vue'
-import SmwtVisualization from '../taskvisualizations/SmwtVisualization.vue'
 import PeakFlowVisualization from '../taskvisualizations/PeakFlowVisualization.vue'
 
 export default {
@@ -155,7 +151,6 @@ export default {
     DrawingVisualization,
     TugtVisualization,
     VocalizationVisualization,
-    SmwtVisualization,
     PeakFlowVisualization
   },
   data () {
