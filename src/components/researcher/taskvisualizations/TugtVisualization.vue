@@ -87,7 +87,10 @@ export default {
             title: {
               display: true,
               text: 'Rotation',
-              color: '#459399'
+              color: '#459399',
+              font: {
+                size: 16
+              }
             },
             zoom: {
               zoom: {
@@ -158,7 +161,10 @@ export default {
             title: {
               display: true,
               text: 'Acceleration Gravity',
-              color: '#459399'
+              color: '#459399',
+              font: {
+                size: 16
+              }
             },
             zoom: {
               zoom: {

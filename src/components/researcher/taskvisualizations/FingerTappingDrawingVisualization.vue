@@ -86,7 +86,10 @@ export default {
             title: {
               display: true,
               text: 'Finger Tapping',
-              color: '#459399'
+              color: '#459399',
+              font: {
+                size: 16
+              }
             },
             zoom: {
               zoom: {
@@ -153,7 +156,10 @@ export default {
             title: {
               display: true,
               text: 'Inter Tapping Time',
-              color: '#459399'
+              color: '#459399',
+              font: {
+                size: 16
+              }
             },
             zoom: {
               zoom: {
