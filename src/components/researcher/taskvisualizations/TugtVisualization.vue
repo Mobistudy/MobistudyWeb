@@ -1,15 +1,22 @@
 <template>
-  <canvas id="tugtVectorChart"></canvas>
-  <div class="resetChart">
+  <div>
+    <q-toggle v-model="isFTCombined">{{ isFTCombined ? 'Module' : 'XYZ' }}</q-toggle>
+    <canvas id="tugtVectorChart"></canvas>
+  </div>
+    <div class="resetChart">
       <q-btn @click="tugtVectorChart.resetZoom()">Reset Acceleration Gravity</q-btn>
     </div>
-  <canvas id="tugtRotarChart"></canvas>
-  <div class="resetChart">
+  <div>
+    <q-toggle v-model="isITTCombined">{{ isITTCombined ? 'Module' : 'XYZ' }}</q-toggle>
+    <canvas id="tugtRotarChart"></canvas>
+  </div>
+    <div class="resetChart">
       <q-btn @click="tugtRotarChart.resetZoom()">Reset Rotation</q-btn>
     </div>
 </template>
 
 <script>
+import { ref } from 'vue'
 import { Chart } from 'chart.js/auto'
 import zoomPlugin from 'chartjs-plugin-zoom'
 Chart.register(zoomPlugin)
@@ -19,6 +26,12 @@ export default {
   mounted () {
     this.initializeRotarChart()
     this.initializeVectorChart()
+  },
+  data () {
+    return {
+      isFTCombined: ref(true),
+      isITTCombined: ref(true)
+    }
   },
   methods: {
     initializeRotarChart () {

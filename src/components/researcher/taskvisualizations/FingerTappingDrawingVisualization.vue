@@ -2,19 +2,19 @@
   <div>
     <canvas id="fingerTappingChart"></canvas>
   </div>
+    <div class="resetChart">
+      <q-btn @click="fingerTapping.resetZoom()">Reset Finger Tapping Chart</q-btn>
+    </div>
     <div id="fingerTappingResult">
-      <div class="resetChart">
-        <q-btn @click="fingerTapping.resetZoom()">Reset Finger Tapping Chart</q-btn>
-      </div>
       <p>Total Taps: {{ this.data.length }}</p>
       <p>Average Tap Time Difference: {{ this.getAverageTapTime() }}</p>
     </div>
   <div>
     <canvas id="fingerTappingDelayChart"></canvas>
+  </div>
     <div class="resetChart">
       <q-btn @click="interTapping.resetZoom()">Reset Inter Tapping Chart</q-btn>
     </div>
-  </div>
 </template>
 
 <script>
