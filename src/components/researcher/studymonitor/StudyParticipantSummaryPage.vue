@@ -88,6 +88,9 @@
                   <div v-if="taskDataType === 'smwt'">
                     <SmwtVisualization :data="taskDataContent" />
                   </div>
+                  <div v-if="taskDataType === 'peakFlow'">
+                    <PeakFlowVisualization :data="taskDataContent" />
+                  </div>
                 </q-card-section>
               </q-card>
             </q-dialog>
@@ -140,6 +143,7 @@ import DrawingVisualization from '../taskvisualizations/DrawingVisualization.vue
 import TugtVisualization from '../taskvisualizations/TugtVisualization.vue'
 import VocalizationVisualization from '../taskvisualizations/VocalizationVisualization.vue'
 import SmwtVisualization from '../taskvisualizations/SmwtVisualization.vue'
+import PeakFlowVisualization from '../taskvisualizations/PeakFlowVisualization.vue'
 
 export default {
   name: 'StudyParticipant',
@@ -151,7 +155,8 @@ export default {
     DrawingVisualization,
     TugtVisualization,
     VocalizationVisualization,
-    SmwtVisualization
+    SmwtVisualization,
+    PeakFlowVisualization
   },
   data () {
     return {
