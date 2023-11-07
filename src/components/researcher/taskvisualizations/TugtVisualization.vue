@@ -7,14 +7,14 @@
     <canvas id="tugtVectorChart"></canvas>
   </div>
     <div class="resetChart">
-      <q-btn @click="tugtVectorChart.resetZoom()">Reset Zoom</q-btn>
+      <q-btn @click="tugtVectorChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
     </div>
   <div>
     <q-toggle v-model="isITTCombined">{{ isITTCombined ? 'Module' : 'XYZ' }}</q-toggle>
     <canvas id="tugtRotarChart"></canvas>
   </div>
     <div class="resetChart">
-      <q-btn @click="tugtRotarChart.resetZoom()">Reset Zoom</q-btn>
+      <q-btn @click="tugtRotarChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
     </div>
 </template>
 
@@ -233,5 +233,8 @@ export default {
   text-align: center;
   font-weight: bold;
   color: #459399;
+}
+.reset_btn {
+  font-size: 12px; padding: 4px 8px
 }
 </style>

@@ -6,7 +6,7 @@
       <canvas id="fingerTappingChart"></canvas>
     </div>
       <div class="resetChart">
-        <q-btn @click="fingerTapping.resetZoom()">Reset Zoom</q-btn>
+        <q-btn @click="fingerTapping.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
       </div>
       <div id="fingerTappingResult">
         <p>Total Taps: {{ this.data.length }}</p>
@@ -16,7 +16,7 @@
       <canvas id="fingerTappingDelayChart"></canvas>
     </div>
       <div class="resetChart">
-        <q-btn @click="interTapping.resetZoom()">Reset Zoom</q-btn>
+        <q-btn @click="interTapping.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
       </div>
 </template>
 
@@ -249,5 +249,8 @@ button {
 .resetChart * {
   color: white;
   background-color: #71bbcd;
+}
+.reset_btn {
+  font-size: 12px; padding: 4px 8px
 }
 </style>
