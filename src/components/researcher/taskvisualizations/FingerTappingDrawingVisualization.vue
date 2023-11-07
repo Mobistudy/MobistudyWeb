@@ -103,8 +103,8 @@ export default {
                   enabled: true
                 },
                 mode: 'x',
-                limits: {
-                  x: { min: 0, max: 100 }
+                onZoom () {
+                  console.log('FT')
                 }
               }
             }
@@ -172,7 +172,10 @@ export default {
                 pinch: {
                   enabled: true
                 },
-                mode: 'x'
+                mode: 'x',
+                onZoom () {
+                  console.log('ITT')
+                }
               }
             }
           }
