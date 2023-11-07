@@ -38,20 +38,18 @@ export default {
   },
   methods: {
     handleFTToggleChange () {
+      this.tugtChart.destroy()
       if (this.isACCombined) {
-        this.tugtChart.destroy()
         this.initializeVectorChart()
       } else {
-        this.tugtChart.destroy()
         this.initializeXYZChart()
       }
     },
     handleRoterToggleChange () {
+      this.tugtRotarChart.destroy()
       if (this.isRCombined) {
-        this.tugtRotarChart.destroy()
         this.initializeRotarCombinedChart()
       } else {
-        this.tugtRotarChart.destroy()
         this.initializeRotarSeparate()
       }
     },
