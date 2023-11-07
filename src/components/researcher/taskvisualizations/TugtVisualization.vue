@@ -401,7 +401,7 @@ export default {
     },
     getXYZ () {
       const vectors = []
-      const accGArr = JSON.parse(JSON.stringify(this.data.motion.map(obj => obj.accG)))
+      const accGArr = this.getMotionObjects().map(obj => obj.accG)
       for (let i = 0; i < accGArr.length; i++) {
         vectors.push({
           x: i,
@@ -410,24 +410,24 @@ export default {
       }
       return vectors
     },
-    getAlphaBetaGamma (roter) {
+    getAlphaBetaGamma (aBG) {
       const alphaBetaGamma = []
-      const roterArr = JSON.parse(JSON.stringify(this.data.motion.map(obj => obj.rotRate)))
+      const roterArr = this.getMotionObjects().map(obj => obj.rotRate)
       for (let i = 0; i < roterArr.length; i++) {
         alphaBetaGamma.push({
           x: i,
-          y: Math.sqrt((roterArr[i][roter] * roterArr[i][roter]))
+          y: Math.sqrt((roterArr[i][aBG] * roterArr[i][aBG]))
         })
       }
       return alphaBetaGamma
     },
     getRoter () {
       const vectors = []
-      const roter = JSON.parse(JSON.stringify(this.data.motion.map(obj => obj.rotRate)))
-      for (let i = 0; i < roter.length; i++) {
+      const roterArr = this.getMotionObjects().map(obj => obj.rotRate)
+      for (let i = 0; i < roterArr.length; i++) {
         vectors.push({
           x: i,
-          y: Math.sqrt((roter[i].alpha * roter[i].alpha), (roter[i].beta * roter[i].beta), (roter[i].gamma * roter[i].gamma))
+          y: Math.sqrt((roterArr[i].alpha * roterArr[i].alpha), (roterArr[i].beta * roterArr[i].beta), (roterArr[i].gamma * roterArr[i].gamma))
         })
       }
       return vectors
