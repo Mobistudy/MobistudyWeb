@@ -89,7 +89,7 @@
                     <PeakFlowVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
                   </div>
                   <div v-if="taskDataType === 'position'">
-                    <PeakFlowVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <PositionVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
                   </div>
                 </q-card-section>
               </q-card>
@@ -143,6 +143,7 @@ import DrawingVisualization from '../taskvisualizations/DrawingVisualization.vue
 import TugtVisualization from '../taskvisualizations/TugtVisualization.vue'
 import VocalizationVisualization from '../taskvisualizations/VocalizationVisualization.vue'
 import PeakFlowVisualization from '../taskvisualizations/PeakFlowVisualization.vue'
+import PositionVisualization from '../taskvisualizations/PositionVisualization.vue'
 
 export default {
   name: 'StudyParticipant',
@@ -154,7 +155,8 @@ export default {
     DrawingVisualization,
     TugtVisualization,
     VocalizationVisualization,
-    PeakFlowVisualization
+    PeakFlowVisualization,
+    PositionVisualization
   },
   data () {
     return {
