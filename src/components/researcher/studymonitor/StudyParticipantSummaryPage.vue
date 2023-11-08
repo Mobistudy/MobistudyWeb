@@ -62,55 +62,34 @@
               <q-card style="min-width: 300px">
                 <q-bar class="my-q-bar bg-primary">
                   <div class="text-h6 text-white text-bold text-uppercase">
-                    <span>{{ niceTimestamp(taskCompletedDate) }}</span>
+                    <span>{{ taskDataType }}</span>
                   </div>
-
                   <q-space />
-
                   <q-btn dense flat icon="close" v-close-popup class="material-symbols-outlined">
                     <q-tooltip class="bg-secondary text-white">Close</q-tooltip>
                   </q-btn>
                 </q-bar>
-
                 <q-card-section>
-                  <div v-if="taskDataType === 'form'">
-                    <div
-                      v-for="(answer, index) in taskDataContent"
-                      :key="index"
-                    >
-                      <p class="q-title text-bold">
-                        {{ getBestLocale(answer.questionText) }}
-                      </p>
-                      <p v-if="answer.questionType == 'freetext'">
-                        {{ answer.answer }}
-                      </p>
-                      <p v-if="answer.questionType == 'slider'">
-                        {{ answer.answer }}
-                      </p>
-                      <p v-if="answer.questionType == 'number'">
-                        {{ answer.answer }}
-                      </p>
-                      <p v-if="answer.questionType == 'singleChoice'">
-                        {{ answer.answer.answerText }}
-                      </p>
-                      <div v-if="answer.questionType == 'multiChoice'">
-                        <p
-                          v-for="(subanswer, index1) in answer.answer"
-                          :key="index1"
-                        >
-                          {{ subanswer.answerText }}
-                        </p>
-                      </div>
-                      <q-img
-                        v-if="answer.questionType === 'photo'"
-                        :src="answer.answer"
-                        @click="showImage"
-                      />
-                      <div v-show="isImageVisible" class="fullscreen-image">
-                        <span class="close-btn" @click="hideImage">&times;</span>
-                        <img :src="answer.answer" alt="Full screen Image" />
-                      </div>
-                    </div>
+                  <div v-if="taskDataType === 'fingerTapping'">
+                    <FingerTappingDrawingVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                  </div>
+                  <div v-if="taskDataType === 'holdPhone'">
+                    <HoldPhoneVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                  </div>
+                  <div v-if="taskDataType === 'drawing'">
+                    <DrawingVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                  </div>
+                  <div v-if="taskDataType === 'tugt'">
+                    <TugtVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                  </div>
+                  <div v-if="taskDataType === 'vocalization'">
+                    <VocalizationVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                  </div>
+                  <div v-if="taskDataType === 'peakFlow'">
+                    <PeakFlowVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                  </div>
+                  <div v-if="taskDataType === 'position'">
+                    <PositionVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
                   </div>
                 </q-card-section>
               </q-card>
@@ -158,11 +137,27 @@ import { bestLocale } from '@mixins/bestLocale'
 import { date } from 'quasar'
 import { ref } from 'vue'
 import Chart from 'chart.js/auto'
+import FingerTappingDrawingVisualization from '../taskvisualizations/FingerTappingDrawingVisualization.vue'
+import HoldPhoneVisualization from '../taskvisualizations/HoldPhoneVisualization.vue'
+import DrawingVisualization from '../taskvisualizations/DrawingVisualization.vue'
+import TugtVisualization from '../taskvisualizations/TugtVisualization.vue'
+import VocalizationVisualization from '../taskvisualizations/VocalizationVisualization.vue'
+import PeakFlowVisualization from '../taskvisualizations/PeakFlowVisualization.vue'
+import PositionVisualization from '../taskvisualizations/PositionVisualization.vue'
 
 export default {
   name: 'StudyParticipant',
   props: ['studyKey', 'userKey'],
   mixins: [bestLocale],
+  components: {
+    FingerTappingDrawingVisualization,
+    HoldPhoneVisualization,
+    DrawingVisualization,
+    TugtVisualization,
+    VocalizationVisualization,
+    PeakFlowVisualization,
+    PositionVisualization
+  },
   data () {
     return {
       locale: this.$i18n.locale,
@@ -241,7 +236,6 @@ export default {
           userKey: params.filter.userKey
         }
         this.tasks = await API.getTasksResults(queryParams.studyKey, queryParams.userKey)
-        console.log(this.tasks)
       } catch (err) {
         this.$q.notify({
           color: 'negative',
@@ -281,7 +275,6 @@ export default {
       // Verifica si hay tareas disponibles
       if (this.tasks.length > 0) {
         const firstTaskToLoad = this.tasks[0]
-        console.log('primera imagen')
         this.tasksToLoad.push(firstTaskToLoad)
         await this.loadNextImage()
       }
@@ -294,7 +287,6 @@ export default {
         const jsonId = taskToLoad.attachments[0]
         try {
           const response = await API.getTaskAttachment(this.studyKey, this.userKey, taskId, jsonId)
-          console.log(response)
           const photo = response.find(item => item.questionType === 'photo')
           if (photo) {
             const slide = {
