@@ -7,7 +7,7 @@
       </div>
       <div class="q-pa-md">
         <canvas
-          style="margin: 0 auto; padding-right: 2rem;"
+          style="margin: 0 auto; padding-right: 2rem; display: inline;"
           height="320"
           ref="lineChart"
         />

@@ -138,11 +138,30 @@
                         {{ smwtDistance }} m
                       </p>
                     </div>
-                    <s-m-w-t-map
-                      :studyKey="studyKey"
-                      :userKey="userKey"
-                      :taskDataContent="taskDataContent"
-                    ></s-m-w-t-map>
+                    <div>
+                      <q-option-group
+                        v-model="panel"
+                        inline
+                        :options="[
+                          { label: 'Map', value: 'map' },
+                          { label: 'Chart', value: 'chart' }
+                        ]"
+                      />
+                      <q-tab-panels v-model="panel" animated class="shadow-2 rounded-borders">
+                        <q-tab-panel name="map">
+                          <s-m-w-t-map
+                            :studyKey="studyKey"
+                            :userKey="userKey"
+                            :taskDataContent="taskDataContent"
+                          ></s-m-w-t-map>
+                        </q-tab-panel>
+
+                        <q-tab-panel name="chart">
+                          <div class="text-h6">Chart</div>
+                          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        </q-tab-panel>
+                      </q-tab-panels>
+                    </div>
                   </div>
                 </q-card-section>
               </q-card>
@@ -210,6 +229,7 @@ export default {
   data () {
     return {
       locale: this.$i18n.locale,
+      panel: ref('map'),
       photoUrl: ref('https://excelautomationinc.com/wp-content/uploads/2021/07/No-Photo-Available.jpg'),
       current: 0,
       direction: 1,
