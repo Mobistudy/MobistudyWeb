@@ -88,6 +88,9 @@
                   <div v-if="taskDataType === 'peakFlow'">
                     <PeakFlowVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
                   </div>
+                  <div v-if="taskDataType === 'position'">
+                    <PeakFlowVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                  </div>
                 </q-card-section>
               </q-card>
             </q-dialog>
