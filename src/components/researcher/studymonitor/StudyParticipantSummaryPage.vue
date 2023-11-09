@@ -157,8 +157,11 @@
                         </q-tab-panel>
 
                         <q-tab-panel name="chart">
-                          <div class="text-h6">Chart</div>
-                          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                          <s-m-w-t-chart
+                            :studyKey="studyKey"
+                            :userKey="userKey"
+                            :taskDataContent="taskDataContent"
+                          ></s-m-w-t-chart>
                         </q-tab-panel>
                       </q-tab-panels>
                     </div>
@@ -212,6 +215,7 @@
 import API from '@shared/API.js'
 import MiBand3Charts from '@components/researcher/studymonitor/MiBand3Charts'
 import SMWTMap from '@components/researcher/studymonitor/SMWTMap'
+import SMWTChart from '@components/researcher/studymonitor/SMWTChart'
 import { bestLocale } from '@mixins/bestLocale'
 import { date } from 'quasar'
 import { ref } from 'vue'
@@ -224,7 +228,7 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,
 export default {
   name: 'StudyParticipant',
   props: ['studyKey', 'userKey'],
-  components: { Bar, MiBand3Charts, SMWTMap },
+  components: { Bar, MiBand3Charts, SMWTMap, SMWTChart },
   mixins: [bestLocale],
   data () {
     return {

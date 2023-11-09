@@ -26,16 +26,6 @@
           />
         </div>
       </div>
-      <q-separator></q-separator>
-      <div class="text-center text-h6">
-        {{ $t('miband3.pieChart') }}
-      </div>
-      <div class="q-pa-md">
-        <canvas
-          ref="pieChart"
-          height="270"
-        ></canvas>
-      </div>
     </div>
 
     <q-inner-loading :showing="isDownloading">
@@ -98,7 +88,6 @@ export default {
   data () {
     return {
       startDate: new Date(),
-      deviceInfo: {},
       isDownloading: false,
       lineChart: undefined,
       currentStartHour: 0,
@@ -136,9 +125,8 @@ export default {
       lineChart.reset()
 
       try {
-        this.deviceInfo = this.taskDataContent.device
-        storedData = this.taskDataContent.activity
-
+        storedData = this.taskDataContent.inertial.motion
+        console.log(storedData)
         if (storedData.length < minimumDataRequired) { // If less than 30 minutes of data exists, show page which describes to little data is found, wait and come back next time.
           await this.storeDownloadDate(this.startDate) // by storing this, we make sure to retrieve the data from the time the data was not enough instead of from today - period (which depends on when the user performs the task)
           // TODO: should we also store that the task is completed?
@@ -150,10 +138,9 @@ export default {
 
         this.report.summary.length = storedData.length
         this.report.summary.completedTS = new Date()
-        this.report.summary.firstTS = storedData[0].date
-        this.report.summary.lastTS = storedData[storedData.length - 1].date
+        this.report.summary.firstTS = storedData[0].msFromStart
+        this.report.summary.lastTS = storedData[storedData.length - 1].msFromStart
         this.report.data = {
-          device: this.deviceInfo,
           activity: storedData
         }
 
