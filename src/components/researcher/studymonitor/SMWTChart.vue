@@ -57,49 +57,22 @@ Chart.register(ScatterController, LineElement, PointElement, CategoryScale, Line
 
 // a bunch of colors that nicely fit together on a multi-line or bar chart
 // if there are more than 10 colors, we are in trouble
-const chartColors = [
-  '#800000',
-  '#778000',
-  '#118000',
-  '#008080',
-  '#003780',
-  '#080080',
-  '#440080',
-  '#790080',
-  '#800046',
-  '#800046'
-]
+// const chartColors = [
+//   '#800000',
+//   '#778000',
+//   '#118000',
+//   '#008080',
+//   '#003780',
+//   '#080080',
+//   '#440080',
+//   '#790080',
+//   '#800046',
+//   '#800046'
+// ]
 
 // holder of all the stored data, this is kept outside of Vue for efficiency
 let storedData = []
 const minimumDataRequired = 30 // 30 minutes of data is required at a minimum to upload the data
-
-// pie chart configuration
-const pieChartConfig = {
-  type: 'doughnut',
-  data: {
-    labels: [],
-    datasets: [{
-      data: [],
-      backgroundColor: []
-    }]
-  },
-  options: {
-    animation: {
-      animateScale: true
-    }
-  },
-  // additional properties used internally
-  indexes: [],
-  maxIndex: -1,
-  reset () {
-    this.data.datasets.data = []
-    this.data.datasets.backgroundColor = []
-    this.data.labels = []
-    this.indexes = []
-    this.maxIndex = -1
-  }
-}
 
 // holder of the line chart data
 const lineChart = {
@@ -160,7 +133,6 @@ export default {
 
       // reset the charts stuff in case it has been partially filled
       storedData = []
-      pieChartConfig.reset()
       lineChart.reset()
 
       try {
@@ -174,7 +146,6 @@ export default {
           return
         }
 
-        this.createPieChart()
         this.renderLineChart(this.currentStartHour, this.currentEndHour)
 
         this.report.summary.length = storedData.length
@@ -236,28 +207,6 @@ export default {
       lineChart.intensities.push({ x: date, y: intensity })
       lineChart.steps.push({ x: date, y: steps })
       lineChart.labels.push(this.niceTimestamp(date))
-    },
-
-    createPieChart () {
-      // create the configuration object
-      for (const datapoint of storedData) {
-        const activityType = datapoint.activityType
-        const name = this.getStringIdentifier(activityType)
-        if (pieChartConfig.indexes[name] === undefined) {
-          pieChartConfig.maxIndex++
-          const index = pieChartConfig.maxIndex
-          pieChartConfig.indexes[name] = index
-          pieChartConfig.data.datasets[0].data[index] = 1
-          pieChartConfig.data.datasets[0].backgroundColor[index] = chartColors[index]
-          pieChartConfig.data.labels.push(this.$t('miband3.activityTypes.' + name))
-        } else {
-          const index = pieChartConfig.indexes[name]
-          pieChartConfig.data.datasets[0].data[index]++
-        }
-      }
-      // create the chart
-      const pieCtx = this.$refs.pieChart
-      new Chart(pieCtx, pieChartConfig)
     },
 
     updateLineChartReferences () {
@@ -374,37 +323,6 @@ export default {
         this.disablePlus = true
       } else {
         this.disablePlus = false
-      }
-    },
-    getStringIdentifier (index) {
-      switch (index) {
-        case 1:
-        case 16:
-          return 'walk'
-        case 3:
-          return 'not_worn'
-        case 6:
-          return 'charging'
-        case 80:
-        case 90:
-        case 89:
-        case 91:
-        case 92:
-        case 96:
-          return 'sedentary'
-        case 98:
-        case 82:
-          return 'running'
-        case 17:
-          return 'activity_high'
-        case 106:
-        case 112:
-        case 121:
-        case 122:
-        case 123:
-          return 'sleep'
-        default:
-          return 'unknown'
       }
     }
   }
