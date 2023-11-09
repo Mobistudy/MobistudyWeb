@@ -1,9 +1,8 @@
 <template>
-  <q-page id="main">
+  <div id="main">
     <div v-show="!isDownloading">
-      <p class="q-pa-md mobitxt1">{{ $t('miband3.chartsIntro') }}</p>
       <div class="text-center text-h6">
-        {{ $t('miband3.lineChart') }}
+        {{ $t('smwt.lineChart') }}
       </div>
       <div class="q-pa-md">
         <canvas
@@ -13,7 +12,7 @@
         />
         <div class="row justify-around">
           <q-btn
-            :label="'-12 ' + $t('miband3.hours')"
+            :label="'-12 ' + $t('smwt.hours')"
             color="secondary"
             :disable="disableMinus"
             @click="lineChartAdd((-12))"
@@ -35,7 +34,7 @@
         color="primary"
       />
     </q-inner-loading>
-  </q-page>
+  </div>
 </template>
 
 <script>
@@ -66,14 +65,14 @@ const minimumDataRequired = 30 // 30 minutes of data is required at a minimum to
 
 // holder of the line chart data
 const lineChart = {
-  hrs: [],
-  steps: [],
-  intensities: [],
+  accX: [],
+  accY: [],
+  accZ: [],
   labels: [],
   reset () {
-    this.hrs = []
-    this.steps = []
-    this.intensities = []
+    this.accX = []
+    this.accY = []
+    this.accZ = []
     this.labels = []
   }
 }
@@ -134,7 +133,7 @@ export default {
           return
         }
 
-        this.renderLineChart(this.currentStartHour, this.currentEndHour)
+        this.renderLineChart()
 
         this.report.summary.length = storedData.length
         this.report.summary.completedTS = new Date()
@@ -150,16 +149,11 @@ export default {
         this.showErrorDialog() // TODO: Retry if the device is disconnected? The retry won't accomplish anything in this case and is confusing from a user perspective. ?? Retry moves to Connect page, make sure i am disconnected.
       }
     },
-    renderLineChart (startTime, endTime) {
+    renderLineChart () {
       lineChart.reset()
-      const startIndexInMinutes = startTime * 60
-      let endIndexInMinutes = endTime * 60 - 1
-      if (endIndexInMinutes >= storedData.length) {
-        endIndexInMinutes = storedData.length - 1
-      }
-      for (let i = startIndexInMinutes; i <= endIndexInMinutes; i++) {
+      for (let i = 0; i <= storedData.length - 1; i++) {
         const data = storedData[i]
-        this.addToLineChart(data.hr, data.intensity, data.steps, data.date)
+        this.addToLineChart(data.accG.x, data.accG.y, data.accG.z, data.msFromStart)
       }
       this.createActivityLineChart()
       this.updateLineChartReferences()
@@ -186,20 +180,17 @@ export default {
       storedData.push(data)
     },
 
-    addToLineChart (hr, intensity, steps, date) {
-      if (hr > 30 && hr < 210) {
-        // filter out unreasonable HR
-        lineChart.hrs.push({ x: date, y: hr })
-      }
-      lineChart.intensities.push({ x: date, y: intensity })
-      lineChart.steps.push({ x: date, y: steps })
-      lineChart.labels.push(this.niceTimestamp(date))
+    addToLineChart (accX, accY, accZ, accStart) {
+      lineChart.accX.push({ x: accStart, y: accX })
+      lineChart.accY.push({ x: accStart, y: accY })
+      lineChart.accZ.push({ x: accStart, y: accZ })
+      lineChart.labels.push(accStart)
     },
 
     updateLineChartReferences () {
-      this.lineChart.data.datasets[0].data = lineChart.hrs
-      this.lineChart.data.datasets[1].data = lineChart.intensities
-      this.lineChart.data.datasets[2].data = lineChart.steps
+      this.lineChart.data.datasets[0].data = lineChart.accX
+      this.lineChart.data.datasets[1].data = lineChart.accY
+      this.lineChart.data.datasets[2].data = lineChart.accZ
       this.lineChart.data.labels = lineChart.labels
     },
 
@@ -214,8 +205,8 @@ export default {
           labels: lineChart.labels,
           datasets: [
             {
-              label: this.$t('miband3.hrs'),
-              data: lineChart.hrs,
+              label: this.$t('smwt.x'),
+              data: lineChart.accX,
               backgroundColor: '#C74038',
               borderColor: '#C74038',
               borderWidth: 0,
@@ -225,8 +216,8 @@ export default {
               lineTension: 0
             },
             {
-              label: this.$t('miband3.intensities'),
-              data: lineChart.intensities,
+              label: this.$t('smwt.y'),
+              data: lineChart.accY,
               backgroundColor: '#4038C7',
               borderColor: '#4038C7',
               borderWidth: 0,
@@ -236,8 +227,8 @@ export default {
               lineTension: 0
             },
             {
-              label: this.$t('miband3.steps'),
-              data: lineChart.steps,
+              label: this.$t('smwt.z'),
+              data: lineChart.accZ,
               backgroundColor: '#38C740',
               borderColor: '#38C740',
               borderWidth: 0,
@@ -273,15 +264,9 @@ export default {
           },
           scales: {
             x: {
-              type: 'time',
-              time: {
-                displayFormats: {
-                  quarter: 'HH:MM:SS'
-                }
-              },
               title: {
                 display: true,
-                text: 'Date'
+                text: 'msFromStart'
               }
             },
             y: {
@@ -315,3 +300,12 @@ export default {
   }
 }
 </script>
+<style scoped>
+
+#main {
+  width: 50vw;
+  height: 60vh;
+  max-width: 100%;
+  max-height: 100%;
+}
+</style>

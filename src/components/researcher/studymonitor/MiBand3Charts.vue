@@ -137,6 +137,7 @@ export default {
     }
   },
   async mounted () {
+    console.log(this.taskDataContent)
     await this.downloadData()
   },
   methods: {
