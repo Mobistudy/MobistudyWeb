@@ -181,10 +181,11 @@ export default {
     },
 
     addToLineChart (accX, accY, accZ, accStart) {
+      const accStartInSeconds = accStart / 1000 // Convert milliseconds to seconds
       lineChart.accX.push({ x: accStart, y: accX })
       lineChart.accY.push({ x: accStart, y: accY })
       lineChart.accZ.push({ x: accStart, y: accZ })
-      lineChart.labels.push(accStart)
+      lineChart.labels.push(accStartInSeconds)
     },
 
     updateLineChartReferences () {
@@ -264,9 +265,17 @@ export default {
           },
           scales: {
             x: {
+              type: 'linear', // Use linear scale for x-axis
+              position: 'bottom',
               title: {
                 display: true,
-                text: 'msFromStart'
+                text: 'Seconds'
+              },
+              ticks: {
+                callback: function (value, index, values) {
+                  // Convert milliseconds to seconds for display
+                  return Math.round(value / 1000)
+                }
               }
             },
             y: {
