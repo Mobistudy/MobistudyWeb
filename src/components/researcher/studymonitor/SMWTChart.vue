@@ -10,20 +10,6 @@
           height="320"
           ref="lineChart"
         />
-        <div class="row justify-around">
-          <q-btn
-            :label="'-12 ' + $t('smwt.hours')"
-            color="secondary"
-            :disable="disableMinus"
-            @click="lineChartAdd((-12))"
-          />
-          <q-btn
-            :label="'+12 ' + $t('miband3.hours')"
-            color="secondary"
-            :disable="disablePlus"
-            @click="lineChartAdd((12))"
-          />
-        </div>
       </div>
     </div>
 
@@ -157,7 +143,6 @@ export default {
       }
       this.createActivityLineChart()
       this.updateLineChartReferences()
-      this.updatePlusMinusButtons() // Could be placed somewhere else but is needed at start in case data size < 12 hours worth
     },
 
     showErrorDialog () {
@@ -268,12 +253,11 @@ export default {
               position: 'bottom',
               title: {
                 display: true,
-                text: 'Seconds'
+                text: 'mm:ss:ms'
               },
               ticks: {
-                callback: function (value, index, values) {
-                  // Convert milliseconds to seconds for display
-                  return Math.round(value / 1000)
+                callback: (value) => {
+                  return this.getFormatTime(value)
                 }
               }
             },
@@ -298,24 +282,6 @@ export default {
       const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${millisecondsPart.toString().padStart(3, '0')}`
 
       return formattedTime
-    },
-    lineChartAdd (amount) {
-      this.currentStartHour += amount
-      this.currentEndHour += amount
-      this.renderLineChart(this.currentStartHour, this.currentEndHour)
-      this.updatePlusMinusButtons()
-    },
-    updatePlusMinusButtons () {
-      if (this.currentStartHour === 0) {
-        this.disableMinus = true
-      } else {
-        this.disableMinus = false
-      }
-      if (this.currentEndHour >= (storedData.length / 60)) {
-        this.disablePlus = true
-      } else {
-        this.disablePlus = false
-      }
     }
   }
 }
@@ -324,7 +290,7 @@ export default {
 
 #main {
   width: 50vw;
-  height: 60vh;
+  min-height: 60vh;
   max-width: 100%;
   max-height: 100%;
 }
