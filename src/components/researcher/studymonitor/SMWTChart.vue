@@ -181,11 +181,10 @@ export default {
     },
 
     addToLineChart (accX, accY, accZ, accStart) {
-      const accStartInSeconds = accStart / 1000 // Convert milliseconds to seconds
       lineChart.accX.push({ x: accStart, y: accX })
       lineChart.accY.push({ x: accStart, y: accY })
       lineChart.accZ.push({ x: accStart, y: accZ })
-      lineChart.labels.push(accStartInSeconds)
+      lineChart.labels.push(this.getFormatTime(accStart))
     },
 
     updateLineChartReferences () {
@@ -287,6 +286,18 @@ export default {
           }
         }
       })
+    },
+    // Function to format milliseconds to MM:SS:MS
+    getFormatTime (milliseconds) {
+      const date = new Date(milliseconds)
+      const minutes = date.getUTCMinutes()
+      const seconds = date.getUTCSeconds()
+      const millisecondsPart = date.getUTCMilliseconds()
+
+      // Pad single-digit values with leading zeros
+      const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${millisecondsPart.toString().padStart(3, '0')}`
+
+      return formattedTime
     },
     lineChartAdd (amount) {
       this.currentStartHour += amount
