@@ -148,9 +148,9 @@ export default {
     showErrorDialog () {
       this.$q.dialog({
         title: this.$t('errors.error'),
-        message: this.$t('miband3.dataDownloadError'),
-        cancel: this.$t('common.cancel'),
-        ok: this.$t('common.retry'),
+        message: this.$t('smwt.dataDownloadError'),
+        cancel: 'Cancel',
+        ok: 'Retry',
         persistent: true
       }).onOk(() => {
         // retry
