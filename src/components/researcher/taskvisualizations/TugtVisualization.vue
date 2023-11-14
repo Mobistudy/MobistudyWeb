@@ -3,6 +3,9 @@
     <p class="taskVisualizationHeader">Completed: {{ completed }}</p>
   </div>
   <div>
+    <p id="tugtTotalTime">Total time: {{ getTotalTime() }}</p>
+  </div>
+  <div>
     <q-toggle @click="handleFTToggleChange()" v-model="isACCombined">{{ isACCombined ? 'Module' : 'XYZ' }}</q-toggle>
     <canvas id="tugtChart"></canvas>
   </div>
@@ -29,6 +32,7 @@ export default {
   mounted () {
     this.initializeRotarCombinedChart()
     this.initializeVectorChart()
+    this.getTotalTime()
   },
   data () {
     return {
@@ -431,6 +435,11 @@ export default {
         })
       }
       return vectors
+    },
+    getTotalTime () {
+      const totalTime = this.getMotionObjects().reverse()[0].msFromStart / 1000
+      const roundTotalTime = (Math.round(totalTime * 100) / 100).toFixed(2)
+      return roundTotalTime
     }
   }
 }
@@ -444,5 +453,8 @@ export default {
 }
 .reset_btn {
   font-size: 12px; padding: 4px 8px
+}
+#tugtTotalTime {
+  text-align: center;
 }
 </style>
