@@ -43,8 +43,4 @@ export default {
 </script>
 
 <style>
-.q-card {
-  min-width: 500px !important;
-  min-height: 500px !important;
-}
 </style>
