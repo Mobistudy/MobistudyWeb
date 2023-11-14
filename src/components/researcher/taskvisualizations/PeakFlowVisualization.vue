@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="peakflow-visualization">
     <p class="taskVisualizationHeader">Completed: {{ completed }}</p>
     <div>
       <p v-for="(test, index) in formattedData" :key="index">{{ test }}</p>
@@ -43,5 +43,37 @@ export default {
 </script>
 
 <style>
+.peakflow-visualization {
+  min-height: 550px;
+  min-width: 450px;
+  text-align: center;
+}
+
+.peakflow-visualization p {
+  font-size: 20px;
+  margin: 20px;
+}
+
+@media screen and (max-width: 800px) {
+  .peakflow-visualization {
+  min-height: 450px;
+  min-width: 400px;
+}
+
+.peakflow-visualization p {
+  font-size: 15px;
+}
+}
+
+@media screen and (max-width: 600px) {
+  .peakflow-visualization {
+  min-height: 400px;
+  min-width: 320px;
+}
+
+.peakflow-visualization p {
+  font-size: 15px;
+}
+}
 
 </style>
