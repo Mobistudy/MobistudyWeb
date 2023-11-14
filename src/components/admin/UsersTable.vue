@@ -96,8 +96,9 @@ export default {
           offset: (params.pagination.page - 1) * params.pagination.rowsPerPage,
           count: params.pagination.rowsPerPage === 0 ? undefined : params.pagination.rowsPerPage
         }
-        this.pagination.rowsNumber = await API.getAllUsers(true, queryParams)
-        this.users = await API.getAllUsers(false, queryParams)
+        const usersR = await API.getAllUsers(queryParams)
+        this.pagination.rowsNumber = usersR.totalCount
+        this.users = usersR.totalCount.subset
       } catch (err) {
         this.$q.notify({
           color: 'negative',

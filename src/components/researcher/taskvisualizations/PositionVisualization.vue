@@ -4,14 +4,16 @@
     <p class="taskVisualizationHeader">Map</p>
 </div>
     <div id="map" style="width: 530px; height: 400px;"></div>
-        <ul v-for="(content, key) in this.data.environment" :key="key">
+    <div class="q-pa-md" style="max-width: 350px" id="position_accordion">
+    <q-list bordered class="rounded-borders" v-for="(content, key) in this.data.environment" :key="key">
+      <q-expansion-item
+        expand-separator
+        :label="key.toUpperCase()"
+      >
+        <q-card>
+          <q-card-section>
             <table id="position_table">
-                <thead>
-                    <tr>
-                        <th class="th_position" @click="this.toggleContent(content)">{{ key.toUpperCase() }}</th>
-                    </tr>
-                </thead>
-                <tbody v-if="content.showContent">
+                <tbody>
                     <tr>
                         <td v-if="key === 'weather'">
                           <table>
@@ -21,15 +23,19 @@
                             </tr>
                             <tr>
                               <td>Temperature</td>
-                              <td> {{ content.temperature }} C°</td>
+                              <td> {{ getRounded(content.temperature) }} C°</td>
+                            </tr>
+                            <tr>
+                              <td>Weather</td>
+                              <td> <img :src="content.icon" alt=""></td>
                             </tr>
                             <tr>
                               <td>Lowest temperature</td>
-                              <td>{{ content.temperatureMin }} C°</td>
+                              <td>{{ getRounded(content.temperatureMin) }} C°</td>
                             </tr>
                             <tr>
                               <td>Highest temperature</td>
-                              <td>{{ content.temperatureMax }} C°</td>
+                              <td>{{ getRounded(content.temperatureMax) }} C°</td>
                             </tr>
                             <tr>
                               <td>Pressure</td>
@@ -37,11 +43,11 @@
                             </tr>
                             <tr>
                               <td>Sunrise</td>
-                              <td>{{ content.sunrise }}</td>
+                              <td>{{ getNicerTimeStamp(content.sunrise) }}</td>
                             </tr>
                             <tr>
                               <td>Sunset</td>
-                              <td>{{ content.sunset }}</td>
+                              <td>{{ getNicerTimeStamp(content.sunset) }}</td>
                             </tr>
                             <tr>
                               <td>Clouds</td>
@@ -180,10 +186,15 @@
                     </tr>
                 </tbody>
             </table>
-        </ul>
+          </q-card-section>
+        </q-card>
+      </q-expansion-item>
+    </q-list>
+  </div>
 </template>
 
 <script>
+import { date } from 'quasar'
 export default {
   props: ['data', 'completed'],
   mounted () {
@@ -206,6 +217,12 @@ export default {
       /* eslint-disable-next-line */
       const marker = L.marker([latitude, longitude]).addTo(map)
       marker.bindPopup('Participant position').openPopup()
+    },
+    getRounded (value) {
+      return (Math.round(value * 100) / 100).toFixed(2)
+    },
+    getNicerTimeStamp (timeStamp) {
+      return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
     }
   }
 }
@@ -229,5 +246,10 @@ export default {
 #position_table td {
   border: 1px solid black;
   padding: 5px;
+}
+#position_accordion {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
 }
 </style>
