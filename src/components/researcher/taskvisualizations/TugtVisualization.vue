@@ -1,0 +1,460 @@
+<template>
+  <div>
+    <p class="taskVisualizationHeader">Completed: {{ completed }}</p>
+  </div>
+  <div>
+    <p id="tugtTotalTime">Total time: {{ getTotalTime() }}</p>
+  </div>
+  <div>
+    <q-toggle @click="handleFTToggleChange()" v-model="isACCombined">{{ isACCombined ? 'Module' : 'XYZ' }}</q-toggle>
+    <canvas id="tugtChart"></canvas>
+  </div>
+    <div class="resetChart">
+      <q-btn @click="tugtChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
+    </div>
+  <div>
+    <q-toggle @click="handleRoterToggleChange()" v-model="isRCombined">{{ isRCombined ? 'Module' : 'XYZ' }}</q-toggle>
+    <canvas id="tugtRotarChart"></canvas>
+  </div>
+    <div class="resetChart">
+      <q-btn @click="tugtRotarChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
+    </div>
+</template>
+
+<script>
+import { ref } from 'vue'
+import { Chart } from 'chart.js/auto'
+import zoomPlugin from 'chartjs-plugin-zoom'
+Chart.register(zoomPlugin)
+
+export default {
+  props: ['data', 'completed'],
+  mounted () {
+    this.initializeRotarCombinedChart()
+    this.initializeVectorChart()
+    this.getTotalTime()
+  },
+  data () {
+    return {
+      isACCombined: ref(true),
+      isRCombined: ref(true)
+    }
+  },
+  methods: {
+    handleFTToggleChange () {
+      this.tugtChart.destroy()
+      if (this.isACCombined) {
+        this.initializeVectorChart()
+      } else {
+        this.initializeXYZChart()
+      }
+    },
+    handleRoterToggleChange () {
+      this.tugtRotarChart.destroy()
+      if (this.isRCombined) {
+        this.initializeRotarCombinedChart()
+      } else {
+        this.initializeRotarSeparate()
+      }
+    },
+    initializeVectorChart () {
+      const ctx = document.getElementById('tugtChart').getContext('2d')
+      const config = {
+        type: 'line',
+        data: {
+          datasets: [
+            {
+              type: 'line',
+              data: this.getXYZ(),
+              borderColor: '#459399',
+              backgroundColor: '#459399',
+              fill: false,
+              borderWidth: 1,
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              type: 'linear',
+              position: 'bottom',
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Milliseconds',
+                color: '#459399'
+              }
+            },
+            y: {
+              ticks: {
+                stepSize: 0.2
+              },
+              suggestedMin: 0.1,
+              suggestedMax: 1,
+              type: 'linear',
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Acceleration Gravity',
+                color: '#459399'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            title: {
+              display: true,
+              text: 'Acceleration Gravity',
+              color: '#459399',
+              font: {
+                size: 16
+              }
+            },
+            zoom: {
+              zoom: {
+                wheel: {
+                  enabled: true
+                },
+                pinch: {
+                  enabled: true
+                },
+                mode: 'x'
+              }
+            }
+          }
+        }
+      }
+      this.tugtChart = new Chart(ctx, config)
+    },
+    initializeXYZChart () {
+      const ctx = document.getElementById('tugtChart').getContext('2d')
+      const config = {
+        type: 'line',
+        data: {
+          datasets: [
+            {
+              type: 'line',
+              data: this.getAccG('x'),
+              borderColor: 'blue',
+              backgroundColor: 'blue',
+              fill: false,
+              borderWidth: 1,
+              pointRadius: 0,
+              label: 'Acc X'
+            },
+            {
+              type: 'line',
+              data: this.getAccG('y'),
+              borderColor: 'red',
+              backgroundColor: 'red',
+              fill: false,
+              borderWidth: 1,
+              pointRadius: 0,
+              label: 'Acc Y'
+            },
+            {
+              type: 'line',
+              data: this.getAccG('z'),
+              borderColor: 'green',
+              backgroundColor: 'green',
+              fill: false,
+              borderWidth: 1,
+              pointRadius: 0,
+              label: 'Acc Z'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              type: 'linear',
+              position: 'bottom',
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Milliseconds',
+                color: '#459399'
+              }
+            },
+            y: {
+              ticks: {
+                stepSize: 0.2
+              },
+              suggestedMin: 0.1,
+              suggestedMax: 1,
+              type: 'linear',
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Acceleration Gravity',
+                color: '#459399'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+            },
+            title: {
+              display: true,
+              text: 'Acceleration Gravity',
+              color: '#459399',
+              font: {
+                size: 16
+              }
+            },
+            zoom: {
+              zoom: {
+                wheel: {
+                  enabled: true
+                },
+                pinch: {
+                  enabled: true
+                },
+                mode: 'x'
+              }
+            }
+          }
+        }
+      }
+      this.tugtChart = new Chart(ctx, config)
+    },
+    initializeRotarCombinedChart () {
+      const ctx = document.getElementById('tugtRotarChart').getContext('2d')
+      const config = {
+        type: 'line',
+        data: {
+          datasets: [
+            {
+              label: 'Rotation',
+              data: this.getRoter(),
+              borderColor: '#459399',
+              backgroundColor: '#459399',
+              fill: false,
+              borderWidth: 1,
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              type: 'linear',
+              position: 'bottom',
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Milliseconds',
+                color: '#459399'
+              }
+            },
+            y: {
+              ticks: {
+                stepSize: 0.2
+              },
+              suggestedMin: 0.1,
+              suggestedMax: 1,
+              type: 'linear',
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Rotation',
+                color: '#459399'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            title: {
+              display: true,
+              text: 'Rotation',
+              color: '#459399',
+              font: {
+                size: 16
+              }
+            },
+            zoom: {
+              zoom: {
+                wheel: {
+                  enabled: true
+                },
+                pinch: {
+                  enabled: true
+                },
+                mode: 'x'
+              }
+            }
+          }
+        }
+      }
+      this.tugtRotarChart = new Chart(ctx, config)
+    },
+    initializeRotarSeparate () {
+      const ctx = document.getElementById('tugtRotarChart').getContext('2d')
+      const config = {
+        type: 'line',
+        data: {
+          datasets: [
+            {
+              data: this.getAlphaBetaGamma('alpha'),
+              borderColor: 'blue',
+              backgroundColor: 'blue',
+              fill: false,
+              borderWidth: 1,
+              pointRadius: 0,
+              label: 'Alpha'
+            },
+            {
+              data: this.getAlphaBetaGamma('beta'),
+              borderColor: 'red',
+              backgroundColor: 'red',
+              fill: false,
+              borderWidth: 1,
+              pointRadius: 0,
+              label: 'Beta'
+            },
+            {
+              data: this.getAlphaBetaGamma('gamma'),
+              borderColor: 'green',
+              backgroundColor: 'green',
+              fill: false,
+              borderWidth: 1,
+              pointRadius: 0,
+              label: 'Gamma'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              type: 'linear',
+              position: 'bottom',
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Milliseconds',
+                color: '#459399'
+              }
+            },
+            y: {
+              ticks: {
+                stepSize: 0.2
+              },
+              suggestedMin: 0.1,
+              suggestedMax: 1,
+              type: 'linear',
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Rotation',
+                color: '#459399'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+            },
+            title: {
+              display: true,
+              text: 'Rotation',
+              color: '#459399',
+              font: {
+                size: 16
+              }
+            },
+            zoom: {
+              zoom: {
+                wheel: {
+                  enabled: true
+                },
+                pinch: {
+                  enabled: true
+                },
+                mode: 'x'
+              }
+            }
+          }
+        }
+      }
+      this.tugtRotarChart = new Chart(ctx, config)
+    },
+    getMotionObjects () {
+      return JSON.parse(JSON.stringify(this.data.motion))
+    },
+    getOrientationObjects () {
+      return JSON.parse(JSON.stringify(this.data.orientation))
+    },
+    getAccG (axis) {
+      const accGArr = []
+      const accGObjArr = this.getMotionObjects().map(obj => obj.accG)
+      for (let i = 0; i < accGObjArr.length; i++) {
+        accGArr.push({
+          x: i,
+          y: Math.sqrt((accGObjArr[i][axis] * accGObjArr[i][axis]))
+        })
+      }
+      return accGArr
+    },
+    getXYZ () {
+      const vectors = []
+      const accGArr = this.getMotionObjects().map(obj => obj.accG)
+      for (let i = 0; i < accGArr.length; i++) {
+        vectors.push({
+          x: i,
+          y: Math.sqrt((accGArr[i].x * accGArr[i].x), (accGArr[i].y * accGArr[i].y), (accGArr[i].z * accGArr[i].z))
+        })
+      }
+      return vectors
+    },
+    getAlphaBetaGamma (aBG) {
+      const alphaBetaGamma = []
+      const roterArr = this.getMotionObjects().map(obj => obj.rotRate)
+      for (let i = 0; i < roterArr.length; i++) {
+        alphaBetaGamma.push({
+          x: i,
+          y: Math.sqrt((roterArr[i][aBG] * roterArr[i][aBG]))
+        })
+      }
+      return alphaBetaGamma
+    },
+    getRoter () {
+      const vectors = []
+      const roterArr = this.getMotionObjects().map(obj => obj.rotRate)
+      for (let i = 0; i < roterArr.length; i++) {
+        vectors.push({
+          x: i,
+          y: Math.sqrt((roterArr[i].alpha * roterArr[i].alpha), (roterArr[i].beta * roterArr[i].beta), (roterArr[i].gamma * roterArr[i].gamma))
+        })
+      }
+      return vectors
+    },
+    getTotalTime () {
+      const totalTime = this.getMotionObjects().reverse()[0].msFromStart / 1000
+      const roundTotalTime = (Math.round(totalTime * 100) / 100).toFixed(2)
+      return roundTotalTime
+    }
+  }
+}
+</script>
+
+<style>
+.taskVisualizationHeader {
+  text-align: center;
+  font-weight: bold;
+  color: #459399;
+}
+.reset_btn {
+  font-size: 12px; padding: 4px 8px
+}
+#tugtTotalTime {
+  text-align: center;
+}
+</style>

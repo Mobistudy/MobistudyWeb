@@ -62,16 +62,13 @@
               <q-card style="min-width: 400px; max-width: 900px;">
                 <q-bar class="my-q-bar bg-primary">
                   <div class="text-h6 text-white text-bold text-uppercase">
-                    <span>{{ niceTimestamp(taskCompletedDate) }}</span>
+                    <span>{{ taskDataType }}</span>
                   </div>
-
                   <q-space />
-
                   <q-btn dense flat icon="close" v-close-popup class="material-symbols-outlined">
                     <q-tooltip class="bg-secondary text-white">Close</q-tooltip>
                   </q-btn>
                 </q-bar>
-
                 <q-card-section>
                   <div v-if="taskDataType === 'form'">
                     <div
@@ -115,6 +112,27 @@
                         <img :src="answer.answer" alt="Full screen Image" />
                       </div>
                     </div>
+                  </div>
+                  <div v-if="taskDataType === 'fingerTapping'">
+                    <FingerTappingDrawingVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                  </div>
+                  <div v-if="taskDataType === 'holdPhone'">
+                    <HoldPhoneVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                  </div>
+                  <div v-if="taskDataType === 'drawing'">
+                    <DrawingVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                  </div>
+                  <div v-if="taskDataType === 'tugt'">
+                    <TugtVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                  </div>
+                  <div v-if="taskDataType === 'vocalization'">
+                    <VocalizationVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                  </div>
+                  <div v-if="taskDataType === 'peakFlow'">
+                    <PeakFlowVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                  </div>
+                  <div v-if="taskDataType === 'position'">
+                    <PositionVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
                   </div>
                   <div v-else-if="taskDataType === 'miband3'">
                     <mi-band-3-charts
@@ -224,12 +242,31 @@ import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, Li
 import 'chartjs-adapter-date-fns'
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, TimeScale)
+import FingerTappingDrawingVisualization from '../taskvisualizations/FingerTappingDrawingVisualization.vue'
+import HoldPhoneVisualization from '../taskvisualizations/HoldPhoneVisualization.vue'
+import DrawingVisualization from '../taskvisualizations/DrawingVisualization.vue'
+import TugtVisualization from '../taskvisualizations/TugtVisualization.vue'
+import VocalizationVisualization from '../taskvisualizations/VocalizationVisualization.vue'
+import PeakFlowVisualization from '../taskvisualizations/PeakFlowVisualization.vue'
+import PositionVisualization from '../taskvisualizations/PositionVisualization.vue'
 
 export default {
   name: 'StudyParticipant',
   props: ['studyKey', 'userKey'],
-  components: { Bar, MiBand3Charts, SMWTMap, SMWTChart },
   mixins: [bestLocale],
+  components: {
+    Bar,
+    MiBand3Charts,
+    SMWTMap,
+    SMWTChart,
+    FingerTappingDrawingVisualization,
+    HoldPhoneVisualization,
+    DrawingVisualization,
+    TugtVisualization,
+    VocalizationVisualization,
+    PeakFlowVisualization,
+    PositionVisualization
+  },
   data () {
     return {
       locale: this.$i18n.locale,
@@ -345,7 +382,6 @@ export default {
           userKey: params.filter.userKey
         }
         this.tasks = await API.getTasksResults(queryParams.studyKey, queryParams.userKey)
-        console.log(this.tasks)
       } catch (err) {
         this.$q.notify({
           color: 'negative',
