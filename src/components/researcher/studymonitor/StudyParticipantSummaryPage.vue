@@ -37,7 +37,7 @@
                     </template>
                   </template>
                   <template v-else>
-                    {{ props.row.taskType }}
+                    {{ firstLetterUpperCase(props.row.taskType) }}
                   </template>
                 </q-td>
               </template>
@@ -46,15 +46,11 @@
                   {{ niceTimestamp(props.row.summary.completedTS) }}
                 </q-td>
               </template>
-              <template #body-cell-asked="props">
-                <q-td :props="props">
-                  {{ props.row.summary.asked }}
-                </q-td>
-              </template>
-
-              <template #body-cell-answered="props">
-                <q-td :props="props">
-                  {{ props.row.summary.answered }}
+              <template #body-cell-summary="props">
+                <q-td  :props="props">
+                  <p v-for="task, i in taskSummary(props.row.summary)" :key ="i">
+                    {{ task }}
+                  </p>
                 </q-td>
               </template>
             </q-table>
@@ -176,8 +172,7 @@ export default {
       columns: [
         { name: 'data', required: false, label: '', align: 'center', field: 'data', sortable: false },
         { name: 'formName', required: true, label: 'Task', align: 'center', field: 'formName' },
-        { name: 'asked', required: true, label: 'Asked', align: 'center', field: 'asked', sortable: true },
-        { name: 'answered', required: true, label: 'Answered', align: 'center', field: 'answered', sortable: true },
+        { name: 'summary', required: true, label: 'Summary', align: 'center', field: 'summary', sortable: false },
         { name: 'completedTS', required: true, label: 'Completed', align: 'center', field: 'completedTS', sortable: true }
       ],
       filter: {},
@@ -228,6 +223,9 @@ export default {
     niceTimestamp (timeStamp) {
       return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
     },
+    firstLetterUpperCase (str) {
+      return str.charAt(0).toUpperCase() + str.slice(1)
+    },
     async loadTasks (params) {
       this.loading = true
       try {
@@ -270,6 +268,23 @@ export default {
           icon: 'report_problem'
         })
       }
+    },
+    taskSummary (props) {
+      const list = []
+      const { startedTS, completedTS, ...theRest } = props
+      const keys = Object.keys(theRest)
+
+      for (let key of keys) {
+        let value = theRest[key]
+        if (typeof value === 'number') {
+          value = Math.round(Number(value))
+          value.toString()
+        }
+        key = this.firstLetterUpperCase(key)
+        key = key.match(/[A-Z][a-z]+|[0-9]+/g).join(' ')
+        list.push(key + ': ' + value + ' ')
+      }
+      return list
     },
     async loadFirstImage () {
       // Verifica si hay tareas disponibles
