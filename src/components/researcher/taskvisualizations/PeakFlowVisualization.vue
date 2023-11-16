@@ -1,79 +1,41 @@
 <template>
-  <div class="peakflow-visualization">
+  <div>
     <p class="taskVisualizationHeader">Completed: {{ completed }}</p>
-    <div>
-      <p v-for="(test, index) in formattedData" :key="index">{{ test }}</p>
-    </div>
-    <p>Highest Value: {{ highestValueWithUnits }}</p>
   </div>
+  <q-table :rows="getRows()" :columns="getColumns()" row-key="field" :dense="true" class="q-mt-md">
+    <q-tr :props="props">
+      <q-td v-for="col in props.cols" :key="col.name" :props="props">
+        {{ col.value }}
+      </q-td>
+    </q-tr>
+</q-table>
 </template>
 
 <script>
 export default {
   props: ['data', 'completed'],
-  computed: {
-    formattedData () {
-      if (this.data && this.data.PEFs) {
-        return this.data.PEFs.map((value, index) => `Test ${index + 1}: ${value} liters/minute`)
-      }
-      return []
-    },
-    highestValue () {
-      if (this.data && this.data.PEFs) {
-        return Math.max(...this.data.PEFs)
-      }
-      return null
-    },
-    highestValueWithUnits () {
-      if (this.highestValue !== null) {
-        return `${this.highestValue} liters/minute`
-      }
-      return null
-    }
-  },
-  mounted () {
-    this.initializeChart()
-  },
   methods: {
-    initializeChart () {
-      console.log('Peak Flow visualization...')
+    getValues () {
+      const values = this.data.PEFs
+      return values.sort().reverse()
+    },
+    getColumns () {
+      return [
+        { name: 'field', align: 'left', label: 'Data', field: 'field' },
+        { name: 'value', align: 'left', label: 'Value', field: 'value' }
+      ]
+    },
+    getRows () {
+      return [
+        { field: 'Highest value', value: this.getValues()[0] },
+        { field: 'Middle value', value: this.getValues()[1] },
+        { field: 'Lowest value', value: this.getValues()[2] }
+      ]
     }
   }
 }
 </script>
 
 <style>
-.peakflow-visualization {
-  min-height: 550px;
-  min-width: 450px;
-  text-align: center;
-}
-
-.peakflow-visualization p {
-  font-size: 20px;
-  margin: 20px;
-}
-
-@media screen and (max-width: 800px) {
-  .peakflow-visualization {
-  min-height: 450px;
-  min-width: 400px;
-}
-
-.peakflow-visualization p {
-  font-size: 15px;
-}
-}
-
-@media screen and (max-width: 600px) {
-  .peakflow-visualization {
-  min-height: 400px;
-  min-width: 320px;
-}
-
-.peakflow-visualization p {
-  font-size: 15px;
-}
-}
 
 </style>

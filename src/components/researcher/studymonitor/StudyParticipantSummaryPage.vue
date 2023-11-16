@@ -87,6 +87,12 @@
                   <div v-if="taskDataType === 'position'">
                     <PositionVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
                   </div>
+                  <div v-if="taskDataType === 'miband'">
+                    <MibandVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                  </div>
+                  <div v-if="taskDataType === 'po60'">
+                    <Po60Visualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                  </div>
                 </q-card-section>
               </q-card>
             </q-dialog>
@@ -140,6 +146,8 @@ import TugtVisualization from '../taskvisualizations/TugtVisualization.vue'
 import VocalizationVisualization from '../taskvisualizations/VocalizationVisualization.vue'
 import PeakFlowVisualization from '../taskvisualizations/PeakFlowVisualization.vue'
 import PositionVisualization from '../taskvisualizations/PositionVisualization.vue'
+import MibandVisualization from '../taskvisualizations/MibandVisualization.vue'
+import Po60Visualization from '../taskvisualizations/Po60Visualization.vue'
 
 export default {
   name: 'StudyParticipant',
@@ -152,7 +160,9 @@ export default {
     TugtVisualization,
     VocalizationVisualization,
     PeakFlowVisualization,
-    PositionVisualization
+    PositionVisualization,
+    MibandVisualization,
+    Po60Visualization
   },
   data () {
     return {
