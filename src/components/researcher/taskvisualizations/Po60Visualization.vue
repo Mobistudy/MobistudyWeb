@@ -24,27 +24,10 @@
 <script>
 export default {
   props: ['data', 'completed'],
-  data () {
-    return {
-      healthData: {
-        userKey: '16207',
-        studyKey: '1978',
-        taskId: 6,
-        createdTS: '2023-11-16T20:37:10.982Z',
-        po60Data: {
-          startTimestamp: '2023-11-16T20:37:09.374Z',
-          endTimestamp: null,
-          hrMax: 144,
-          hrMin: 50,
-          hrAvg: 101,
-          SPO2Max: 90,
-          SPO2Min: 61,
-          SPO2Avg: 50
-        }
-      }
-    }
-  },
   computed: {
+    healthData () {
+      return this.data
+    },
     tableData () {
       return [
         { field: 'Max HR', value: this.healthData.po60Data.hrMax },
