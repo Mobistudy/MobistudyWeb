@@ -57,7 +57,7 @@ export default {
     },
     columns () {
       return [
-        { name: 'field', align: 'left', label: 'Field', field: 'field' },
+        { name: 'field', align: 'left', label: 'Health Data', field: 'field' },
         { name: 'value', align: 'left', label: 'Value', field: 'value' }
       ]
     }
