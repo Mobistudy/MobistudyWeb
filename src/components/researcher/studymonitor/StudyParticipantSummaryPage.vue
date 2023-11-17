@@ -47,8 +47,8 @@
                 </q-td>
               </template>
               <template #body-cell-summary="props">
-                <q-td  :props="props">
-                  <p v-for="task, i in taskSummary(props.row.summary)" :key ="i">
+                <q-td :props="props">
+                  <p v-for="task, i in taskSummary(props.row.summary)" :key="i">
                     {{ task }}
                   </p>
                 </q-td>
@@ -292,7 +292,7 @@ export default {
         }
         key = this.firstLetterUpperCase(key)
         key = key.match(/[A-Z][a-z]+|[0-9]+/g).join(' ')
-        list.push(key + ': ' + value + ' ')
+        list.push(`${key}: ${value}`)
       }
       return list
     },
