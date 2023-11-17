@@ -3,14 +3,7 @@
     <p class="taskVisualizationHeader">Completed: {{ completed }}</p>
     </div>
     <q-page>
-      <q-table
-        :rows="tableData"
-        :columns="columns"
-        row-key="field"
-        :dense="true"
-        :rows-per-page-options="[10, 20, 50]"
-        class="q-mt-md"
-      >
+      <q-table :rows="tableData" :columns="columns" row-key="field" :dense="true" class="q-mt-md">
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
@@ -24,18 +17,15 @@
 <script>
 export default {
   props: ['data', 'completed'],
-  computed: {
-    healthData () {
-      return this.data
-    },
+  methods: {
     tableData () {
       return [
-        { field: 'Max HR', value: this.healthData.po60Data.hrMax },
-        { field: 'Min HR', value: this.healthData.po60Data.hrMin },
-        { field: 'Avg HR', value: this.healthData.po60Data.hrAvg },
-        { field: 'Max SPO2', value: this.healthData.po60Data.SPO2Max },
-        { field: 'Min SPO2', value: this.healthData.po60Data.SPO2Min },
-        { field: 'Avg SPO2', value: this.healthData.po60Data.SPO2Avg }
+        { field: 'Max HR', value: this.data.po60Data.hrMax },
+        { field: 'Min HR', value: this.data.po60Data.hrMin },
+        { field: 'Avg HR', value: this.data.po60Data.hrAvg },
+        { field: 'Max SPO2', value: this.data.po60Data.SPO2Max },
+        { field: 'Min SPO2', value: this.data.po60Data.SPO2Min },
+        { field: 'Avg SPO2', value: this.data.po60Data.SPO2Avg }
       ]
     },
     columns () {
@@ -47,5 +37,7 @@ export default {
   }
 }
 </script>
+
 <style>
+
 </style>
