@@ -2,7 +2,7 @@
   <div>
     <p class="taskVisualizationHeader">Completed: {{ completed }}</p>
   </div>
-  <q-table :rows="getRows()" :columns="getColumns()" row-key="field" :dense="true" class="q-mt-md">
+  <q-table :rows="getRows()" :columns="getColumns()" row-key="field" :dense="true" class="q-mt-md" :hide-pagination="true">
     <q-tr :props="props">
       <q-td v-for="col in props.cols" :key="col.name" :props="props">
         {{ col.value }}
