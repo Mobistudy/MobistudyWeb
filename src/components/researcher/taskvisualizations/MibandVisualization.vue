@@ -12,14 +12,14 @@
 
 <script>
 import { Chart } from 'chart.js/auto'
-import { date } from 'quasar'
 import zoomPlugin from 'chartjs-plugin-zoom'
 Chart.register(zoomPlugin)
+import { date } from 'quasar'
+
 export default {
   props: ['data', 'completed'],
   mounted () {
     this.initializeChart()
-    console.log(this.getStepsActivity())
   },
   methods: {
     initializeChart () {
