@@ -1,37 +1,28 @@
 <template>
-    <div>
+  <div>
     <p class="taskVisualizationHeader">Completed: {{ completed }}</p>
-    </div>
-    <q-page>
-      <q-table :rows="this.tableData()" :columns="this.columns()" row-key="field" :dense="true" class="q-mt-md">
-        <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td v-for="col in props.cols" :key="col.name" :props="props">
-              {{ col.value }}
-            </q-td>
-          </q-tr>
-        </template>
-      </q-table>
-    </q-page>
-  </template>
+  </div>
+  <q-table :rows="this.getRows()" :columns="this.getColumns()" row-key="field" :dense="true" class="q-mt-md" :hide-pagination="true" />
+</template>
+
 <script>
 export default {
   props: ['data', 'completed'],
   methods: {
-    tableData () {
+    getColumns () {
       return [
-        { field: 'Max HR', value: this.data.po60Data.hrMax },
-        { field: 'Min HR', value: this.data.po60Data.hrMin },
-        { field: 'Avg HR', value: this.data.po60Data.hrAvg },
-        { field: 'Max SPO2', value: this.data.po60Data.SPO2Max },
-        { field: 'Min SPO2', value: this.data.po60Data.SPO2Min },
-        { field: 'Avg SPO2', value: this.data.po60Data.SPO2Avg }
+        { name: 'value', align: 'left', label: 'Health Data', field: 'value' },
+        { name: 'po60', align: 'left', label: 'Value', field: 'po60' }
       ]
     },
-    columns () {
+    getRows () {
       return [
-        { name: 'field', align: 'left', label: 'Health Data', field: 'field' },
-        { name: 'value', align: 'left', label: 'Value', field: 'value' }
+        { value: 'Max HR', po60: this.data.po60Data.hrMax },
+        { value: 'Min HR', po60: this.data.po60Data.hrMin },
+        { value: 'Avg HR', po60: this.data.po60Data.hrAvg },
+        { value: 'Max SPO2', po60: this.data.po60Data.SPO2Max },
+        { value: 'Min SPO2', po60: this.data.po60Data.SPO2Min },
+        { value: 'Avg SPO2', po60: this.data.po60Data.SPO2Avg }
       ]
     }
   }
