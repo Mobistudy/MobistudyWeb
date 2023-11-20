@@ -3,185 +3,25 @@
     <p class="taskVisualizationHeader">Completed: {{ completed }}</p>
     <p class="taskVisualizationHeader">Map</p>
 </div>
-    <div id="map" style="width: 530px; height: 400px;"></div>
-    <div class="q-pa-md" style="max-width: 350px" id="position_accordion">
-    <q-list bordered class="rounded-borders" v-for="(content, key) in this.data.environment" :key="key">
-      <q-expansion-item
-        expand-separator
-        :label="key.toUpperCase()"
-      >
+    <div id="map"></div>
+    <q-list id="position_accordion" bordered class="rounded-borders" v-for="(content, key) in this.data.environment" :key="key">
+      <q-expansion-item expand-separator :label="key.toUpperCase()">
         <q-card>
           <q-card-section>
             <table id="position_table">
                 <tbody>
                     <tr>
                         <td v-if="key === 'weather'">
-                          <table>
-                            <tr>
-                              <td>Location</td>
-                              <td>{{ content.location }}</td>
-                            </tr>
-                            <tr>
-                              <td>Temperature</td>
-                              <td> {{ getRounded(content.temperature) }} C°</td>
-                            </tr>
-                            <tr>
-                              <td>Weather</td>
-                              <td> <img :src="content.icon" alt=""></td>
-                            </tr>
-                            <tr>
-                              <td>Lowest temperature</td>
-                              <td>{{ getRounded(content.temperatureMin) }} C°</td>
-                            </tr>
-                            <tr>
-                              <td>Highest temperature</td>
-                              <td>{{ getRounded(content.temperatureMax) }} C°</td>
-                            </tr>
-                            <tr>
-                              <td>Pressure</td>
-                              <td>{{ content.pressure }} mbar</td>
-                            </tr>
-                            <tr>
-                              <td>Sunrise</td>
-                              <td>{{ getNicerTimeStamp(content.sunrise) }}</td>
-                            </tr>
-                            <tr>
-                              <td>Sunset</td>
-                              <td>{{ getNicerTimeStamp(content.sunset) }}</td>
-                            </tr>
-                            <tr>
-                              <td>Clouds</td>
-                              <td>{{ content.clouds }}</td>
-                            </tr>
-                            <tr>
-                              <td>Wind Speed</td>
-                              <td>{{ content.wind.speed }} m/s</td>
-                            </tr>
-                          </table>
+                          <q-table :rows="getWeatherRows(content)" :columns="getWeatherColumns()" row-key="field" :dense="true" class="q-mt-md" :rows-per-page-options="[0]" :hide-pagination="true" />
                         </td>
                         <td v-if="key === 'pollution'">
-                          <table>
-                            <tr>
-                              <td>Air Quality Index (AQI)</td>
-                              <td>{{  content.aqi }}</td>
-                            </tr>
-                            <tr>
-                              <td>Co amount</td>
-                              <td>{{  content.components.co }}</td>
-                            </tr>
-                            <tr>
-                              <td>No amount</td>
-                              <td>{{  content.components.no }}</td>
-                            </tr>
-                            <tr>
-                              <td>No2 Amount</td>
-                              <td>{{  content.components.no2 }}</td>
-                            </tr>
-                            <tr>
-                              <td>O3 Amount</td>
-                              <td>{{  content.components.o3 }}</td>
-                            </tr>
-                            <tr>
-                              <td>So2 Amount</td>
-                              <td>{{  content.components.so2 }}</td>
-                            </tr>
-                            <tr>
-                              <td>PM2_5 Amount</td>
-                              <td>{{  content.components.pm2_5 }}</td>
-                            </tr>
-                            <tr>
-                              <td>PM 10</td>
-                              <td>{{  content.components.pm10 }}</td>
-                            </tr>
-                            <tr>
-                              <td>Nh3 Amount</td>
-                              <td>{{  content.components.nh3 }}</td>
-                            </tr>
-                          </table>
+                          <q-table :rows="getPollutionRows(content)" :columns="getPollutionColumns()" row-key="field" :dense="true" class="q-mt-md" :rows-per-page-options="[0]" :hide-pagination="true" />
                         </td>
                         <td v-if="key === 'postcode'">
-                          <table>
-                            <tr>
-                              <td>Postcode</td>
-                              <td>{{ content.postcode }}</td>
-                            </tr>
-                            <tr>
-                              <td>County</td>
-                              <td>{{ content.county }}</td>
-                            </tr>
-                          </table>
+                          <q-table :rows="getPostcodeRows(content)" :columns="getPostcodeColumns()" row-key="field" :dense="true" class="q-mt-md" :rows-per-page-options="[0]" :hide-pagination="true" />
                         </td>
                         <td v-if="key === 'allergens'">
-                          <table>
-                            <tr>
-                              <td>Grass pollen amount</td>
-                              <td>{{ content.pollen.Count.grass_pollen }}</td>
-                            </tr>
-                            <tr>
-                              <td>Tree pollen amount</td>
-                              <td>{{ content.pollen.Count.tree_pollen }}</td>
-                            </tr>
-                            <tr>
-                              <td>Weed pollen amount</td>
-                              <td>{{ content.pollen.Count.weed_pollen }}</td>
-                            </tr>
-                            <tr>
-                              <td>Risk grass pollen</td>
-                              <td>{{ content.pollen.Risk.grass_pollen }}</td>
-                            </tr>
-                            <tr>
-                              <td>Risk tree pollen</td>
-                              <td>{{ content.pollen.Risk.tree_pollen }}</td>
-                            </tr>
-                            <tr>
-                              <td>Risk weed pollen</td>
-                              <td>{{ content.pollen.Risk.weed_pollen }}</td>
-                            </tr>
-                            <tr>
-                              <td>Species grass</td>
-                              <td>{{ content.pollen.Species.Grass }}</td>
-                            </tr>
-                            <tr>
-                              <td>Species others</td>
-                              <td>{{ content.pollen.Species.Others }}</td>
-                            </tr>
-                            <tr>
-                              <td>Species tree alder</td>
-                              <td>{{ content.pollen.Species.Tree.Alder }}</td>
-                            </tr>
-                            <tr>
-                              <td>Species tree birch</td>
-                              <td>{{ content.pollen.Species.Tree.Birch }}</td>
-                            </tr>
-                            <tr>
-                              <td>Species tree cypress</td>
-                              <td>{{ content.pollen.Species.Tree.Cypress }}</td>
-                            </tr>
-                            <tr>
-                              <td>Species tree elm</td>
-                              <td>{{ content.pollen.Species.Tree.Elm }}</td>
-                            </tr>
-                            <tr>
-                              <td>Species tree hazel</td>
-                              <td>{{ content.pollen.Species.Tree.Hazel }}</td>
-                            </tr>
-                            <tr>
-                              <td>Species tree oak</td>
-                              <td>{{ content.pollen.Species.Tree.Oak }}</td>
-                            </tr>
-                            <tr>
-                              <td>Species tree pine</td>
-                              <td>{{ content.pollen.Species.Tree.Pine }}</td>
-                            </tr>
-                            <tr>
-                              <td>Species tree plane</td>
-                              <td>{{ content.pollen.Species.Tree.Plane }}</td>
-                            </tr>
-                            <tr>
-                              <td>Species tree Poplar/cottonwood</td>
-                              <td>{{ content.pollen.Species.Tree['Poplar / Cottonwood'] }}</td>
-                            </tr>
-                          </table>
+                          <q-table :rows="getAllergensRows(content)" :columns="getAllergensColumns()" row-key="field" :dense="true" class="q-mt-md" :rows-per-page-options="[0]" :hide-pagination="true" />
                         </td>
                     </tr>
                 </tbody>
@@ -190,20 +30,17 @@
         </q-card>
       </q-expansion-item>
     </q-list>
-  </div>
 </template>
 
 <script>
 import { date } from 'quasar'
+
 export default {
   props: ['data', 'completed'],
   mounted () {
     this.initializeMap()
   },
   methods: {
-    toggleContent (data) {
-      data.showContent = !data.showContent
-    },
     initializeMap () {
       const latitude = this.data.position.coords.latitude
       const longitude = this.data.position.coords.longitude
@@ -218,6 +55,84 @@ export default {
       const marker = L.marker([latitude, longitude]).addTo(map)
       marker.bindPopup('Participant position').openPopup()
     },
+    getWeatherColumns () {
+      return [
+        { name: 'title', align: 'left', label: 'Title', field: 'title' },
+        { name: 'data', align: 'left', label: 'Data', field: 'data' }
+      ]
+    },
+    getWeatherRows (content) {
+      return [
+        { title: 'Location', data: content.location },
+        { title: 'Weather', data: '...' },
+        { title: 'Temperature', data: this.getRounded(content.temperature) },
+        { title: 'Lowest temperature', data: this.getRounded(content.temperatureMin) },
+        { title: 'Highest temperature', data: this.getRounded(content.temperatureMax) },
+        { title: 'Pressure', data: content.pressure },
+        { title: 'Sunrise', data: this.getNicerTimeStamp(content.sunrise) },
+        { title: 'Sunset', data: this.getNicerTimeStamp(content.sunset) },
+        { title: 'Clouds', data: content.clouds },
+        { title: 'Wind Speed', data: content.wind.speed }
+      ]
+    },
+    getPollutionColumns () {
+      return [
+        { name: 'title', align: 'left', label: 'Title', field: 'title' },
+        { name: 'data', align: 'left', label: 'Data', field: 'data' }
+      ]
+    },
+    getPollutionRows (content) {
+      return [
+        { title: 'Air Quality Index (AQI)', data: content.aqi },
+        { title: 'Co', data: content.components.co },
+        { title: 'No', data: content.components.no },
+        { title: 'No2', data: content.components.no2 },
+        { title: 'O3', data: content.components.o3 },
+        { title: 'So2', data: content.components.so2 },
+        { title: 'PM2_5', data: content.components.pm2_5 },
+        { title: 'PM10', data: content.components.pm10 },
+        { title: 'Nh3', data: content.components.nh3 }
+      ]
+    },
+    getPostcodeColumns () {
+      return [
+        { name: 'title', align: 'left', label: 'Title', field: 'title' },
+        { name: 'data', align: 'left', label: 'Data', field: 'data' }
+      ]
+    },
+    getPostcodeRows (content) {
+      return [
+        { title: 'Postcode', data: content.postcode },
+        { title: 'County', data: content.county }
+      ]
+    },
+    getAllergensColumns () {
+      return [
+        { name: 'title', align: 'left', label: 'Title', field: 'title' },
+        { name: 'data', align: 'left', label: 'Data', field: 'data' }
+      ]
+    },
+    getAllergensRows (content) {
+      return [
+        { title: 'Grass Pollen Amount', data: content.pollen.Count.grass_pollen },
+        { title: 'Tree Pollen Amount', data: content.pollen.Count.tree_pollen },
+        { title: 'Weed Pollen Amount', data: content.pollen.Count.weed_pollen },
+        { title: 'Risk Grass Pollen', data: content.pollen.Risk.grass_pollen },
+        { title: 'Risk Tree Pollen', data: content.pollen.Risk.tree_pollen },
+        { title: 'Risk Weed Pollen', data: content.pollen.Risk.weed_pollen },
+        { title: 'Species Grass', data: content.pollen.Species.Grass['Grass / Poaceae'] },
+        { title: 'Species Others', data: content.pollen.Species.Others },
+        { title: 'Species Tree Alder', data: content.pollen.Species.Tree.Alder },
+        { title: 'Species Tree Birch', data: content.pollen.Species.Tree.Birch },
+        { title: 'Species Tree Cypress', data: content.pollen.Species.Tree.Cypress },
+        { title: 'Species Tree Elm', data: content.pollen.Species.Tree.Elm },
+        { title: 'Species Tree Hazel', data: content.pollen.Species.Tree.Hazel },
+        { title: 'Species Tree Oak', data: content.pollen.Species.Tree.Oak },
+        { title: 'Species Tree Pine', data: content.pollen.Species.Tree.Pine },
+        { title: 'Species Tree Plane', data: content.pollen.Species.Tree.Plane },
+        { title: 'Species Tree Poplar/Cottonwood', data: content.pollen.Species.Tree['Poplar / Cottonwood'] }
+      ]
+    },
     getRounded (value) {
       return (Math.round(value * 100) / 100).toFixed(2)
     },
@@ -229,12 +144,10 @@ export default {
 </script>
 
 <style>
-.th_position, .th_position:hover {
-  color: #459399;
-}
-.th_position:hover {
-  text-decoration:underline;
-  cursor: pointer;
+#map {
+  width: 530px;
+  height: 400px;
+  margin-bottom: 10px;
 }
 #position_table {
   display: flex;
@@ -243,13 +156,11 @@ export default {
   align-items: center;
   margin-right: 20px;
 }
-#position_table td {
-  border: 1px solid black;
-  padding: 5px;
-}
 #position_accordion {
   display: flex;
   flex-direction: column;
   margin: auto;
+
+  max-width: 350px;
 }
 </style>
