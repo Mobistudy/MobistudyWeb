@@ -3,7 +3,7 @@
     <p class="taskVisualizationHeader">Completed: {{ completed }}</p>
     </div>
     <q-page>
-      <q-table :rows="tableData" :columns="columns" row-key="field" :dense="true" class="q-mt-md">
+      <q-table :rows="this.tableData()" :columns="this.columns()" row-key="field" :dense="true" class="q-mt-md">
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
