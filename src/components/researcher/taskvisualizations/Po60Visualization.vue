@@ -1,37 +1,57 @@
 <template>
-    <div>
-    <p class="taskVisualizationHeader">Completed: {{ completed }}</p>
-    </div>
-    <q-page>
-      <q-table :rows="tableData" :columns="columns" row-key="field" :dense="true" class="q-mt-md">
-        <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td v-for="col in props.cols" :key="col.name" :props="props">
-              {{ col.value }}
-            </q-td>
-          </q-tr>
-        </template>
-      </q-table>
-    </q-page>
-  </template>
+  <div>
+    <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(completed) }}</p>
+  </div>
+  <q-table :rows="this.getRows()" :columns="this.getColumns()" row-key="field" :dense="true" class="q-mt-md" :hide-pagination="true" />
+</template>
+
 <script>
+import API from 'src/shared/API'
+import { date } from 'quasar'
+
 export default {
-  props: ['data', 'completed'],
+  props: ['taskProps'],
+  mounted () {
+    this.fetchTaskData()
+  },
+  data () {
+    return {
+      completed: null,
+      data: null
+    }
+  },
   methods: {
-    tableData () {
+    async fetchTaskData () {
+      try {
+        this.taskData = await API.getTaskAttachment(this.taskProps.row.studyKey, this.taskProps.row.userKey, this.taskProps.row.taskId, this.taskProps.row.attachments[0])
+        this.completed = this.taskData.createdTS
+        this.data = this.taskData.po60Data
+        this.getRows()
+      } catch (err) {
+        this.$q.notify({
+          color: 'negative',
+          message: 'Cannot retrieve the task content',
+          icon: 'report_problem'
+        })
+      }
+    },
+    niceTimestamp (timeStamp) {
+      return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
+    },
+    getColumns () {
       return [
-        { field: 'Max HR', value: this.data.po60Data.hrMax },
-        { field: 'Min HR', value: this.data.po60Data.hrMin },
-        { field: 'Avg HR', value: this.data.po60Data.hrAvg },
-        { field: 'Max SPO2', value: this.data.po60Data.SPO2Max },
-        { field: 'Min SPO2', value: this.data.po60Data.SPO2Min },
-        { field: 'Avg SPO2', value: this.data.po60Data.SPO2Avg }
+        { name: 'value', align: 'left', label: 'Health Data', field: 'value' },
+        { name: 'po60', align: 'left', label: 'Value', field: 'po60' }
       ]
     },
-    columns () {
+    getRows () {
       return [
-        { name: 'field', align: 'left', label: 'Health Data', field: 'field' },
-        { name: 'value', align: 'left', label: 'Value', field: 'value' }
+        { value: 'Max HR', po60: this.data ? this.data.hrMax : 0 },
+        { value: 'Min HR', po60: this.data ? this.data.hrMin : 0 },
+        { value: 'Avg HR', po60: this.data ? this.data.hrAvg : 0 },
+        { value: 'Max SPO2', po60: this.data ? this.data.SPO2Max : 0 },
+        { value: 'Min SPO2', po60: this.data ? this.data.SPO2Min : 0 },
+        { value: 'Avg SPO2', po60: this.data ? this.data.SPO2Avg : 0 }
       ]
     }
   }
