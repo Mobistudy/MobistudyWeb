@@ -88,7 +88,7 @@
                     <PositionVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
                   </div>
                   <div v-if="taskDataType === 'miband'">
-                    <MibandVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <MibandVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'po60'">
                     <Po60Visualization :taskProps="taskProps" />
