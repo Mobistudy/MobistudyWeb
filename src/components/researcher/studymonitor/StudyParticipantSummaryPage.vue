@@ -91,7 +91,7 @@
                     <MibandVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
                   </div>
                   <div v-if="taskDataType === 'po60'">
-                    <Po60Visualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <Po60Visualization :taskProps="taskProps" />
                   </div>
                 </q-card-section>
               </q-card>
@@ -191,6 +191,7 @@ export default {
       taskDataContent: undefined,
       taskDataModal: false,
       taskCompletedDate: undefined,
+      taskProps: null,
       loading: false
     }
   },
@@ -259,6 +260,7 @@ export default {
         this.taskDataType = props.row.taskType
         this.taskCompletedDate = props.row.summary.completedTS
         this.taskDataModal = true
+        this.taskProps = props
         this.getParticipant()
       } catch (err) {
         this.$q.notify({
