@@ -85,7 +85,7 @@
                     <PeakFlowVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'position'">
-                    <PositionVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <PositionVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'miband'">
                     <MibandVisualization :taskProps="taskProps" />

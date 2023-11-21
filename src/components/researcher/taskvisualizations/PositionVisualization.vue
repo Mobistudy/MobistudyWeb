@@ -1,9 +1,13 @@
 <template>
-<div>
-    <p class="taskVisualizationHeader">Completed: {{ completed }}</p>
-    <p class="taskVisualizationHeader">Map</p>
+<div v-if="loading">
+  <q-spinner-gears size="80px" color="primary" />
 </div>
-    <div id="map"></div>
+<div v-else-if="data">
+  <div>
+    <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(completed) }}</p>
+    <p class="taskVisualizationHeader">Map</p>
+  </div>
+    <div v-if="data" id="map"></div>
     <q-list id="position_accordion" bordered class="rounded-borders" v-for="(content, key) in this.data.environment" :key="key">
       <q-expansion-item expand-separator :label="key.toUpperCase()">
         <q-card>
@@ -30,30 +34,67 @@
         </q-card>
       </q-expansion-item>
     </q-list>
+</div>
+<div v-else>
+    <q-alert color="negative" icon="report_problem">
+      Cannot retrieve the task content
+    </q-alert>
+  </div>
 </template>
 
 <script>
+import API from 'src/shared/API'
 import { date } from 'quasar'
 
 export default {
-  props: ['data', 'completed'],
+  props: ['taskProps'],
+  data () {
+    return {
+      loading: true,
+      completed: null,
+      data: null
+    }
+  },
   mounted () {
-    this.initializeMap()
+    this.fetchTaskData()
   },
   methods: {
+    async fetchTaskData () {
+      try {
+        this.taskData = await API.getTaskAttachment(this.taskProps.row.studyKey, this.taskProps.row.userKey, this.taskProps.row.taskId, this.taskProps.row.attachments[0])
+        this.completed = this.taskData.createdTS
+        this.data = this.taskData
+      } catch (err) {
+        this.$q.notify({
+          color: 'negative',
+          message: 'Cannot retrieve the task content',
+          icon: 'report_problem'
+        })
+      } finally {
+        this.loading = false
+        this.$nextTick(() => {
+          this.initializeMap()
+        })
+      }
+    },
+    niceTimestamp (timeStamp) {
+      return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
+    },
     initializeMap () {
-      const latitude = this.data.position.coords.latitude
-      const longitude = this.data.position.coords.longitude
-      /* eslint-disable-next-line */
-      const map = L.map('map').setView([latitude, longitude], 13)
-      /* eslint-disable-next-line */
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        maxZoom: 20,
-        attribution: '&copy; <a href="https://carto.com/attributions">CartoDB</a>'
-      }).addTo(map)
-      /* eslint-disable-next-line */
-      const marker = L.marker([latitude, longitude]).addTo(map)
-      marker.bindPopup('Participant position').openPopup()
+      if (this.data) {
+        const latitude = this.data.position.coords.latitude
+        const longitude = this.data.position.coords.longitude
+        /* eslint-disable-next-line */
+        const map = L.map('map').setView([latitude, longitude], 13)
+        /* eslint-disable-next-line */
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+          maxZoom: 20,
+          attribution: '&copy; <a href="https://carto.com/attributions">CartoDB</a>'
+        }).addTo(map)
+        /* eslint-disable-next-line */
+        const marker = L.marker([latitude, longitude]).addTo(map)
+        marker.bindPopup('Participant position').openPopup()
+      }
     },
     getWeatherColumns () {
       return [
