@@ -70,16 +70,16 @@
                     <FingerTappingDrawingVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'holdPhone'">
-                    <HoldPhoneVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <HoldPhoneVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'drawing'">
-                    <DrawingVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <DrawingVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'tugt'">
                     <TugtVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
                   </div>
                   <div v-if="taskDataType === 'vocalization'">
-                    <VocalizationVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <VocalizationVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'peakFlow'">
                     <PeakFlowVisualization :taskProps="taskProps" />
