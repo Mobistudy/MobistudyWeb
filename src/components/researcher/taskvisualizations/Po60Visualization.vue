@@ -16,7 +16,6 @@ export default {
   },
   data () {
     return {
-      taskData: undefined,
       completed: null,
       data: null
     }
