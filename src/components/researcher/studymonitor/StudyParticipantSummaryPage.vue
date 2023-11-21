@@ -82,7 +82,7 @@
                     <VocalizationVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
                   </div>
                   <div v-if="taskDataType === 'peakFlow'">
-                    <PeakFlowVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <PeakFlowVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'position'">
                     <PositionVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
