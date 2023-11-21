@@ -48,7 +48,7 @@
               </template>
               <template #body-cell-summary="props">
                 <q-td :props="props">
-                  <p v-for="task, i in taskSummary(props.row.summary)" :key="i">
+                  <p v-for="task, i in taskSummary(props.row.summary, props.row.taskType)" :key="i">
                     {{ task }}
                   </p>
                 </q-td>
@@ -260,6 +260,7 @@ export default {
         this.taskCompletedDate = props.row.summary.completedTS
         this.taskDataModal = true
         this.getParticipant()
+        console.log(props.row.attachments)
       } catch (err) {
         this.$q.notify({
           color: 'negative',
@@ -279,14 +280,34 @@ export default {
         })
       }
     },
-    taskSummary (props) {
+    taskSummary (props, data) {
       const list = []
       const { startedTS, completedTS, ...theRest } = props
       const keys = Object.keys(theRest)
 
       for (let key of keys) {
         let value = theRest[key]
-        if (typeof value === 'number') {
+        if (data === 'vocalization') {
+          for (const v in value) {
+            key = 'Vocal ' + (value[v].vocal).toUpperCase()
+            const start = ((value[v].startedTS).slice(11, 23))
+            const stop = ((value[v].completedTS).slice(11, 23))
+            const time = this.calcDifferenceInTime(start, stop)
+            list.push(`${key}: ${time}`)
+          }
+          return list
+        } else if (data === 'holdPhone') {
+          const left = value.left.accelerationVariance
+          const right = value.right.accelerationVariance
+          const average = left + right / 2
+          key = key + 'AccelerationVariance'
+          value = (Math.round(average * 100) / 100).toString()
+        } else if (data === 'tugt') {
+          key = key.slice(0, 8)
+          value = Math.round(Number(value) / 1000) + ' sec'
+        }
+
+        if (data === 'drawing' || data === 'fingerTapping') {
           value = Math.round(Number(value))
           value.toString()
         }
@@ -295,6 +316,14 @@ export default {
         list.push(`${key}: ${value}`)
       }
       return list
+    },
+    calcDifferenceInTime (start, stop) {
+      start = start.replaceAll(':', '')
+      start = start.replaceAll('.', '')
+      stop = stop.replaceAll(':', '')
+      stop = stop.replaceAll('.', '')
+      const time = Math.round((stop - start) / 1000)
+      return time + ' sec'
     },
     async loadFirstImage () {
       // Verifica si hay tareas disponibles
