@@ -3,17 +3,17 @@
     <p class="taskVisualizationHeader">Completed: {{ completed }}</p>
   </div>
   <div>
-    <p id="tugtTotalTime">Total time: {{ getTotalTime() }}</p>
+    <p id="tugtTotalTime">Total time: {{ this.data && getTotalTime() }}</p>
   </div>
   <div>
-    <q-toggle @click="handleFTToggleChange()" v-model="isACCombined">{{ isACCombined ? 'Module' : 'XYZ' }}</q-toggle>
+    <q-toggle @click=" this.data && handleFTToggleChange()" v-model="isACCombined">{{ isACCombined ? 'Module' : 'XYZ' }}</q-toggle>
     <canvas id="tugtChart"></canvas>
   </div>
     <div class="resetChart">
       <q-btn @click="tugtChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
     </div>
   <div>
-    <q-toggle @click="handleRoterToggleChange()" v-model="isRCombined">{{ isRCombined ? 'Module' : 'XYZ' }}</q-toggle>
+    <q-toggle @click="this.data && handleRoterToggleChange()" v-model="isRCombined">{{ isRCombined ? 'Module' : 'XYZ' }}</q-toggle>
     <canvas id="tugtRotarChart"></canvas>
   </div>
     <div class="resetChart">
@@ -22,25 +22,46 @@
 </template>
 
 <script>
+import API from 'src/shared/API'
+import { date } from 'quasar'
 import { ref } from 'vue'
 import { Chart } from 'chart.js/auto'
 import zoomPlugin from 'chartjs-plugin-zoom'
 Chart.register(zoomPlugin)
 
 export default {
-  props: ['data', 'completed'],
+  props: ['taskProps'],
   mounted () {
-    this.initializeRotarCombinedChart()
-    this.initializeVectorChart()
-    this.getTotalTime()
+    this.fetchTaskData()
   },
   data () {
     return {
+      completed: null,
+      data: null,
       isACCombined: ref(true),
       isRCombined: ref(true)
     }
   },
   methods: {
+    async fetchTaskData () {
+      try {
+        this.taskData = await API.getTaskAttachment(this.taskProps.row.studyKey, this.taskProps.row.userKey, this.taskProps.row.taskId, this.taskProps.row.attachments[0])
+        this.completed = this.taskData.createdTS
+        this.data = this.taskData
+        this.initializeRotarCombinedChart()
+        this.initializeVectorChart()
+        this.getTotalTime()
+      } catch (err) {
+        this.$q.notify({
+          color: 'negative',
+          message: 'Cannot retrieve the task content',
+          icon: 'report_problem'
+        })
+      }
+    },
+    niceTimestamp (timeStamp) {
+      return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
+    },
     handleFTToggleChange () {
       this.tugtChart.destroy()
       if (this.isACCombined) {

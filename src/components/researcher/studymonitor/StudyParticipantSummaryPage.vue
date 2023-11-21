@@ -76,7 +76,7 @@
                     <DrawingVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'tugt'">
-                    <TugtVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <TugtVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'vocalization'">
                     <VocalizationVisualization :taskProps="taskProps" />
