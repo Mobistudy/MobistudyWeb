@@ -306,7 +306,6 @@ export default {
         await this.loadNextImage()
       }
     },
-
     async loadNextImage () {
       if (this.currentIndex < this.tasksToLoad.length) {
         const taskToLoad = this.tasksToLoad[this.currentIndex]
