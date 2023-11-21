@@ -67,7 +67,7 @@
                 </q-bar>
                 <q-card-section>
                   <div v-if="taskDataType === 'fingerTapping'">
-                    <FingerTappingDrawingVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <FingerTappingDrawingVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'holdPhone'">
                     <HoldPhoneVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
@@ -262,7 +262,6 @@ export default {
         this.taskDataModal = true
         this.taskProps = props
         this.getParticipant()
-        console.log(props.row.attachments)
       } catch (err) {
         this.$q.notify({
           color: 'negative',
