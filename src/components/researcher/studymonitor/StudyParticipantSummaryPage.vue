@@ -37,7 +37,7 @@
                     </template>
                   </template>
                   <template v-else>
-                    {{ firstLetterUpperCase(props.row.taskType) }}
+                    {{ showTaskName(props.row.taskType) }}
                   </template>
                 </q-td>
               </template>
@@ -236,6 +236,24 @@ export default {
     },
     firstLetterUpperCase (str) {
       return str.charAt(0).toUpperCase() + str.slice(1)
+    },
+    showTaskName (taskType) {
+      switch (taskType) {
+        case 'fingerTapping':
+          return 'Finger Tapping'
+        case 'holdPhone':
+          return 'Hold The Phone'
+        case 'tugt':
+          return 'Timed up and Go Test'
+        case 'peakFlow':
+          return 'Peak Flow'
+        case 'miband':
+          return 'Mi-Band'
+        case 'smwt':
+          return 'Six Minute Walk Test'
+        default:
+          return this.firstLetterUpperCase(taskType)
+      }
     },
     async loadTasks (params) {
       this.loading = true
