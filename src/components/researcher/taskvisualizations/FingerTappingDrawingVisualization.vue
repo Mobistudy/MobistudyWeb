@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p class="taskVisualizationHeader">Completed: {{ completed }}</p>
+    <p class="taskVisualizationHeader">Completed: {{ this.data && this.niceTimestamp(completed) }}</p>
   </div>
     <div>
       <canvas id="fingerTappingChart"></canvas>
@@ -9,8 +9,8 @@
         <q-btn @click="fingerTapping.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
       </div>
       <div id="fingerTappingResult">
-        <p>Total Taps: {{ this.data.length }}</p>
-        <p>Average Tap Time Difference: {{ this.getAverageTapTime() }}</p>
+        <p>Total Taps: {{ this.data && this.data.length }}</p>
+        <p>Average Tap Time Difference: {{ this.data && this.getAverageTapTime() }}ms</p>
       </div>
     <div>
       <canvas id="fingerTappingDelayChart"></canvas>
@@ -21,17 +21,44 @@
 </template>
 
 <script>
+import API from 'src/shared/API'
+import { date } from 'quasar'
 import { Chart } from 'chart.js/auto'
 import zoomPlugin from 'chartjs-plugin-zoom'
 Chart.register(zoomPlugin)
 
 export default {
-  props: ['data', 'completed'],
+  props: ['taskProps'],
   mounted () {
-    this.initializeFingerTappingChart()
-    this.initializeFingerTappingDelayChart()
+    this.fetchTaskData()
+  },
+  data () {
+    return {
+      completed: null,
+      data: null
+    }
   },
   methods: {
+    async fetchTaskData () {
+      try {
+        this.taskData = await API.getTaskAttachment(this.taskProps.row.studyKey, this.taskProps.row.userKey, this.taskProps.row.taskId, this.taskProps.row.attachments[0])
+        this.completed = this.taskData.createdTS
+        this.data = this.taskData
+        this.initializeFingerTappingChart()
+        this.initializeFingerTappingDelayChart()
+        this.getAverageTapTime()
+        this.getTapTimeDifference()
+      } catch (err) {
+        this.$q.notify({
+          color: 'negative',
+          message: 'Cannot retrieve the task content',
+          icon: 'report_problem'
+        })
+      }
+    },
+    niceTimestamp (timeStamp) {
+      return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
+    },
     initializeFingerTappingChart () {
       const ctx = document.getElementById('fingerTappingChart').getContext('2d')
       const config = {
@@ -213,7 +240,6 @@ export default {
       }
     },
     getTapTimeDifference () {
-      // create variable to avoid mutation of the "data" prop
       const data = this.data
       const sortedTaps = data.sort((firstTap, secondTap) => firstTap.msFromStart - secondTap.msFromStart)
       const tapTimeDifference = []

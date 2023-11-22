@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p class="taskVisualizationHeader">Completed: {{ completed }}</p>
+    <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(completed) }}</p>
   </div>
   <div>
     <canvas id="mibandChart"></canvas>
@@ -11,17 +11,41 @@
 </template>
 
 <script>
+import API from 'src/shared/API'
+import { date } from 'quasar'
 import { Chart } from 'chart.js/auto'
 import zoomPlugin from 'chartjs-plugin-zoom'
 Chart.register(zoomPlugin)
-import { date } from 'quasar'
 
 export default {
-  props: ['data', 'completed'],
+  props: ['taskProps'],
   mounted () {
-    this.initializeChart()
+    this.fetchTaskData()
+  },
+  data () {
+    return {
+      completed: null,
+      data: null
+    }
   },
   methods: {
+    async fetchTaskData () {
+      try {
+        this.taskData = await API.getTaskAttachment(this.taskProps.row.studyKey, this.taskProps.row.userKey, this.taskProps.row.taskId, this.taskProps.row.attachments[0])
+        this.completed = this.taskData.createdTS
+        this.data = this.taskData.miband3Data
+        this.initializeChart()
+      } catch (err) {
+        this.$q.notify({
+          color: 'negative',
+          message: 'Cannot retrieve the task content',
+          icon: 'report_problem'
+        })
+      }
+    },
+    niceTimestamp (timeStamp) {
+      return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
+    },
     initializeChart () {
       const ctx = document.getElementById('mibandChart').getContext('2d')
       const config = {
@@ -79,29 +103,29 @@ export default {
     },
     getStepsActivity () {
       const stepsArr = []
-      for (let i = 0; i < this.data.miband3Data.length; i++) {
-        stepsArr.push(this.data.miband3Data[i].steps)
+      for (let i = 0; i < this.data.length; i++) {
+        stepsArr.push(this.data[i].steps)
       }
       return stepsArr
     },
     getIntensityActivity () {
       const intensityArr = []
-      for (let i = 0; i < this.data.miband3Data.length; i++) {
-        intensityArr.push(this.data.miband3Data[i].intensity)
+      for (let i = 0; i < this.data.length; i++) {
+        intensityArr.push(this.data[i].intensity)
       }
       return intensityArr
     },
     getHeartrateActivity () {
       const heartrate = []
-      for (let i = 0; i < this.data.miband3Data.length; i++) {
-        heartrate.push(this.data.miband3Data[i].hr)
+      for (let i = 0; i < this.data.length; i++) {
+        heartrate.push(this.data[i].hr)
       }
       return heartrate
     },
     getActivityDate () {
       const dateArr = []
-      for (let i = 0; i < this.data.miband3Data.length; i++) {
-        dateArr.push(date.formatDate(this.data.miband3Data[i].date, 'YYYY-MM-DD HH:mm:ss'))
+      for (let i = 0; i < this.data.length; i++) {
+        dateArr.push(date.formatDate(this.data[i].date, 'YYYY-MM-DD HH:mm:ss'))
       }
       return dateArr
     }

@@ -37,7 +37,7 @@
                     </template>
                   </template>
                   <template v-else>
-                    {{ firstLetterUpperCase(props.row.taskType) }}
+                    {{ showTaskName(props.row.taskType) }}
                   </template>
                 </q-td>
               </template>
@@ -48,7 +48,7 @@
               </template>
               <template #body-cell-summary="props">
                 <q-td :props="props">
-                  <p v-for="task, i in taskSummary(props.row.summary)" :key="i">
+                  <p v-for="task, i in taskSummary(props.row.summary, props.row.taskType)" :key="i">
                     {{ task }}
                   </p>
                 </q-td>
@@ -67,31 +67,31 @@
                 </q-bar>
                 <q-card-section>
                   <div v-if="taskDataType === 'fingerTapping'">
-                    <FingerTappingDrawingVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <FingerTappingDrawingVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'holdPhone'">
-                    <HoldPhoneVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <HoldPhoneVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'drawing'">
-                    <DrawingVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <DrawingVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'tugt'">
-                    <TugtVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <TugtVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'vocalization'">
-                    <VocalizationVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <VocalizationVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'peakFlow'">
-                    <PeakFlowVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <PeakFlowVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'position'">
-                    <PositionVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <PositionVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'miband'">
-                    <MibandVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <MibandVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'po60'">
-                    <Po60Visualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <Po60Visualization :taskProps="taskProps" />
                   </div>
                 </q-card-section>
               </q-card>
@@ -191,6 +191,7 @@ export default {
       taskDataContent: undefined,
       taskDataModal: false,
       taskCompletedDate: undefined,
+      taskProps: null,
       loading: false
     }
   },
@@ -236,6 +237,24 @@ export default {
     firstLetterUpperCase (str) {
       return str.charAt(0).toUpperCase() + str.slice(1)
     },
+    showTaskName (taskType) {
+      switch (taskType) {
+        case 'fingerTapping':
+          return 'Finger Tapping'
+        case 'holdPhone':
+          return 'Hold The Phone'
+        case 'tugt':
+          return 'Timed up and Go Test'
+        case 'peakFlow':
+          return 'Peak Flow'
+        case 'miband':
+          return 'Mi-Band'
+        case 'smwt':
+          return 'Six Minute Walk Test'
+        default:
+          return this.firstLetterUpperCase(taskType)
+      }
+    },
     async loadTasks (params) {
       this.loading = true
       try {
@@ -259,6 +278,7 @@ export default {
         this.taskDataType = props.row.taskType
         this.taskCompletedDate = props.row.summary.completedTS
         this.taskDataModal = true
+        this.taskProps = props
         this.getParticipant()
       } catch (err) {
         this.$q.notify({
@@ -279,14 +299,34 @@ export default {
         })
       }
     },
-    taskSummary (props) {
+    taskSummary (props, data) {
       const list = []
       const { startedTS, completedTS, ...theRest } = props
       const keys = Object.keys(theRest)
 
       for (let key of keys) {
         let value = theRest[key]
-        if (typeof value === 'number') {
+        if (data === 'vocalization') {
+          for (const v in value) {
+            key = 'Vocal ' + (value[v].vocal).toUpperCase()
+            const start = ((value[v].startedTS).slice(11, 23))
+            const stop = ((value[v].completedTS).slice(11, 23))
+            const time = this.calcDifferenceInTime(start, stop)
+            list.push(`${key}: ${time}`)
+          }
+          return list
+        } else if (data === 'holdPhone') {
+          const left = value.left.accelerationVariance
+          const right = value.right.accelerationVariance
+          const average = left + right / 2
+          key = key + 'AccelerationVariance'
+          value = (Math.round(average * 100) / 100).toString()
+        } else if (data === 'tugt') {
+          key = key.slice(0, 8)
+          value = Math.round(Number(value) / 1000) + ' sec'
+        }
+
+        if (data === 'drawing' || data === 'fingerTapping') {
           value = Math.round(Number(value))
           value.toString()
         }
@@ -296,6 +336,14 @@ export default {
       }
       return list
     },
+    calcDifferenceInTime (start, stop) {
+      start = start.replaceAll(':', '')
+      start = start.replaceAll('.', '')
+      stop = stop.replaceAll(':', '')
+      stop = stop.replaceAll('.', '')
+      const time = Math.round((stop - start) / 1000)
+      return time + ' sec'
+    },
     async loadFirstImage () {
       // Verifica si hay tareas disponibles
       if (this.tasks.length > 0) {
@@ -304,7 +352,6 @@ export default {
         await this.loadNextImage()
       }
     },
-
     async loadNextImage () {
       if (this.currentIndex < this.tasksToLoad.length) {
         const taskToLoad = this.tasksToLoad[this.currentIndex]
