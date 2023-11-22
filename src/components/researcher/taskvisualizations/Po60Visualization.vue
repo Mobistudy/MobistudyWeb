@@ -1,8 +1,10 @@
 <template>
-  <div>
-    <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(completed) }}</p>
+  <div class="po60_container">
+    <div>
+      <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(completed) }}</p>
+    </div>
+    <q-table :rows="this.getRows()" :columns="this.getColumns()" row-key="field" :dense="true" class="q-mt-md" :hide-pagination="true" style="height: 100%; width: 100%;" />
   </div>
-  <q-table :rows="this.getRows()" :columns="this.getColumns()" row-key="field" :dense="true" class="q-mt-md" :hide-pagination="true" />
 </template>
 
 <script>
@@ -59,5 +61,8 @@ export default {
 </script>
 
 <style>
-
+.po60_container {
+  min-height: 400px;
+  min-height: 400px;
+}
 </style>
