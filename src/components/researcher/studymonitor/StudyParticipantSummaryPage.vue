@@ -243,23 +243,15 @@ export default {
           return 'Finger Tapping'
         case 'holdPhone':
           return 'Hold The Phone'
-        case 'drawing':
-          return this.firstLetterUpperCase(taskType)
         case 'tugt':
           return 'Timed up and Go Test'
-        case 'vocalization':
-          return this.firstLetterUpperCase(taskType)
         case 'peakFlow':
           return 'Peak Flow'
         case 'miband':
           return 'Mi-Band'
         case 'smwt':
           return 'Six Minute Walk Test'
-        case 'position':
-          return this.firstLetterUpperCase(taskType)
-        case 'po60':
-          return this.firstLetterUpperCase(taskType)
-        case 'form':
+        default:
           return this.firstLetterUpperCase(taskType)
       }
     },
