@@ -136,14 +136,14 @@
                   <div v-if="taskDataType === 'po60'">
                     <Po60Visualization :taskProps="taskProps" />
                   </div>
-                  <div v-else-if="taskDataType === 'miband3'">
+                  <div v-if="taskDataType === 'miband3'">
                     <mi-band-3-charts
                       :studyKey="studyKey"
                       :userKey="userKey"
                       :taskDataContent="taskDataContent"
                     ></mi-band-3-charts>
                   </div>
-                  <div v-else-if="taskDataType === 'smwt'">
+                  <div v-if="taskDataType === 'smwt'">
                     <div>
                       <p class="q-title text-bold">
                         Steps
@@ -451,6 +451,7 @@ export default {
       }
     },
     taskSummary (props, data) {
+      console.log(props)
       const list = []
       const { startedTS, completedTS, ...theRest } = props
       const keys = Object.keys(theRest)
