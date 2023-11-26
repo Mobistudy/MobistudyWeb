@@ -137,11 +137,11 @@
                     <Po60Visualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'miband3'">
-                    <mi-band-3-charts
+                    <MiBand3Visualization
                       :studyKey="studyKey"
                       :userKey="userKey"
                       :taskDataContent="taskDataContent"
-                    ></mi-band-3-charts>
+                    ></MiBand3Visualization>
                   </div>
                   <div v-if="taskDataType === 'smwt'">
                     <div>
@@ -169,19 +169,19 @@
                       />
                       <q-tab-panels v-model="panel" animated class="shadow-2 rounded-borders">
                         <q-tab-panel name="map">
-                          <s-m-w-t-map
+                          <SmwtMapVisualization
                             :studyKey="studyKey"
                             :userKey="userKey"
                             :taskDataContent="taskDataContent"
-                          ></s-m-w-t-map>
+                          ></SmwtMapVisualization>
                         </q-tab-panel>
 
                         <q-tab-panel name="chart">
-                          <s-m-w-t-chart
+                          <SmwtChartVisualization
                             :studyKey="studyKey"
                             :userKey="userKey"
                             :taskDataContent="taskDataContent"
-                          ></s-m-w-t-chart>
+                          ></SmwtChartVisualization>
                         </q-tab-panel>
                       </q-tab-panels>
                     </div>
@@ -241,9 +241,9 @@ import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, Li
 import 'chartjs-adapter-date-fns'
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, TimeScale)
-import MiBand3Charts from '@components/researcher/studymonitor/MiBand3Charts'
-import SMWTMap from '../taskvisualizations/SmwtMapVisualization.vue'
-import SMWTChart from '../taskvisualizations/SmwtChartVisualization.vue'
+import MiBand3Visualization from '../taskvisualizations/MiBand3Visualization.vue'
+import SmwtMapVisualization from '../taskvisualizations/SmwtMapVisualization.vue'
+import SmwtChartVisualization from '../taskvisualizations/SmwtChartVisualization.vue'
 import FingerTappingDrawingVisualization from '../taskvisualizations/FingerTappingDrawingVisualization.vue'
 import HoldPhoneVisualization from '../taskvisualizations/HoldPhoneVisualization.vue'
 import DrawingVisualization from '../taskvisualizations/DrawingVisualization.vue'
@@ -260,9 +260,9 @@ export default {
   mixins: [bestLocale],
   components: {
     Bar,
-    MiBand3Charts,
-    SMWTMap,
-    SMWTChart,
+    MiBand3Visualization,
+    SmwtMapVisualization,
+    SmwtChartVisualization,
     FingerTappingDrawingVisualization,
     HoldPhoneVisualization,
     DrawingVisualization,
