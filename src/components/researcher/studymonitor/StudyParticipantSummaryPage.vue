@@ -186,56 +186,6 @@
                       </q-tab-panels>
                     </div>
                   </div>
-                  <div v-else-if="taskDataType === 'miband3'">
-                    <mi-band-3-charts
-                      :studyKey="studyKey"
-                      :userKey="userKey"
-                      :taskDataContent="taskDataContent"
-                    ></mi-band-3-charts>
-                  </div>
-                  <div v-else-if="taskDataType === 'smwt'">
-                    <div>
-                      <p class="q-title text-bold">
-                        Steps
-                      </p>
-                      <p>
-                        {{ smwtSteps }}
-                      </p>
-                      <p class="q-title text-bold">
-                        Distance
-                      </p>
-                      <p>
-                        {{ smwtDistance }} m
-                      </p>
-                    </div>
-                    <div>
-                      <q-option-group
-                        v-model="panel"
-                        inline
-                        :options="[
-                          { label: 'Map', value: 'map' },
-                          { label: 'Chart', value: 'chart' }
-                        ]"
-                      />
-                      <q-tab-panels v-model="panel" animated class="shadow-2 rounded-borders">
-                        <q-tab-panel name="map">
-                          <s-m-w-t-map
-                            :studyKey="studyKey"
-                            :userKey="userKey"
-                            :taskDataContent="taskDataContent"
-                          ></s-m-w-t-map>
-                        </q-tab-panel>
-
-                        <q-tab-panel name="chart">
-                          <s-m-w-t-chart
-                            :studyKey="studyKey"
-                            :userKey="userKey"
-                            :taskDataContent="taskDataContent"
-                          ></s-m-w-t-chart>
-                        </q-tab-panel>
-                      </q-tab-panels>
-                    </div>
-                  </div>
                 </q-card-section>
               </q-card>
             </q-dialog>
