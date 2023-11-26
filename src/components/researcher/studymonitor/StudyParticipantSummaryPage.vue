@@ -37,7 +37,7 @@
                     </template>
                   </template>
                   <template v-else>
-                    {{ props.row.taskType }}
+                    {{ showTaskName(props.row.taskType) }}
                   </template>
                 </q-td>
               </template>
@@ -46,15 +46,11 @@
                   {{ niceTimestamp(props.row.summary.completedTS) }}
                 </q-td>
               </template>
-              <template #body-cell-asked="props">
+              <template #body-cell-summary="props">
                 <q-td :props="props">
-                  {{ props.row.summary.asked }}
-                </q-td>
-              </template>
-
-              <template #body-cell-answered="props">
-                <q-td :props="props">
-                  {{ props.row.summary.answered }}
+                  <p v-for="task, i in taskSummary(props.row.summary, props.row.taskType)" :key="i">
+                    {{ task }}
+                  </p>
                 </q-td>
               </template>
             </q-table>
@@ -114,25 +110,81 @@
                     </div>
                   </div>
                   <div v-if="taskDataType === 'fingerTapping'">
-                    <FingerTappingDrawingVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <FingerTappingDrawingVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'holdPhone'">
-                    <HoldPhoneVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <HoldPhoneVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'drawing'">
-                    <DrawingVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <DrawingVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'tugt'">
-                    <TugtVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <TugtVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'vocalization'">
-                    <VocalizationVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <VocalizationVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'peakFlow'">
-                    <PeakFlowVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <PeakFlowVisualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'position'">
-                    <PositionVisualization :data="taskDataContent" :completed="niceTimestamp(taskCompletedDate)" />
+                    <PositionVisualization :taskProps="taskProps" />
+                  </div>
+                  <div v-if="taskDataType === 'miband'">
+                    <MibandVisualization :taskProps="taskProps" />
+                  </div>
+                  <div v-if="taskDataType === 'po60'">
+                    <Po60Visualization :taskProps="taskProps" />
+                  </div>
+                  <div v-else-if="taskDataType === 'miband3'">
+                    <mi-band-3-charts
+                      :studyKey="studyKey"
+                      :userKey="userKey"
+                      :taskDataContent="taskDataContent"
+                    ></mi-band-3-charts>
+                  </div>
+                  <div v-else-if="taskDataType === 'smwt'">
+                    <div>
+                      <p class="q-title text-bold">
+                        Steps
+                      </p>
+                      <p>
+                        {{ smwtSteps }}
+                      </p>
+                      <p class="q-title text-bold">
+                        Distance
+                      </p>
+                      <p>
+                        {{ smwtDistance }} m
+                      </p>
+                    </div>
+                    <div>
+                      <q-option-group
+                        v-model="panel"
+                        inline
+                        :options="[
+                          { label: 'Map', value: 'map' },
+                          { label: 'Chart', value: 'chart' }
+                        ]"
+                      />
+                      <q-tab-panels v-model="panel" animated class="shadow-2 rounded-borders">
+                        <q-tab-panel name="map">
+                          <s-m-w-t-map
+                            :studyKey="studyKey"
+                            :userKey="userKey"
+                            :taskDataContent="taskDataContent"
+                          ></s-m-w-t-map>
+                        </q-tab-panel>
+
+                        <q-tab-panel name="chart">
+                          <s-m-w-t-chart
+                            :studyKey="studyKey"
+                            :userKey="userKey"
+                            :taskDataContent="taskDataContent"
+                          ></s-m-w-t-chart>
+                        </q-tab-panel>
+                      </q-tab-panels>
+                    </div>
                   </div>
                   <div v-else-if="taskDataType === 'miband3'">
                     <mi-band-3-charts
@@ -249,6 +301,8 @@ import TugtVisualization from '../taskvisualizations/TugtVisualization.vue'
 import VocalizationVisualization from '../taskvisualizations/VocalizationVisualization.vue'
 import PeakFlowVisualization from '../taskvisualizations/PeakFlowVisualization.vue'
 import PositionVisualization from '../taskvisualizations/PositionVisualization.vue'
+import MibandVisualization from '../taskvisualizations/MibandVisualization.vue'
+import Po60Visualization from '../taskvisualizations/Po60Visualization.vue'
 
 export default {
   name: 'StudyParticipant',
@@ -265,7 +319,9 @@ export default {
     TugtVisualization,
     VocalizationVisualization,
     PeakFlowVisualization,
-    PositionVisualization
+    PositionVisualization,
+    MibandVisualization,
+    Po60Visualization
   },
   data () {
     return {
@@ -287,8 +343,7 @@ export default {
       columns: [
         { name: 'data', required: false, label: '', align: 'center', field: 'data', sortable: false },
         { name: 'formName', required: true, label: 'Task', align: 'center', field: 'formName' },
-        { name: 'asked', required: true, label: 'Asked', align: 'center', field: 'asked', sortable: true },
-        { name: 'answered', required: true, label: 'Answered', align: 'center', field: 'answered', sortable: true },
+        { name: 'summary', required: true, label: 'Summary', align: 'center', field: 'summary', sortable: false },
         { name: 'completedTS', required: true, label: 'Completed', align: 'center', field: 'completedTS', sortable: true }
       ],
       filter: {},
@@ -297,6 +352,7 @@ export default {
       taskDataContent: undefined,
       taskDataModal: false,
       taskCompletedDate: undefined,
+      taskProps: null,
       smwtDistance: undefined,
       smwtSteps: undefined,
       loading: false,
@@ -374,6 +430,27 @@ export default {
     niceTimestamp (timeStamp) {
       return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
     },
+    firstLetterUpperCase (str) {
+      return str.charAt(0).toUpperCase() + str.slice(1)
+    },
+    showTaskName (taskType) {
+      switch (taskType) {
+        case 'fingerTapping':
+          return 'Finger Tapping'
+        case 'holdPhone':
+          return 'Hold The Phone'
+        case 'tugt':
+          return 'Timed up and Go Test'
+        case 'peakFlow':
+          return 'Peak Flow'
+        case 'miband':
+          return 'Mi-Band'
+        case 'smwt':
+          return 'Six Minute Walk Test'
+        default:
+          return this.firstLetterUpperCase(taskType)
+      }
+    },
     async loadTasks (params) {
       this.loading = true
       try {
@@ -402,6 +479,7 @@ export default {
           this.smwtDistance = Math.round(smwtDistanceDecimals)
         }
         this.taskDataModal = true
+        this.taskProps = props
         this.getParticipant()
       } catch (err) {
         this.$q.notify({
@@ -421,6 +499,51 @@ export default {
           icon: 'report_problem'
         })
       }
+    },
+    taskSummary (props, data) {
+      const list = []
+      const { startedTS, completedTS, ...theRest } = props
+      const keys = Object.keys(theRest)
+
+      for (let key of keys) {
+        let value = theRest[key]
+        if (data === 'vocalization') {
+          for (const v in value) {
+            key = 'Vocal ' + (value[v].vocal).toUpperCase()
+            const start = ((value[v].startedTS).slice(11, 23))
+            const stop = ((value[v].completedTS).slice(11, 23))
+            const time = this.calcDifferenceInTime(start, stop)
+            list.push(`${key}: ${time}`)
+          }
+          return list
+        } else if (data === 'holdPhone') {
+          const left = value.left.accelerationVariance
+          const right = value.right.accelerationVariance
+          const average = left + right / 2
+          key = key + 'AccelerationVariance'
+          value = (Math.round(average * 100) / 100).toString()
+        } else if (data === 'tugt') {
+          key = key.slice(0, 8)
+          value = Math.round(Number(value) / 1000) + ' sec'
+        }
+
+        if (data === 'drawing' || data === 'fingerTapping') {
+          value = Math.round(Number(value))
+          value.toString()
+        }
+        key = this.firstLetterUpperCase(key)
+        key = key.match(/[A-Z][a-z]+|[0-9]+/g).join(' ')
+        list.push(`${key}: ${value}`)
+      }
+      return list
+    },
+    calcDifferenceInTime (start, stop) {
+      start = start.replaceAll(':', '')
+      start = start.replaceAll('.', '')
+      stop = stop.replaceAll(':', '')
+      stop = stop.replaceAll('.', '')
+      const time = Math.round((stop - start) / 1000)
+      return time + ' sec'
     },
     async loadFirstImage () {
       // Verifica si hay tareas disponibles

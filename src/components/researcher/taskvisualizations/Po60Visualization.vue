@@ -1,9 +1,9 @@
 <template>
-  <div class="peakflow_container">
+  <div class="po60_container">
     <div>
       <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(completed) }}</p>
     </div>
-    <q-table :rows="getRows()" :columns="getColumns()" row-key="field" :dense="true" class="q-mt-md" :hide-pagination="true" style="height: 100%; width: 100%;" />
+    <q-table :rows="this.getRows()" :columns="this.getColumns()" row-key="field" :dense="true" class="q-mt-md" :hide-pagination="true" style="height: 100%; width: 100%;" />
   </div>
 </template>
 
@@ -27,9 +27,7 @@ export default {
       try {
         this.taskData = await API.getTaskAttachment(this.taskProps.row.studyKey, this.taskProps.row.userKey, this.taskProps.row.taskId, this.taskProps.row.attachments[0])
         this.completed = this.taskData.createdTS
-        console.log(this.completed)
-        console.log(this.taskData)
-        this.data = this.taskData.PEFs
+        this.data = this.taskData.po60Data
         this.getRows()
       } catch (err) {
         this.$q.notify({
@@ -42,21 +40,20 @@ export default {
     niceTimestamp (timeStamp) {
       return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
     },
-    getValues () {
-      const values = this.data
-      return values.sort().reverse()
-    },
     getColumns () {
       return [
-        { name: 'value', align: 'left', label: 'Value', field: 'value' },
-        { name: 'peakflow', align: 'left', label: 'PeakFlow', field: 'peakflow' }
+        { name: 'value', align: 'left', label: 'Health Data', field: 'value' },
+        { name: 'po60', align: 'left', label: 'Value', field: 'po60' }
       ]
     },
     getRows () {
       return [
-        { value: 'Highest value', peakflow: this.data ? this.getValues()[0] : 0 },
-        { value: 'Middle value', peakflow: this.data ? this.getValues()[1] : 0 },
-        { value: 'Lowest value', peakflow: this.data ? this.getValues()[2] : 0 }
+        { value: 'Max HR', po60: this.data ? this.data.hrMax : 0 },
+        { value: 'Min HR', po60: this.data ? this.data.hrMin : 0 },
+        { value: 'Avg HR', po60: this.data ? this.data.hrAvg : 0 },
+        { value: 'Max SPO2', po60: this.data ? this.data.SPO2Max : 0 },
+        { value: 'Min SPO2', po60: this.data ? this.data.SPO2Min : 0 },
+        { value: 'Avg SPO2', po60: this.data ? this.data.SPO2Avg : 0 }
       ]
     }
   }
@@ -64,7 +61,7 @@ export default {
 </script>
 
 <style>
-.peakflow_container {
+.po60_container {
   min-height: 400px;
   min-height: 400px;
 }
