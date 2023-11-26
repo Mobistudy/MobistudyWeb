@@ -490,6 +490,7 @@ export default {
       for (const task of this.tasks) {
         const taskId = task.taskId
         const jsonId = task.attachments[0]
+        console.log(task)
 
         try {
           const taskAttachment = await API.getTaskAttachment(this.studyKey, this.userKey, taskId, jsonId)
@@ -499,7 +500,7 @@ export default {
           }).map(item => {
             return {
               type: this.getBestLocale(item.questionText),
-              timestamp: item.timeStamp,
+              timestamp: task.summary.completedTS,
               value: item.answer
             }
           })
@@ -509,7 +510,7 @@ export default {
         }
       }
       // Group timestamps by day
-      const uniqueDates = [...new Set(chartData.map(item => this.getDateForChart(item.timestamp)))]
+      const uniqueDates = [...new Set(chartData.map(item => this.niceTimestamp(item.timestamp)))]
 
       // Initialize datasets with empty arrays
       const painData = Array(uniqueDates.length).fill(0)
@@ -517,7 +518,7 @@ export default {
 
       // Update dataset values based on the data
       chartData.forEach(item => {
-        const dateIndex = uniqueDates.indexOf(this.getDateForChart(item.timestamp))
+        const dateIndex = uniqueDates.indexOf(this.niceTimestamp(item.timestamp))
         if (item.type === 'Pain') {
           painData[dateIndex] += item.value
         } else if (item.type === 'Temperature') {
