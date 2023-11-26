@@ -233,9 +233,6 @@
 
 <script>
 import API from '@shared/API.js'
-import MiBand3Charts from '@components/researcher/studymonitor/MiBand3Charts'
-import SMWTMap from '@components/researcher/studymonitor/SMWTMap'
-import SMWTChart from '@components/researcher/studymonitor/SMWTChart'
 import { bestLocale } from '@mixins/bestLocale'
 import { date } from 'quasar'
 import { ref } from 'vue'
@@ -244,6 +241,9 @@ import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, Li
 import 'chartjs-adapter-date-fns'
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, TimeScale)
+import MiBand3Charts from '@components/researcher/studymonitor/MiBand3Charts'
+import SMWTMap from '../taskvisualizations/SmwtMapVisualization.vue'
+import SMWTChart from '../taskvisualizations/SmwtChartVisualization.vue'
 import FingerTappingDrawingVisualization from '../taskvisualizations/FingerTappingDrawingVisualization.vue'
 import HoldPhoneVisualization from '../taskvisualizations/HoldPhoneVisualization.vue'
 import DrawingVisualization from '../taskvisualizations/DrawingVisualization.vue'
