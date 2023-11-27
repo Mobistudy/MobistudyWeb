@@ -197,7 +197,13 @@
             </q-tabs>
             <div>
               <div v-if="activeTab === 'tab-chart'">
-                <FingerTappingSummery :studyKey="studyKey" :userKey="userKey" />
+                <q-select square outlined v-model="selectedTask" :options="options" label="Select task summary" />
+                <div v-if="selectedTask.value === 'FingerTapping'">
+                  <FingerTappingSummery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'SMWT'">
+                  <p>Test</p>
+                </div>
               </div>
 
               <div v-else>
@@ -270,6 +276,11 @@ export default {
   },
   data () {
     return {
+      selectedTask: '',
+      options: [
+        { label: 'Finger Tapping', value: 'FingerTapping' },
+        { label: 'Six Minute Walk test', value: 'SMWT' }
+      ],
       locale: this.$i18n.locale,
       panel: ref('map'),
       photoUrl: ref('https://excelautomationinc.com/wp-content/uploads/2021/07/No-Photo-Available.jpg'),
