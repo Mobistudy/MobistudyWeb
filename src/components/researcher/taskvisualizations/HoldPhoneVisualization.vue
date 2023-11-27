@@ -26,9 +26,9 @@ export default {
         this.taskData = await API.getTaskAttachment(this.taskProps.row.studyKey, this.taskProps.row.userKey, this.taskProps.row.taskId, this.taskProps.row.attachments[0])
         this.completed = this.taskData.createdTS
         this.data = this.taskData
-        console.log('Kinetic', this.getKineticMotion())
-        console.log('Postural', this.getPosturalMotion())
-        console.log('Resting', this.getRestingMotion())
+        console.log('Kinetic', this.getKineticData())
+        console.log('Postural', this.getPosturalData())
+        console.log('Resting', this.getRestingData())
       } catch (err) {
         this.$q.notify({
           color: 'negative',
@@ -40,13 +40,13 @@ export default {
     niceTimestamp (timeStamp) {
       return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
     },
-    getKineticMotion () {
+    getKineticData () {
       return this.data.kinetic
     },
-    getPosturalMotion () {
+    getPosturalData () {
       return this.data.postural
     },
-    getRestingMotion () {
+    getRestingData () {
       return this.data.resting
     }
   }
