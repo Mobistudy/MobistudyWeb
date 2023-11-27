@@ -197,12 +197,7 @@
             </q-tabs>
             <div>
               <div v-if="activeTab === 'tab-chart'">
-                <Bar
-                  v-if="chartLoaded"
-                  id="my-chart-id"
-                  :options="chartOptions"
-                  :data="chartData"
-                />
+                <FingerTappingSummery :studyKey="studyKey" :userKey="userKey" />
               </div>
 
               <div v-else>
@@ -236,7 +231,6 @@ import API from '@shared/API.js'
 import { bestLocale } from '@mixins/bestLocale'
 import { date } from 'quasar'
 import { ref } from 'vue'
-import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, TimeScale } from 'chart.js'
 import 'chartjs-adapter-date-fns'
 
@@ -253,13 +247,13 @@ import PeakFlowVisualization from '../taskvisualizations/PeakFlowVisualization.v
 import PositionVisualization from '../taskvisualizations/PositionVisualization.vue'
 import MibandVisualization from '../taskvisualizations/MibandVisualization.vue'
 import Po60Visualization from '../taskvisualizations/Po60Visualization.vue'
+import FingerTappingSummery from '../taskSummeryVisualizations/FingerTappingSummery.vue'
 
 export default {
   name: 'StudyParticipant',
   props: ['studyKey', 'userKey'],
   mixins: [bestLocale],
   components: {
-    Bar,
     MiBand3Visualization,
     SmwtMapVisualization,
     SmwtChartVisualization,
@@ -271,7 +265,8 @@ export default {
     PeakFlowVisualization,
     PositionVisualization,
     MibandVisualization,
-    Po60Visualization
+    Po60Visualization,
+    FingerTappingSummery
   },
   data () {
     return {
