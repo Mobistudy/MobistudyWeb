@@ -137,26 +137,14 @@
                     <Po60Visualization :taskProps="taskProps" />
                   </div>
                   <div v-if="taskDataType === 'miband3'">
-                    <MiBand3Visualization
-                      :studyKey="studyKey"
-                      :userKey="userKey"
-                      :taskDataContent="taskDataContent"
-                    ></MiBand3Visualization>
+                    <MiBand3Visualization :studyKey="studyKey" :userKey="userKey" :taskDataContent="taskDataContent" />
                   </div>
                   <div v-if="taskDataType === 'smwt'">
                     <div>
-                      <p class="q-title text-bold">
-                        Steps
-                      </p>
-                      <p>
-                        {{ smwtSteps }}
-                      </p>
-                      <p class="q-title text-bold">
-                        Distance
-                      </p>
-                      <p>
-                        {{ smwtDistance }} m
-                      </p>
+                      <p class="q-title text-bold">Steps</p>
+                      <p>{{ smwtSteps }}</p>
+                      <p class="q-title text-bold">Distance</p>
+                      <p>{{ smwtDistance }} m</p>
                     </div>
                     <div>
                       <q-option-group
@@ -175,7 +163,6 @@
                             :taskDataContent="taskDataContent"
                           ></SmwtMapVisualization>
                         </q-tab-panel>
-
                         <q-tab-panel name="chart">
                           <SmwtChartVisualization
                             :studyKey="studyKey"
@@ -197,15 +184,38 @@
             </q-tabs>
             <div>
               <div v-if="activeTab === 'tab-chart'">
-                <q-select square outlined v-model="selectedTask" :options="options" label="Select task summary" />
-                <div v-if="selectedTask.value === 'FingerTapping'">
+                <q-select square outlined v-model="selectedTask" :options="getTaskSummarySelectOptions()" label="Select task summary" />
+                <div v-if="selectedTask.value === 'fingerTapping'">
                   <FingerTappingSummery :studyKey="studyKey" :userKey="userKey" />
                 </div>
-                <div v-if="selectedTask.value === 'SMWT'">
-                  <p>Test</p>
+                <div v-if="selectedTask.value === 'holdPhone'">
+                  <HoldPhoneSummery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'drawing'">
+                  <DrawingSummery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'tugt'">
+                  <TugtSummery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'vocalization'">
+                  <VocalizationSummery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'peakFlow'">
+                  <PeakFlowSummery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'position'">
+                  <PositionSummery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'miband'">
+                  <MiBandSummery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'po60'">
+                  <Po60Summery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'smwt'">
+                  <SmwtSummery :studyKey="studyKey" :userKey="userKey" />
                 </div>
               </div>
-
               <div v-else>
                 <div id="slider">
                   <transition-group tag="div" :name="transitionName" class="slides-group">
@@ -254,6 +264,15 @@ import PositionVisualization from '../taskvisualizations/PositionVisualization.v
 import MibandVisualization from '../taskvisualizations/MibandVisualization.vue'
 import Po60Visualization from '../taskvisualizations/Po60Visualization.vue'
 import FingerTappingSummery from '../taskSummeryVisualizations/FingerTappingSummery.vue'
+import HoldPhoneSummery from '../taskSummeryVisualizations/HoldPhoneSummery.vue'
+import DrawingSummery from '../taskSummeryVisualizations/DrawingSummery.vue'
+import TugtSummery from '../taskSummeryVisualizations/TugtSummery.vue'
+import VocalizationSummery from '../taskSummeryVisualizations/VocalizationSummery.vue'
+import PeakFlowSummery from '../taskSummeryVisualizations/PeakFlowSummery.vue'
+import PositionSummery from '../taskSummeryVisualizations/PositionSummery.vue'
+import MiBandSummery from '../taskSummeryVisualizations/MiBandSummery.vue'
+import Po60Summery from '../taskSummeryVisualizations/Po60Summery.vue'
+import SmwtSummery from '../taskSummeryVisualizations/SmwtSummery.vue'
 
 export default {
   name: 'StudyParticipant',
@@ -272,15 +291,20 @@ export default {
     PositionVisualization,
     MibandVisualization,
     Po60Visualization,
-    FingerTappingSummery
+    FingerTappingSummery,
+    HoldPhoneSummery,
+    DrawingSummery,
+    TugtSummery,
+    VocalizationSummery,
+    PeakFlowSummery,
+    PositionSummery,
+    MiBandSummery,
+    Po60Summery,
+    SmwtSummery
   },
   data () {
     return {
       selectedTask: '',
-      options: [
-        { label: 'Finger Tapping', value: 'FingerTapping' },
-        { label: 'Six Minute Walk test', value: 'SMWT' }
-      ],
       locale: this.$i18n.locale,
       panel: ref('map'),
       photoUrl: ref('https://excelautomationinc.com/wp-content/uploads/2021/07/No-Photo-Available.jpg'),
@@ -456,6 +480,15 @@ export default {
         })
       }
     },
+    getParticipantTaskTypes () {
+      return [...new Set(this.tasks.map(task => task.taskType))]
+    },
+    getTaskSummarySelectOptions () {
+      return this.getParticipantTaskTypes().map(task => ({
+        label: this.showTaskName(task),
+        value: task
+      }))
+    },
     taskSummary (props, data) {
       console.log(props)
       const list = []
@@ -518,7 +551,6 @@ export default {
         const jsonId = taskToLoad.attachments[0]
         try {
           const response = await API.getTaskAttachment(this.studyKey, this.userKey, taskId, jsonId)
-          console.log(response)
           if (Array.isArray(response)) { // Comprueba si response es un array
             const photo = response.find(item => item.questionType === 'photo')
             if (photo && photo.answer) {
@@ -546,7 +578,6 @@ export default {
     },
     async handleChange () {
       if (this.tasks[this.currentIndex]) {
-        console.log('handleChange')
         const taskToLoad = this.tasks[this.currentIndex]
         this.tasksToLoad.push(taskToLoad)
         await this.loadNextImage()
@@ -832,7 +863,6 @@ export default {
 }
 
 /* CHART */
-
 #my-chart-id {
   margin-top: 5px;
 }
