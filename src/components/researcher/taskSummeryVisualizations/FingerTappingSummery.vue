@@ -3,9 +3,6 @@
     <div>
       <canvas id="fingerTappingSummeryChart"></canvas>
     </div>
-    <div class="resetChart">
-    <q-btn @click="fingerTappingSummery.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
-    </div>
 </div>
 </template>
 
@@ -13,8 +10,6 @@
 /* eslint-disable */
 import API from 'src/shared/API'
 import { Chart } from 'chart.js/auto'
-import zoomPlugin from 'chartjs-plugin-zoom'
-Chart.register(zoomPlugin)
 
 export default {
 props: ['studyKey', 'userKey'],
@@ -33,7 +28,6 @@ methods: {
       this.taskData = await API.getTasksResults(this.studyKey, this.userKey)
       const filteredTaskData = this.taskData.filter(task => task.taskId === 9)
       this.fingerTappingResults = filteredTaskData
-      this.getFingerTappingSummery()
       this.initializeFingerTappingChart()
     } catch (err) {
       this.$q.notify({
@@ -44,7 +38,6 @@ methods: {
     }
   },
   getFingerTappingSummery () {
-    console.log(this.fingerTappingResults.map(result => result.summary.tappingCount))
     return this.fingerTappingResults.map(result => ({
         x: new Date(result.summary.completedTS),
         y: result.summary.tappingCount
