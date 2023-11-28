@@ -1,11 +1,14 @@
 <template>
+<div v-if="tugtResults">
     <div>
-        Timed up and Go Test Summery
+      <canvas id="tugtSummeryChart"></canvas>
     </div>
+</div>
 </template>
 
 <script>
 import API from 'src/shared/API'
+import { Chart } from 'chart.js/auto'
 
 export default {
   props: ['studyKey', 'userKey'],
@@ -14,7 +17,8 @@ export default {
   },
   data () {
     return {
-      taskData: null
+      taskData: null,
+      tugtResults: []
     }
   },
   methods: {
@@ -22,7 +26,8 @@ export default {
       try {
         this.taskData = await API.getTasksResults(this.studyKey, this.userKey)
         const filteredTaskData = this.taskData.filter(task => task.taskId === 10)
-        console.log(filteredTaskData)
+        this.tugtResults = filteredTaskData
+        this.initializeTugtChart()
       } catch (err) {
         this.$q.notify({
           color: 'negative',
@@ -30,6 +35,49 @@ export default {
           icon: 'report_problem'
         })
       }
+    },
+    getTugtSummery () {
+      return this.tugtResults.map(result => ({
+        x: new Date(result.summary.completedTS),
+        y: (result.summary.durationMs / 1000)
+      }))
+    },
+    getTugtSummeryLabels () {
+      return this.tugtResults.map(result => result.summary.completedTS)
+    },
+    initializeTugtChart () {
+      const ctx = document.getElementById('tugtSummeryChart').getContext('2d')
+      const config = {
+        type: 'line',
+        data: {
+          datasets: [
+            {
+              label: 'Tugt',
+              data: this.getTugtSummery(),
+              borderColor: '#459399',
+              backgroundColor: '#459399'
+            }
+          ],
+          labels: this.getTugtSummeryLabels()
+        },
+        options: {
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                unit: 'day'
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Duration (seconds)'
+              }
+            }
+          }
+        }
+      }
+      this.tugtSummery = new Chart(ctx, config)
     }
   }
 }
