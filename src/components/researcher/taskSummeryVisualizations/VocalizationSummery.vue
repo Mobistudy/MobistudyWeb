@@ -14,7 +14,8 @@ export default {
   },
   data () {
     return {
-      taskData: null
+      taskData: null,
+      vocalizationResults: []
     }
   },
   methods: {
@@ -22,7 +23,7 @@ export default {
       try {
         this.taskData = await API.getTasksResults(this.studyKey, this.userKey)
         const filteredTaskData = this.taskData.filter(task => task.taskId === 12)
-        console.log(filteredTaskData)
+        this.vocalizationResults = filteredTaskData
       } catch (err) {
         this.$q.notify({
           color: 'negative',
