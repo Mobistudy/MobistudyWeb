@@ -26,7 +26,9 @@ export default {
         this.taskData = await API.getTaskAttachment(this.taskProps.row.studyKey, this.taskProps.row.userKey, this.taskProps.row.taskId, this.taskProps.row.attachments[0])
         this.completed = this.taskData.createdTS
         this.data = this.taskData
-        this.initializeChart()
+        console.log('Kinetic', this.getKineticData())
+        console.log('Postural', this.getPosturalData())
+        console.log('Resting', this.getRestingData())
       } catch (err) {
         this.$q.notify({
           color: 'negative',
@@ -38,8 +40,14 @@ export default {
     niceTimestamp (timeStamp) {
       return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
     },
-    initializeChart () {
-      console.log('HoldPhone chart...')
+    getKineticData () {
+      return this.data.kinetic
+    },
+    getPosturalData () {
+      return this.data.postural
+    },
+    getRestingData () {
+      return this.data.resting
     }
   }
 }
