@@ -326,7 +326,7 @@ export default {
           value = Math.round(Number(value) / 1000) + ' sec'
         }
 
-        if (data === 'drawing' || data === 'fingerTapping') {
+        if (typeof value === 'number' && data !== 'holdPhone' && data !== 'vocalization' && data !== 'tugt') {
           value = Math.round(Number(value))
           value.toString()
         }
