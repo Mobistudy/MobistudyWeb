@@ -46,6 +46,9 @@
         <q-td :props="props">
           {{ niceTimestamp(props.value) }}
         </q-td>
+        <q-td>
+          <q-rating v-model="ratingModel" size="3.5em" color="blue" icon="star_border" icon-selected="star" :max="1"/>
+        </q-td>
       </template>
       <template #body-cell-data="props">
         <q-td :props="props">
@@ -60,6 +63,7 @@
 </template>
 
 <script>
+import { ref } from 'vue'
 import API from '@shared/API.js'
 import { date } from 'quasar'
 
@@ -72,6 +76,7 @@ export default {
   data () {
     return {
       participants: [],
+      ratingModel: ref(3),
       columns: [
         { name: 'data', required: false, label: '', align: 'center', field: 'data', sortable: false },
         { name: 'FullName', required: true, label: 'Full Name', align: 'center', field: 'fullName', sortable: false, format: (value, row) => `${row.name} ${row.surname}` },
@@ -79,7 +84,8 @@ export default {
         { name: 'userEmail', required: true, label: 'Email', align: 'center', field: 'userEmail', sortable: false },
         { name: 'status', required: true, label: 'Status', align: 'center', field: 'status', sortable: false },
         { name: 'taskResultCount', required: true, label: 'Task Count', align: 'center', field: 'taskResultCount', sortable: false },
-        { name: 'lastTaskDate', required: true, label: 'Last task', align: 'center', field: 'lastTaskDate', sortable: false }
+        { name: 'lastTaskDate', required: true, label: 'Last task', align: 'center', field: 'lastTaskDate', sortable: false },
+        { name: 'favorite', required: true, label: 'Favorite', align: 'center', field: 'favorite', sortable: true }
       ],
       filter: {
         name: undefined,

@@ -1,0 +1,86 @@
+<template>
+    <div>
+      <canvas id="peakFlowChart"></canvas>
+    </div>
+</template>
+
+<script>
+import API from 'src/shared/API'
+import { Chart } from 'chart.js/auto'
+
+export default {
+  props: ['studyKey', 'userKey'],
+  mounted () {
+    this.fetchTaskData()
+  },
+  data () {
+    return {
+      taskData: null,
+      peakFlowResults: []
+    }
+  },
+  methods: {
+    async fetchTaskData () {
+      try {
+        this.taskData = await API.getTasksResults(this.studyKey, this.userKey)
+        const filteredTaskData = this.taskData.filter(task => task.taskId === 7)
+        this.peakFlowResults = filteredTaskData
+        this.initializePeakflowChart()
+      } catch (err) {
+        this.$q.notify({
+          color: 'negative',
+          message: 'Cannot retrieve the task content',
+          icon: 'report_problem'
+        })
+      }
+    },
+    getPeakFlowSummery () {
+      return this.peakFlowResults.map(result => ({
+        x: new Date(result.summary.completedTS),
+        y: result.summary.pefMax
+      }))
+    },
+    getPeakFlowSummeryLabels () {
+      return this.peakFlowResults.map(result => result.summary.completedTS)
+    },
+    initializePeakflowChart () {
+      const ctx = document.getElementById('peakFlowChart').getContext('2d')
+      const config = {
+        type: 'line',
+        data: {
+          datasets: [
+            {
+              label: 'PEF max',
+              data: this.getPeakFlowSummery(),
+              borderColor: '#459399',
+              backgroundColor: '#459399'
+            }
+          ],
+          labels: this.getPeakFlowSummeryLabels()
+        },
+        options: {
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                unit: 'day'
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'PEF Max'
+              }
+            }
+          }
+        }
+      }
+      this.peakFlowSummary = new Chart(ctx, config)
+    }
+  }
+}
+</script>
+
+<style>
+
+</style>

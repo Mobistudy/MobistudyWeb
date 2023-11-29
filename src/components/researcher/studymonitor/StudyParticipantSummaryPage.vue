@@ -55,7 +55,7 @@
               </template>
             </q-table>
             <q-dialog v-model="taskDataModal" persistent transition-show="flip-down" transition-hide="flip-up">
-              <q-card style="min-width: 300px">
+              <q-card style="min-width: 400px; max-width: 900px;">
                 <q-bar class="my-q-bar bg-primary">
                   <div class="text-h6 text-white text-bold text-uppercase">
                     <span>{{ taskDataType }}</span>
@@ -66,6 +66,49 @@
                   </q-btn>
                 </q-bar>
                 <q-card-section>
+                  <div v-if="taskDataType === 'form'">
+                    <div
+                      v-for="(answer, index) in taskDataContent"
+                      :key="index"
+                    >
+                      <p class="q-title text-bold">
+                        {{ getBestLocale(answer.questionText) }}
+                      </p>
+                      <p v-if="answer.questionType == 'freetext'">
+                        {{ answer.answer }}
+                      </p>
+                      <p v-if="answer.questionType == 'slider'">
+                        {{ answer.answer }}
+                      </p>
+                      <p v-if="answer.questionType == 'number'">
+                        {{ answer.answer }}
+                      </p>
+                      <p v-if="answer.questionType == 'singleChoice'">
+                        {{ answer.answer.answerText }}
+                      </p>
+                      <div v-if="answer.questionType == 'multiChoice'">
+                        <p
+                          v-for="(subanswer, index1) in answer.answer"
+                          :key="index1"
+                        >
+                          {{ subanswer.answerText }}
+                        </p>
+                      </div>
+                      <q-img
+                        v-if="answer.questionType === 'photo' && answer.answer"
+                        :src="answer.answer"
+                        @click="showImage"
+                      />
+                      <q-img
+                        v-if="answer.questionType === 'photo' && !answer.answer"
+                        :src="photoUrl"
+                      />
+                      <div v-show="isImageVisible" class="fullscreen-image">
+                        <span class="close-btn" @click="hideImage">&times;</span>
+                        <img :src="answer.answer" alt="Full screen Image" />
+                      </div>
+                    </div>
+                  </div>
                   <div v-if="taskDataType === 'fingerTapping'">
                     <FingerTappingDrawingVisualization :taskProps="taskProps" />
                   </div>
@@ -93,6 +136,43 @@
                   <div v-if="taskDataType === 'po60'">
                     <Po60Visualization :taskProps="taskProps" />
                   </div>
+                  <div v-if="taskDataType === 'miband3'">
+                    <MiBand3Visualization :studyKey="studyKey" :userKey="userKey" :taskDataContent="taskDataContent" />
+                  </div>
+                  <div v-if="taskDataType === 'smwt'">
+                    <div>
+                      <p class="q-title text-bold">Steps</p>
+                      <p>{{ smwtSteps }}</p>
+                      <p class="q-title text-bold">Distance</p>
+                      <p>{{ smwtDistance }} m</p>
+                    </div>
+                    <div>
+                      <q-option-group
+                        v-model="panel"
+                        inline
+                        :options="[
+                          { label: 'Map', value: 'map' },
+                          { label: 'Chart', value: 'chart' }
+                        ]"
+                      />
+                      <q-tab-panels v-model="panel" animated class="shadow-2 rounded-borders">
+                        <q-tab-panel name="map">
+                          <SmwtMapVisualization
+                            :studyKey="studyKey"
+                            :userKey="userKey"
+                            :taskDataContent="taskDataContent"
+                          ></SmwtMapVisualization>
+                        </q-tab-panel>
+                        <q-tab-panel name="chart">
+                          <SmwtChartVisualization
+                            :studyKey="studyKey"
+                            :userKey="userKey"
+                            :taskDataContent="taskDataContent"
+                          ></SmwtChartVisualization>
+                        </q-tab-panel>
+                      </q-tab-panels>
+                    </div>
+                  </div>
                 </q-card-section>
               </q-card>
             </q-dialog>
@@ -104,9 +184,38 @@
             </q-tabs>
             <div>
               <div v-if="activeTab === 'tab-chart'">
-                <canvas id="myChart"></canvas>
+                <q-select square outlined v-model="selectedTask" :options="getTaskSummarySelectOptions()" label="Select task summary" />
+                <div v-if="selectedTask.value === 'fingerTapping'">
+                  <FingerTappingSummery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'holdPhone'">
+                  <HoldPhoneSummery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'drawing'">
+                  <DrawingSummery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'tugt'">
+                  <TugtSummery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'vocalization'">
+                  <VocalizationSummery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'peakFlow'">
+                  <PeakFlowSummery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'position'">
+                  <PositionSummery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'miband'">
+                  <MiBandSummery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'po60'">
+                  <Po60Summery :studyKey="studyKey" :userKey="userKey" />
+                </div>
+                <div v-if="selectedTask.value === 'smwt'">
+                  <SmwtSummery :studyKey="studyKey" :userKey="userKey" />
+                </div>
               </div>
-
               <div v-else>
                 <div id="slider">
                   <transition-group tag="div" :name="transitionName" class="slides-group">
@@ -138,7 +247,13 @@ import API from '@shared/API.js'
 import { bestLocale } from '@mixins/bestLocale'
 import { date } from 'quasar'
 import { ref } from 'vue'
-import Chart from 'chart.js/auto'
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, TimeScale } from 'chart.js'
+import 'chartjs-adapter-date-fns'
+
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, TimeScale)
+import MiBand3Visualization from '../taskvisualizations/MiBand3Visualization.vue'
+import SmwtMapVisualization from '../taskvisualizations/SmwtMapVisualization.vue'
+import SmwtChartVisualization from '../taskvisualizations/SmwtChartVisualization.vue'
 import FingerTappingDrawingVisualization from '../taskvisualizations/FingerTappingDrawingVisualization.vue'
 import HoldPhoneVisualization from '../taskvisualizations/HoldPhoneVisualization.vue'
 import DrawingVisualization from '../taskvisualizations/DrawingVisualization.vue'
@@ -148,12 +263,25 @@ import PeakFlowVisualization from '../taskvisualizations/PeakFlowVisualization.v
 import PositionVisualization from '../taskvisualizations/PositionVisualization.vue'
 import MibandVisualization from '../taskvisualizations/MibandVisualization.vue'
 import Po60Visualization from '../taskvisualizations/Po60Visualization.vue'
+import FingerTappingSummery from '../taskSummeryVisualizations/FingerTappingSummery.vue'
+import HoldPhoneSummery from '../taskSummeryVisualizations/HoldPhoneSummery.vue'
+import DrawingSummery from '../taskSummeryVisualizations/DrawingSummery.vue'
+import TugtSummery from '../taskSummeryVisualizations/TugtSummery.vue'
+import VocalizationSummery from '../taskSummeryVisualizations/VocalizationSummery.vue'
+import PeakFlowSummery from '../taskSummeryVisualizations/PeakFlowSummery.vue'
+import PositionSummery from '../taskSummeryVisualizations/PositionSummery.vue'
+import MiBandSummery from '../taskSummeryVisualizations/MiBandSummery.vue'
+import Po60Summery from '../taskSummeryVisualizations/Po60Summery.vue'
+import SmwtSummery from '../taskSummeryVisualizations/SmwtSummery.vue'
 
 export default {
   name: 'StudyParticipant',
   props: ['studyKey', 'userKey'],
   mixins: [bestLocale],
   components: {
+    MiBand3Visualization,
+    SmwtMapVisualization,
+    SmwtChartVisualization,
     FingerTappingDrawingVisualization,
     HoldPhoneVisualization,
     DrawingVisualization,
@@ -162,11 +290,24 @@ export default {
     PeakFlowVisualization,
     PositionVisualization,
     MibandVisualization,
-    Po60Visualization
+    Po60Visualization,
+    FingerTappingSummery,
+    HoldPhoneSummery,
+    DrawingSummery,
+    TugtSummery,
+    VocalizationSummery,
+    PeakFlowSummery,
+    PositionSummery,
+    MiBandSummery,
+    Po60Summery,
+    SmwtSummery
   },
   data () {
     return {
+      selectedTask: '',
       locale: this.$i18n.locale,
+      panel: ref('map'),
+      photoUrl: ref('https://excelautomationinc.com/wp-content/uploads/2021/07/No-Photo-Available.jpg'),
       current: 0,
       direction: 1,
       transitionName: 'fade',
@@ -192,7 +333,42 @@ export default {
       taskDataModal: false,
       taskCompletedDate: undefined,
       taskProps: null,
-      loading: false
+      smwtDistance: undefined,
+      smwtSteps: undefined,
+      loading: false,
+      chartLoaded: false,
+      chartData: {
+        labels: [],
+        datasets: [
+          {
+            label: 'Pain',
+            backgroundColor: 'rgba(255, 0, 0, 0.5)',
+            data: []
+          },
+          {
+            label: 'Temperature',
+            backgroundColor: 'rgba(0, 0, 255, 0.5)',
+            data: []
+          }
+        ]
+      },
+      chartOptions: {
+        responsive: true,
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Date'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Value'
+            }
+          }
+        }
+      }
     }
   },
   async created () {
@@ -221,13 +397,13 @@ export default {
       handler (newTasks) {
         if (newTasks.length > 0) {
           this.loadFirstImage()
+          this.updateChartData()
         }
       }
     }
   },
   mounted () {
     this.getParticipant()
-    this.initializeChart()
     this.show = true
   },
   methods: {
@@ -277,6 +453,11 @@ export default {
         this.taskDataContent = await API.getTaskAttachment(this.studyKey, this.userKey, props.row.taskId, props.row.attachments[0])
         this.taskDataType = props.row.taskType
         this.taskCompletedDate = props.row.summary.completedTS
+        if (this.taskDataType === 'smwt') {
+          this.smwtSteps = props.row.summary.steps
+          const smwtDistanceDecimals = props.row.summary.distance
+          this.smwtDistance = Math.round(smwtDistanceDecimals)
+        }
         this.taskDataModal = true
         this.taskProps = props
         this.getParticipant()
@@ -299,7 +480,17 @@ export default {
         })
       }
     },
+    getParticipantTaskTypes () {
+      return [...new Set(this.tasks.map(task => task.taskType))]
+    },
+    getTaskSummarySelectOptions () {
+      return this.getParticipantTaskTypes().map(task => ({
+        label: this.showTaskName(task),
+        value: task
+      }))
+    },
     taskSummary (props, data) {
+      console.log(props)
       const list = []
       const { startedTS, completedTS, ...theRest } = props
       const keys = Object.keys(theRest)
@@ -353,25 +544,32 @@ export default {
       }
     },
     async loadNextImage () {
+      console.log(this.currentIndex)
       if (this.currentIndex < this.tasksToLoad.length) {
         const taskToLoad = this.tasksToLoad[this.currentIndex]
         const taskId = taskToLoad.taskId
         const jsonId = taskToLoad.attachments[0]
         try {
           const response = await API.getTaskAttachment(this.studyKey, this.userKey, taskId, jsonId)
-          const photo = response.find(item => item.questionType === 'photo')
-          if (photo) {
-            const slide = {
-              date: photo.timeStamp,
-              imageUrl: photo.answer
+          if (Array.isArray(response)) { // Comprueba si response es un array
+            const photo = response.find(item => item.questionType === 'photo')
+            if (photo && photo.answer) {
+              const slide = {
+                date: photo.timeStamp,
+                imageUrl: photo.answer
+              }
+              this.slides.push(slide)
+              this.currentIndex++
+            } else {
+              // La tarea actual es de tipo "photo", pero no tiene respuesta.
+              this.currentIndex++
+              this.handleChange()
             }
-            this.slides.push(slide)
-            console.log(this.slides)
-            this.currentIndex++
           } else {
+            // En caso de que response no sea un array
+            console.error('La respuesta no es un array válido.')
             this.currentIndex++
             this.handleChange()
-            console.error('No se encontró una pregunta de tipo "photo" en los datos.')
           }
         } catch (error) {
           console.error('Error al cargar la imagen:', error)
@@ -397,6 +595,59 @@ export default {
       const len = this.slides.length
       this.current = (this.current + dir % len + len) % len
     },
+    async updateChartData () {
+      const chartData = []
+
+      for (const task of this.tasks) {
+        const taskId = task.taskId
+        const jsonId = task.attachments[0]
+        console.log(task)
+
+        try {
+          const taskAttachment = await API.getTaskAttachment(this.studyKey, this.userKey, taskId, jsonId)
+
+          const filteredData = taskAttachment.filter(item => {
+            return item.questionType === 'number' || item.questionType === 'slider'
+          }).map(item => {
+            return {
+              type: this.getBestLocale(item.questionText),
+              timestamp: task.summary.completedTS,
+              value: item.answer
+            }
+          })
+          chartData.push(...filteredData)
+        } catch (error) {
+          console.error('Error fetching task attachment:', error)
+        }
+      }
+      // Group timestamps by day
+      const uniqueDates = [...new Set(chartData.map(item => this.niceTimestamp(item.timestamp)))]
+
+      // Initialize datasets with empty arrays
+      const painData = Array(uniqueDates.length).fill(0)
+      const temperatureData = Array(uniqueDates.length).fill(0)
+
+      // Update dataset values based on the data
+      chartData.forEach(item => {
+        const dateIndex = uniqueDates.indexOf(this.niceTimestamp(item.timestamp))
+        if (item.type === 'Pain') {
+          painData[dateIndex] += item.value
+        } else if (item.type === 'Temperature') {
+          temperatureData[dateIndex] += item.value
+        }
+      })
+
+      // Update the chartData object
+      this.chartData.labels = uniqueDates
+      this.chartData.datasets[0].data = painData
+      this.chartData.datasets[1].data = temperatureData
+
+      this.chartLoaded = true
+    },
+    getDateForChart (timeStamp) {
+      const date = new Date(timeStamp)
+      return date.toISOString().split('T')[0]
+    },
     showImage () {
       this.isImageVisible = true
       document.body.style.overflow = 'hidden'
@@ -404,27 +655,6 @@ export default {
     hideImage () {
       this.isImageVisible = false
       document.body.style.overflow = 'auto'
-    },
-    initializeChart () {
-      const ctx = document.getElementById('myChart').getContext('2d')
-      this.chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['2023-06-04', '2023-06-07', '2023-06-19', '2023-06-25'],
-          datasets: [{
-            label: 'Pain',
-            data: [5, 3, 3, 1],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      })
     },
     showImages () {
       this.activeTab = 'tab-images'
@@ -630,5 +860,10 @@ export default {
 .no-images-message:hover {
   background-color: #f5c6cb; /* Cambiar color de fondo al pasar el cursor */
   transition: background-color 0.3s ease-in-out;
+}
+
+/* CHART */
+#my-chart-id {
+  margin-top: 5px;
 }
 </style>
