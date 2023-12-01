@@ -179,6 +179,13 @@
           </div>
           <div class="right-section">
             <q-select square outlined v-model="selectedTask" :options="getTaskSummarySelectOptions()" label="Select task summary" />
+            <q-tabs class="bg-white text-secondary" align="justify" @change="changeTab" v-model="activeTab">
+              <q-tab name="tab-images" icon="photo_library" label="Images" @click="showImages" />
+              <q-tab name="tab-chart" icon="bar_chart" label="Chart" @click="showChart" />
+            </q-tabs>
+            <div>
+              <div v-if="activeTab === 'tab-chart'">
+                <q-select square outlined v-model="selectedTask" :options="getTaskSummarySelectOptions()" label="Select task summary" />
                 <div v-if="selectedTask.value === 'fingerTapping'">
                   <FingerTappingSummery :studyKey="studyKey" :userKey="userKey" />
                 </div>
@@ -209,6 +216,26 @@
                 <div v-if="selectedTask.value === 'smwt'">
                   <SmwtSummery :studyKey="studyKey" :userKey="userKey" />
                 </div>
+              </div>
+              <div v-else>
+                <div id="slider">
+                  <transition-group tag="div" :name="transitionName" class="slides-group">
+                    <div v-if="slides.length === 0" class="no-images-message">
+                      There are no images available in the tasks.
+                    </div>
+                    <div v-else :key="current" class="slide">
+                      <q-img :src="slides[current].imageUrl" alt="Image" class="slide-image">
+                        <div class="absolute-bottom text-subtitle1 text-center">
+                          <span>{{ niceTimestamp(slides[current].date) }}</span>
+                        </div>
+                      </q-img>
+                    </div>
+                  </transition-group>
+                  <q-btn v-if="slides.length > 0" class="btn btn-prev" round color="secondary" icon="navigate_before" aria-label="Previous slide" @click="slide(-1)"/>
+                  <q-btn v-if="slides.length > 0" class="btn btn-next" round color="secondary" icon="navigate_next" aria-label="Next slide" @click="slide(1)"/>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </q-card-section>
@@ -464,6 +491,7 @@ export default {
       }))
     },
     taskSummary (props, data) {
+      console.log(props)
       const list = []
       const { startedTS, completedTS, ...theRest } = props
       const keys = Object.keys(theRest)
