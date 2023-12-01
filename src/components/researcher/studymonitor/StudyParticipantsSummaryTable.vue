@@ -79,12 +79,12 @@ export default {
       ratingModel: ref(3),
       columns: [
         { name: 'data', required: false, label: '', align: 'center', field: 'data', sortable: false },
-        { name: 'FullName', required: true, label: 'Full Name', align: 'center', field: 'fullName', sortable: false, format: (value, row) => `${row.name} ${row.surname}` },
+        { name: 'FullName', required: true, label: 'Full Name', align: 'center', field: 'fullName', sortable: true, format: (value, row) => `${row.name} ${row.surname}` },
         { name: 'DOB', required: true, label: 'Birthdate', align: 'center', field: 'DOB', sortable: false },
         { name: 'userEmail', required: true, label: 'Email', align: 'center', field: 'userEmail', sortable: false },
         { name: 'status', required: true, label: 'Status', align: 'center', field: 'status', sortable: false },
-        { name: 'taskResultCount', required: true, label: 'Task Count', align: 'center', field: 'taskResultCount', sortable: false },
-        { name: 'lastTaskDate', required: true, label: 'Last task', align: 'center', field: 'lastTaskDate', sortable: false },
+        { name: 'taskResultCount', required: true, label: 'Task Count', align: 'center', field: 'taskResultCount', sortable: true },
+        { name: 'lastTaskDate', required: true, label: 'Last task', align: 'center', field: 'lastTaskDate', sortable: true },
         { name: 'favorite', required: true, label: 'Favorite', align: 'center', field: 'favorite', sortable: true }
       ],
       filter: {
@@ -132,7 +132,9 @@ export default {
           participantName: this.filter.name,
           statusType: this.filter.statusType === 'all' ? undefined : this.filter.statusType,
           offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
-          count: this.pagination.rowsPerPage
+          count: this.pagination.rowsPerPage,
+          sortBy: this.pagination.sortBy,
+          descending: this.pagination.descending
         }
         const stats = await API.getStudyStats(queryParams)
         this.participants = stats.subset
