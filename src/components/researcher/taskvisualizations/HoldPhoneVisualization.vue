@@ -2,52 +2,66 @@
   <div>
     <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(this.taskProps.row.summary.completedTS) }}</p>
   </div>
-
-  <div>
-    <q-toggle @click=" this.data && handleKineticRightToggleChange()" v-model="isKeneticRightCombined">{{ isKeneticRightCombined ? 'Module' : 'XYZ' }}</q-toggle>
-    <canvas id="kineticRightChart"></canvas>
+  <div class="row">
+    <div>
+      <div>
+        <q-toggle @click=" this.data && handleKineticLeftToggleChange()" v-model="isKeneticLeftCombined">{{ isKeneticLeftCombined ? 'Module' : 'XYZ' }}</q-toggle>
+        <canvas id="kineticLeftChart"></canvas>
+      </div>
+      <div class="resetChart">
+        <q-btn @click="kineticLeftChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
+      </div>
+    </div>
+    <div>
+      <div>
+        <q-toggle @click=" this.data && handleKineticRightToggleChange()" v-model="isKeneticRightCombined">{{ isKeneticRightCombined ? 'Module' : 'XYZ' }}</q-toggle>
+        <canvas id="kineticRightChart"></canvas>
+      </div>
+      <div class="resetChart">
+        <q-btn @click="kineticRightChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
+      </div>
+    </div>
   </div>
-  <div class="resetChart">
-    <q-btn @click="kineticRightChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
+  <div class="row">
+    <div>
+      <div>
+        <q-toggle @click="this.data && handlePosturalLeftToggleChange()" v-model="isPosturalLeftCombined">{{ isPosturalLeftCombined ? 'Module' : 'XYZ' }}</q-toggle>
+        <canvas id="posturalLeftChart"></canvas>
+      </div>
+      <div class="resetChart">
+        <q-btn @click="posturalLeftChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
+      </div>
+    </div>
+    <div>
+      <div>
+        <q-toggle @click="this.data && handleoPosturalRightToggleChange()" v-model="isPosturalRightCombined">{{ isPosturalRightCombined ? 'Module' : 'XYZ' }}</q-toggle>
+        <canvas id="posturalRightChart"></canvas>
+      </div>
+      <div class="resetChart">
+        <q-btn @click="posturalRightChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
+      </div>
+    </div>
   </div>
-  <div>
-    <q-toggle @click=" this.data && handleKineticLeftToggleChange()" v-model="isKeneticLeftCombined">{{ isKeneticLeftCombined ? 'Module' : 'XYZ' }}</q-toggle>
-    <canvas id="kineticLeftChart"></canvas>
+  <div class="row">
+    <div>
+      <div>
+        <q-toggle @click="this.data && handleRestingLeftToggleChange()" v-model="isRestingLeftCombined">{{ isRestingLeftCombined ? 'Module' : 'XYZ' }}</q-toggle>
+        <canvas id="restingLeftChart"></canvas>
+      </div>
+      <div class="resetChart">
+        <q-btn @click="restingLeftChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
+      </div>
+    </div>
+    <div>
+      <div>
+        <q-toggle @click="this.data && handleRestingRightToggleChange()" v-model="isRestingRightCombined">{{ isRestingRightCombined ? 'Module' : 'XYZ' }}</q-toggle>
+        <canvas id="restingRightChart"></canvas>
+      </div>
+      <div class="resetChart">
+        <q-btn @click="restingRightChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
+      </div>
+    </div>
   </div>
-  <div class="resetChart">
-    <q-btn @click="kineticLeftChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
-  </div>
-
-  <div>
-    <q-toggle @click="this.data && handleoPosturalRightToggleChange()" v-model="isPosturalRightCombined">{{ isPosturalRightCombined ? 'Module' : 'XYZ' }}</q-toggle>
-    <canvas id="posturalRightChart"></canvas>
-  </div>
-  <div class="resetChart">
-    <q-btn @click="posturalRightChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
-  </div>
-  <div>
-    <q-toggle @click="this.data && handlePosturalLeftToggleChange()" v-model="isPosturalLeftCombined">{{ isPosturalLeftCombined ? 'Module' : 'XYZ' }}</q-toggle>
-    <canvas id="posturalLeftChart"></canvas>
-  </div>
-  <div class="resetChart">
-    <q-btn @click="posturalLeftChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
-  </div>
-
-  <div>
-    <q-toggle @click="this.data && handleRestingRightToggleChange()" v-model="isRestingRightCombined">{{ isRestingRightCombined ? 'Module' : 'XYZ' }}</q-toggle>
-    <canvas id="restingRightChart"></canvas>
-  </div>
-  <div class="resetChart">
-    <q-btn @click="restingRightChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
-  </div>
-  <div>
-    <q-toggle @click="this.data && handleRestingLeftToggleChange()" v-model="isRestingLeftCombined">{{ isRestingLeftCombined ? 'Module' : 'XYZ' }}</q-toggle>
-    <canvas id="restingLeftChart"></canvas>
-  </div>
-  <div class="resetChart">
-    <q-btn @click="restingLeftChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
-  </div>
-
 </template>
 
 <script>
@@ -1183,5 +1197,21 @@ export default {
 </script>
 
 <style>
-
+  .row {
+    display:flex;
+  }
+  .taskVisualizationHeader {
+    text-align: center;
+    font-weight: bold;
+    color: #459399;
+  }
+  .reset_btn {
+    font-size: 12px; padding: 4px 8px
+  }
+  .row div {
+    box-sizing: border-box;
+  }
+  .row > div {
+    width: 50%;
+  }
 </style>
