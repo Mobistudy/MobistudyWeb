@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(completed) }}</p>
+    <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(this.taskProps.row.summary.completedTS) }}</p>
     <div class="audioBox" v-for="d, i in this.data" :key="i">
       <p class="vocal"> {{ d.name }}</p>
       <audio controls>
