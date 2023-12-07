@@ -24,9 +24,7 @@ export default {
     async fetchTaskData () {
       try {
         const taskData = await API.getTasksResults(this.studyKey, this.userKey)
-        console.log(taskData)
         const filteredTaskData = taskData.filter(task => task.taskType === 'holdPhone')
-        console.log(filteredTaskData)
         this.holdThePhoneResult = filteredTaskData
         this.initializeHTPChart()
       } catch (err) {
@@ -38,7 +36,6 @@ export default {
       }
     },
     getHTPSummery (axis, data) {
-      console.log(axis, data)
       const arr = data.map(result => ({
         x: new Date(result.summary.completedTS),
         y: Math.round((result.summary[axis].left.accelerationVariance + result.summary[axis].right.accelerationVariance) / 2)
