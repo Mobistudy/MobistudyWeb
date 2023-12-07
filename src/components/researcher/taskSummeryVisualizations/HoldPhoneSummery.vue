@@ -50,33 +50,21 @@ export default {
         data: {
           datasets: [
             {
-              type: 'line',
               data: this.getHTPSummery('kinetic', this.holdThePhoneResult),
               borderColor: 'blue',
               backgroundColor: 'blue',
-              fill: false,
-              borderWidth: 1,
-              pointRadius: 0,
               label: 'Kinetic'
             },
             {
-              type: 'line',
               data: this.getHTPSummery('postural', this.holdThePhoneResult),
               borderColor: 'red',
               backgroundColor: 'red',
-              fill: false,
-              borderWidth: 1,
-              pointRadius: 0,
               label: 'Postural'
             },
             {
-              type: 'line',
               data: this.getHTPSummery('resting', this.holdThePhoneResult),
               borderColor: 'green',
               backgroundColor: 'green',
-              fill: false,
-              borderWidth: 1,
-              pointRadius: 0,
               label: 'Resting'
             }
           ],
@@ -89,7 +77,8 @@ export default {
               position: 'bottom',
               title: {
                 display: true,
-                text: 'Date'
+                text: 'Date',
+                color: '#459399'
               }
             },
             y: {
@@ -97,7 +86,8 @@ export default {
               beginAtZero: true,
               title: {
                 display: true,
-                text: 'Acceleration Variance'
+                text: 'Acceleration Variance',
+                color: '#459399'
               }
             }
           }

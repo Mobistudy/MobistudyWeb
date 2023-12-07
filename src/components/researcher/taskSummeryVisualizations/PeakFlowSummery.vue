@@ -35,13 +35,10 @@ export default {
       }
     },
     getPeakFlowSummery () {
-      return this.peakFlowResults.map(result => ({
-        x: new Date(result.summary.completedTS),
-        y: result.summary.pefMax
-      }))
+      return this.peakFlowResults.map(result => (result.summary.pefMax))
     },
     getPeakFlowSummeryLabels () {
-      return this.peakFlowResults.map(result => result.summary.completedTS)
+      return this.peakFlowResults.map(result => (result.summary.completedTS).slice(0, 10))
     },
     initializePeakflowChart () {
       const ctx = document.getElementById('peakFlowChart').getContext('2d')
@@ -61,15 +58,18 @@ export default {
         options: {
           scales: {
             x: {
-              type: 'time',
-              time: {
-                unit: 'day'
+              position: 'bottom',
+              title: {
+                display: true,
+                text: 'Date',
+                color: '#459399'
               }
             },
             y: {
               title: {
                 display: true,
-                text: 'PEF Max'
+                text: 'PEF Max',
+                color: '#459399'
               }
             }
           }
@@ -80,7 +80,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>
