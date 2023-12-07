@@ -1,11 +1,14 @@
 <template>
-    <div>
-        Vocalization Summery
-    </div>
-</template>
+  <div v-if="vocalizationResult">
+      <div>
+        <canvas id="vocalizationSummeryChart"></canvas>
+      </div>
+  </div>
+  </template>
 
 <script>
 import API from 'src/shared/API'
+import { Chart } from 'chart.js/auto'
 
 export default {
   props: ['studyKey', 'userKey'],
@@ -14,16 +17,16 @@ export default {
   },
   data () {
     return {
-      taskData: null,
-      vocalizationResults: []
+      vocalizationResult: []
     }
   },
   methods: {
     async fetchTaskData () {
       try {
-        this.taskData = await API.getTasksResults(this.studyKey, this.userKey)
-        const filteredTaskData = this.taskData.filter(task => task.taskId === 'vocalization')
-        this.vocalizationResults = filteredTaskData
+        const taskData = await API.getTasksResults(this.studyKey, this.userKey)
+        const filteredTaskData = taskData.filter(task => task.taskType === 'vocalization')
+        this.vocalizationResult = filteredTaskData
+        this.initializeVocalizationChart()
       } catch (err) {
         this.$q.notify({
           color: 'negative',
@@ -31,11 +34,85 @@ export default {
           icon: 'report_problem'
         })
       }
+    },
+    calcDifferenceInTime (index, result) {
+      let start = (result.summary.phases[index].startedTS).slice(11, 23)
+      let stop = (result.summary.phases[index].completedTS).slice(11, 23)
+      start = start.replaceAll(':', '')
+      start = start.replaceAll('.', '')
+      stop = stop.replaceAll(':', '')
+      stop = stop.replaceAll('.', '')
+      const time = Math.round((stop - start) / 1000)
+      return time
+    },
+    getVocalizationSummery (index, data) {
+      const arr = data.map(result => ({
+        x: new Date(result.summary.completedTS),
+        y: this.calcDifferenceInTime(index, result)
+      }))
+      return arr
+    },
+    getVocalizationSummeryLabels () {
+      return this.vocalizationResult.map(result => result.summary.completedTS)
+    },
+    initializeVocalizationChart () {
+      const ctx = document.getElementById('vocalizationSummeryChart').getContext('2d')
+      const config = {
+        type: 'line',
+        data: {
+          datasets: [
+            {
+              type: 'line',
+              data: this.getVocalizationSummery(0, this.vocalizationResult),
+              borderColor: 'blue',
+              backgroundColor: 'blue',
+              fill: false,
+              borderWidth: 1,
+              pointRadius: 0,
+              label: 'Vowel a'
+            },
+            {
+              type: 'line',
+              data: this.getVocalizationSummery(1, this.vocalizationResult),
+              borderColor: 'red',
+              backgroundColor: 'red',
+              fill: false,
+              borderWidth: 1,
+              pointRadius: 0,
+              label: 'Vowel i'
+            },
+            {
+              type: 'line',
+              data: this.getVocalizationSummery(2, this.vocalizationResult),
+              borderColor: 'green',
+              backgroundColor: 'green',
+              fill: false,
+              borderWidth: 1,
+              pointRadius: 0,
+              label: 'Vowel u'
+            }
+          ],
+          labels: this.getVocalizationSummeryLabels()
+        },
+        options: {
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                unit: 'day'
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'seconds'
+              }
+            }
+          }
+        }
+      }
+      this.vocalizationSummery = new Chart(ctx, config)
     }
   }
 }
 </script>
-
-<style>
-
-</style>
