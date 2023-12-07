@@ -472,7 +472,7 @@ export default {
         let value = theRest[key]
         if (data === 'vocalization') {
           for (const v in value) {
-            key = 'Vocal ' + (value[v].vocal).toUpperCase()
+            key = 'Vowel ' + (value[v].vocal).toUpperCase()
             const start = ((value[v].startedTS).slice(11, 23))
             const stop = ((value[v].completedTS).slice(11, 23))
             const time = this.calcDifferenceInTime(start, stop)
