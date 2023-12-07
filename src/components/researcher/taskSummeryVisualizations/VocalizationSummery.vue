@@ -46,14 +46,11 @@ export default {
       return time
     },
     getVocalizationSummery (index, data) {
-      const arr = data.map(result => ({
-        x: new Date(result.summary.completedTS),
-        y: this.calcDifferenceInTime(index, result)
-      }))
+      const arr = data.map(result => (this.calcDifferenceInTime(index, result)))
       return arr
     },
     getVocalizationSummeryLabels () {
-      return this.vocalizationResult.map(result => result.summary.completedTS)
+      return this.vocalizationResult.map(result => (result.summary.completedTS).slice(0, 10))
     },
     initializeVocalizationChart () {
       const ctx = document.getElementById('vocalizationSummeryChart').getContext('2d')
@@ -62,33 +59,21 @@ export default {
         data: {
           datasets: [
             {
-              type: 'line',
               data: this.getVocalizationSummery(0, this.vocalizationResult),
               borderColor: 'blue',
               backgroundColor: 'blue',
-              fill: false,
-              borderWidth: 1,
-              pointRadius: 0,
               label: 'Vowel a'
             },
             {
-              type: 'line',
               data: this.getVocalizationSummery(1, this.vocalizationResult),
               borderColor: 'red',
               backgroundColor: 'red',
-              fill: false,
-              borderWidth: 1,
-              pointRadius: 0,
               label: 'Vowel i'
             },
             {
-              type: 'line',
               data: this.getVocalizationSummery(2, this.vocalizationResult),
               borderColor: 'green',
               backgroundColor: 'green',
-              fill: false,
-              borderWidth: 1,
-              pointRadius: 0,
               label: 'Vowel u'
             }
           ],
@@ -97,15 +82,18 @@ export default {
         options: {
           scales: {
             x: {
-              type: 'time',
-              time: {
-                unit: 'day'
+              position: 'bottom',
+              title: {
+                display: true,
+                text: 'Date',
+                color: '#459399'
               }
             },
             y: {
               title: {
                 display: true,
-                text: 'seconds'
+                text: 'Seconds',
+                color: '#459399'
               }
             }
           }
