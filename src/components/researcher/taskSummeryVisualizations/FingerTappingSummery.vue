@@ -25,7 +25,7 @@ export default {
     async fetchTaskData () {
       try {
         this.taskData = await API.getTasksResults(this.studyKey, this.userKey)
-        const filteredTaskData = this.taskData.filter(task => task.taskId === 9)
+        const filteredTaskData = this.taskData.filter(task => task.tasktype === 'fingerTapping')
         this.fingerTappingResults = filteredTaskData
         this.initializeFingerTappingChart()
       } catch (err) {

@@ -23,7 +23,7 @@ export default {
     async fetchTaskData () {
       try {
         this.taskData = await API.getTasksResults(this.studyKey, this.userKey)
-        const filteredTaskData = this.taskData.filter(task => task.taskId === 7)
+        const filteredTaskData = this.taskData.filter(task => task.taskType === 'peakFlow')
         this.peakFlowResults = filteredTaskData
         this.initializePeakflowChart()
       } catch (err) {

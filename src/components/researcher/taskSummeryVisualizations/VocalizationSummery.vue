@@ -22,7 +22,7 @@ export default {
     async fetchTaskData () {
       try {
         this.taskData = await API.getTasksResults(this.studyKey, this.userKey)
-        const filteredTaskData = this.taskData.filter(task => task.taskId === 12)
+        const filteredTaskData = this.taskData.filter(task => task.taskId === 'vocalization')
         this.vocalizationResults = filteredTaskData
       } catch (err) {
         this.$q.notify({
