@@ -25,7 +25,7 @@ export default {
     async fetchTaskData () {
       try {
         this.taskData = await API.getTasksResults(this.studyKey, this.userKey)
-        const filteredTaskData = this.taskData.filter(task => task.taskId === 10)
+        const filteredTaskData = this.taskData.filter(task => task.taskType === 'tugt')
         this.tugtResults = filteredTaskData
         this.initializeTugtChart()
       } catch (err) {
@@ -82,7 +82,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>
