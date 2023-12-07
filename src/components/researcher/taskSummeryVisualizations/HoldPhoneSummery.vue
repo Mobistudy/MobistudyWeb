@@ -36,14 +36,12 @@ export default {
       }
     },
     getHTPSummery (axis, data) {
-      const arr = data.map(result => ({
-        x: new Date(result.summary.completedTS),
-        y: Math.round((result.summary[axis].left.accelerationVariance + result.summary[axis].right.accelerationVariance) / 2)
-      }))
+      const arr = data.map(result => (Math.round((result.summary[axis].left.accelerationVariance + result.summary[axis].right.accelerationVariance) / 2)))
       return arr
     },
     getHTPSummeryLabels () {
-      return this.holdThePhoneResult.map(result => result.summary.completedTS)
+      const labels = this.holdThePhoneResult.map(result => (result.summary.completedTS).slice(0, 10))
+      return labels
     },
     initializeHTPChart () {
       const ctx = document.getElementById('HTPSummeryChart').getContext('2d')
@@ -59,7 +57,7 @@ export default {
               fill: false,
               borderWidth: 1,
               pointRadius: 0,
-              label: 'Kinetic Acceleration Variance'
+              label: 'Kinetic'
             },
             {
               type: 'line',
@@ -69,7 +67,7 @@ export default {
               fill: false,
               borderWidth: 1,
               pointRadius: 0,
-              label: 'Postural Acceleration Variance'
+              label: 'Postural'
             },
             {
               type: 'line',
@@ -79,20 +77,24 @@ export default {
               fill: false,
               borderWidth: 1,
               pointRadius: 0,
-              label: 'Resting Acceleration Variance'
+              label: 'Resting'
             }
           ],
           labels: this.getHTPSummeryLabels()
         },
         options: {
+          responsive: true,
           scales: {
             x: {
-              type: 'time',
-              time: {
-                unit: 'day'
+              position: 'bottom',
+              title: {
+                display: true,
+                text: 'Date'
               }
             },
             y: {
+              type: 'linear',
+              beginAtZero: true,
               title: {
                 display: true,
                 text: 'Acceleration Variance'
