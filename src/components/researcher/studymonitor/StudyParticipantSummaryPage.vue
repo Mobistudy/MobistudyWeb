@@ -464,7 +464,6 @@ export default {
       }))
     },
     taskSummary (props, data) {
-      console.log(props)
       const list = []
       const { startedTS, completedTS, ...theRest } = props
       const keys = Object.keys(theRest)
