@@ -2,7 +2,7 @@
   <q-page>
     <q-card class="my-card">
       <q-card-section class="card-title">
-        <div class="text-h6 text-secondary text-bold text-uppercase">{{participant.name}} </div>
+        <div class="text-h6 text-secondary text-bold text-uppercase">{{participant.name}} {{participant.surname}}</div>
       </q-card-section>
       <q-card-section class="card-content">
         <div class="page-content">
