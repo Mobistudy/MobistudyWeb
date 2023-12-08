@@ -51,7 +51,10 @@ const routes = [
       {
         path: '/studyMonitor/:studyKey/participant/:userKey',
         component: () => import('components/researcher/studymonitor/StudyParticipantSummaryPage.vue'),
-        props: true
+        props: true,
+        meta: {
+          closeInsteadOfLogout: true
+        }
       }
     ]
   },

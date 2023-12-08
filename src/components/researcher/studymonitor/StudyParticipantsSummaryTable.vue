@@ -79,7 +79,7 @@ export default {
       ratingModel: ref(3),
       columns: [
         { name: 'data', required: false, label: '', align: 'center', field: 'data', sortable: false },
-        { name: 'FullName', required: true, label: 'Full Name', align: 'center', field: 'fullName', sortable: true, format: (value, row) => `${row.name} ${row.surname}` },
+        { name: 'FullName', required: true, label: 'Full Name', align: 'center', field: 'fullName', sortable: false, format: (value, row) => `${row.name} ` },
         { name: 'DOB', required: true, label: 'Birthdate', align: 'center', field: 'DOB', sortable: false },
         { name: 'userEmail', required: true, label: 'Email', align: 'center', field: 'userEmail', sortable: false },
         { name: 'status', required: true, label: 'Status', align: 'center', field: 'status', sortable: false },

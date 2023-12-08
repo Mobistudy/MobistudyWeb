@@ -6,7 +6,6 @@
         :glossy="$q.theme === 'mat'"
         :inverted="$q.theme === 'ios'"
       >
-
         <q-toolbar-title>
           <img
             square
@@ -15,46 +14,47 @@
           >
         </q-toolbar-title>
         <span class="gt-xs q-mr-lg text-blue-grey-2"> {{ loggedInAsUserLabel }}</span>
-        <q-btn
-          label="LOGOUT"
-          flat
-          dense
-          icon-right="exit_to_app"
-          @click="confirm = true"
-        />
-        <q-dialog
-          v-model="confirm"
-          persistent
-        >
-          <q-card>
-            <q-card-section class="row items-center">
-              <q-avatar
-                icon="warning"
-                color="negative"
-                text-color="white"
-                size="lg"
-              />
-              <span class="q-ml-sm">Are you sure you want to logout?</span>
-            </q-card-section>
-            <q-card-actions align="right">
-              <q-btn
-                flat
-                label="Cancel"
-                color="primary"
-                v-close-popup
-              />
-              <q-btn
-                flat
-                label="Logout"
-                color="primary"
-                v-close-popup
-                @click="logout()"
-              />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
+        <template v-if="!$route.meta.closeInsteadOfLogout">
+          <q-btn
+            label="LOGOUT"
+            flat
+            dense
+            icon-right="exit_to_app"
+            @click="confirm = true"
+          />
+            <q-dialog v-model="confirm" persistent>
+              <q-card>
+                <q-card-section class="row items-center">
+                  <q-avatar
+                    icon="warning"
+                    color="negative"
+                    text-color="white"
+                    size="lg"
+                  />
+                  <span class="q-ml-sm">Are you sure you want to logout?</span>
+                </q-card-section>
+                <q-card-actions align="right">
+                  <q-btn flat label="Cancel" color="primary" v-close-popup />
+                  <q-btn
+                    flat
+                    label="Logout"
+                    color="negative"
+                    v-close-popup
+                    @click="logout"
+                  />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
+        </template>
+        <template v-else>
+          <q-btn
+            round
+            color="black"
+            icon="close"
+            @click="closeWindow"
+          />
+        </template>
       </q-toolbar>
-
     </q-header>
     <q-page-container>
       <router-view />
@@ -88,6 +88,9 @@ export default {
       await userinfo.logout()
       API.setToken('')
       this.$router.push('/login')
+    },
+    closeWindow () {
+      window.close()
     }
   }
 }
