@@ -43,12 +43,12 @@
               </template>
               <template #body-cell-completedTS="props">
                 <q-td :props="props">
-                  {{ niceTimestamp(props.row.summary.completedTS) }}
+                  {{ niceTimestamp(props.row.summary?.completedTS) }}
                 </q-td>
               </template>
               <template #body-cell-summary="props">
                 <q-td :props="props">
-                  <p v-for="task, i in taskSummary(props.row.summary, props.row.taskType)" :key="i">
+                  <p v-for="task, i in taskSummary(props.row, props.row.taskType)" :key="i">
                     {{ task }}
                   </p>
                 </q-td>
@@ -464,8 +464,14 @@ export default {
       }))
     },
     taskSummary (props, data) {
+      console.log(props, data)
       const list = []
-      const { startedTS, completedTS, ...theRest } = props
+
+      if (props.discarded === true) {
+        list.push('Discarded')
+        return list
+      }
+      const { startedTS, completedTS, ...theRest } = props.summary
       const keys = Object.keys(theRest)
 
       for (let key of keys) {
