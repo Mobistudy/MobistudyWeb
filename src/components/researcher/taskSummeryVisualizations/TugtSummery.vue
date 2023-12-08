@@ -25,7 +25,7 @@ export default {
     async fetchTaskData () {
       try {
         this.taskData = await API.getTasksResults(this.studyKey, this.userKey)
-        const filteredTaskData = this.taskData.filter(task => task.taskId === 10)
+        const filteredTaskData = this.taskData.filter(task => task.taskType === 'tugt')
         this.tugtResults = filteredTaskData
         this.initializeTugtChart()
       } catch (err) {
@@ -37,13 +37,10 @@ export default {
       }
     },
     getTugtSummery () {
-      return this.tugtResults.map(result => ({
-        x: new Date(result.summary.completedTS),
-        y: (result.summary.durationMs / 1000)
-      }))
+      return this.tugtResults.map(result => ((result.summary.durationMs / 1000)))
     },
     getTugtSummeryLabels () {
-      return this.tugtResults.map(result => result.summary.completedTS)
+      return this.tugtResults.map(result => (result.summary.completedTS).slice(0, 10))
     },
     initializeTugtChart () {
       const ctx = document.getElementById('tugtSummeryChart').getContext('2d')
@@ -63,15 +60,18 @@ export default {
         options: {
           scales: {
             x: {
-              type: 'time',
-              time: {
-                unit: 'day'
+              position: 'bottom',
+              title: {
+                display: true,
+                text: 'Date',
+                color: '#459399'
               }
             },
             y: {
               title: {
                 display: true,
-                text: 'Duration (seconds)'
+                text: 'Duration (seconds)',
+                color: '#459399'
               }
             }
           }
@@ -82,7 +82,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

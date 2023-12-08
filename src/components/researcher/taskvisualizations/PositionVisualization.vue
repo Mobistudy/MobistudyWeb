@@ -4,8 +4,7 @@
 </div>
 <div v-else-if="data">
   <div>
-    <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(completed) }}</p>
-    <p class="taskVisualizationHeader">Map</p>
+    <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(this.taskProps.row.summary.completedTS) }}</p>
   </div>
     <div v-if="data" id="map"></div>
     <q-list id="position_accordion" bordered class="rounded-borders" v-for="(content, key) in this.data.environment" :key="key">
@@ -51,7 +50,6 @@ export default {
   data () {
     return {
       loading: true,
-      completed: null,
       data: null
     }
   },
@@ -62,7 +60,6 @@ export default {
     async fetchTaskData () {
       try {
         this.taskData = await API.getTaskAttachment(this.taskProps.row.studyKey, this.taskProps.row.userKey, this.taskProps.row.taskId, this.taskProps.row.attachments[0])
-        this.completed = this.taskData.createdTS
         this.data = this.taskData
       } catch (err) {
         this.$q.notify({

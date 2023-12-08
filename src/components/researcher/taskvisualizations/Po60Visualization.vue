@@ -1,7 +1,7 @@
 <template>
   <div class="po60_container">
     <div>
-      <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(completed) }}</p>
+      <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(this.taskProps.row.summary.completedTS) }}</p>
     </div>
     <q-table :rows="this.getRows()" :columns="this.getColumns()" row-key="field" :dense="true" class="q-mt-md" :hide-pagination="true" style="height: 100%; width: 100%;" />
   </div>
@@ -18,7 +18,6 @@ export default {
   },
   data () {
     return {
-      completed: null,
       data: null
     }
   },
@@ -26,7 +25,6 @@ export default {
     async fetchTaskData () {
       try {
         this.taskData = await API.getTaskAttachment(this.taskProps.row.studyKey, this.taskProps.row.userKey, this.taskProps.row.taskId, this.taskProps.row.attachments[0])
-        this.completed = this.taskData.createdTS
         this.data = this.taskData.po60Data
         this.getRows()
       } catch (err) {
