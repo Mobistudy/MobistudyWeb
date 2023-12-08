@@ -7,7 +7,8 @@ export default {
   setToken (newtoken) {
     axiosConfig = {
       headers: {
-        Authorization: 'Bearer ' + newtoken
+        Authorization: 'Bearer ' + newtoken,
+        accept: 'audio/*'
       }
     }
   },
@@ -194,6 +195,11 @@ export default {
     // :studyKey/:userKey/:taskId/:fileName
     const URL = BASE_URL + `/tasksResults/attachments/${studyKey}/${userKey}/${taskId}/${fileName}`
     const resp = await axios.get(URL, axiosConfig)
+    return resp.data
+  },
+  async getAudioAttachment (studyKey, userKey, taskId, fileName) {
+    const URL = BASE_URL + `/tasksResults/attachments/${studyKey}/${userKey}/${taskId}/${fileName}`
+    const resp = await axios.get(URL, { ...axiosConfig, responseType: 'blob' })
     return resp.data
   },
   // Health Store Data

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p class="taskVisualizationHeader">Completed: {{ completed }}</p>
+    <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(this.taskProps.row.summary.completedTS) }}</p>
   </div>
   <div>
     <p id="tugtTotalTime">Total time: {{ this.data && getTotalTime() }}</p>
@@ -36,7 +36,6 @@ export default {
   },
   data () {
     return {
-      completed: null,
       data: null,
       isACCombined: ref(true),
       isRCombined: ref(true)
@@ -46,7 +45,6 @@ export default {
     async fetchTaskData () {
       try {
         this.taskData = await API.getTaskAttachment(this.taskProps.row.studyKey, this.taskProps.row.userKey, this.taskProps.row.taskId, this.taskProps.row.attachments[0])
-        this.completed = this.taskData.createdTS
         this.data = this.taskData
         this.initializeRotarCombinedChart()
         this.initializeVectorChart()

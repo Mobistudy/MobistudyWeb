@@ -21,7 +21,7 @@ export default {
     async fetchTaskData () {
       try {
         this.taskData = await API.getTasksResults(this.studyKey, this.userKey)
-        const filteredTaskData = this.taskData.filter(task => task.taskId === 3)
+        const filteredTaskData = this.taskData.filter(task => task.taskType === 'miband')
         console.log(filteredTaskData)
       } catch (err) {
         this.$q.notify({

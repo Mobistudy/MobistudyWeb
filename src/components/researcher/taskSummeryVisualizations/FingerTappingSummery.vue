@@ -25,7 +25,7 @@ export default {
     async fetchTaskData () {
       try {
         this.taskData = await API.getTasksResults(this.studyKey, this.userKey)
-        const filteredTaskData = this.taskData.filter(task => task.taskId === 9)
+        const filteredTaskData = this.taskData.filter(task => task.taskType === 'fingerTapping')
         this.fingerTappingResults = filteredTaskData
         this.initializeFingerTappingChart()
       } catch (err) {
@@ -37,13 +37,10 @@ export default {
       }
     },
     getFingerTappingSummery () {
-      return this.fingerTappingResults.map(result => ({
-        x: new Date(result.summary.completedTS),
-        y: result.summary.tappingCount
-      }))
+      return this.fingerTappingResults.map(result => (result.summary.tappingCount))
     },
     getFingerTappingSummeryLabels () {
-      return this.fingerTappingResults.map(result => result.summary.completedTS)
+      return this.fingerTappingResults.map(result => (result.summary.completedTS).slice(0, 10))
     },
     initializeFingerTappingChart () {
       const ctx = document.getElementById('fingerTappingSummeryChart').getContext('2d')
@@ -63,15 +60,18 @@ export default {
         options: {
           scales: {
             x: {
-              type: 'time',
-              time: {
-                unit: 'day'
+              position: 'bottom',
+              title: {
+                display: true,
+                text: 'Date',
+                color: '#459399'
               }
             },
             y: {
               title: {
                 display: true,
-                text: 'Tapping Count'
+                text: 'Tapping Count',
+                color: '#459399'
               }
             }
           }
@@ -82,7 +82,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

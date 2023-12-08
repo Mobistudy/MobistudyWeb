@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(completed) }}</p>
+    <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(this.taskProps.row.summary.completedTS) }}</p>
   </div>
   <div>
     <canvas id="mibandChart"></canvas>
@@ -24,7 +24,6 @@ export default {
   },
   data () {
     return {
-      completed: null,
       data: null
     }
   },
@@ -32,7 +31,6 @@ export default {
     async fetchTaskData () {
       try {
         this.taskData = await API.getTaskAttachment(this.taskProps.row.studyKey, this.taskProps.row.userKey, this.taskProps.row.taskId, this.taskProps.row.attachments[0])
-        this.completed = this.taskData.createdTS
         this.data = this.taskData.miband3Data
         this.initializeChart()
       } catch (err) {
