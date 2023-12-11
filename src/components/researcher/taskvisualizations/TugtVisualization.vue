@@ -1,24 +1,26 @@
 <template>
-  <div>
-    <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(this.taskProps.row.summary.completedTS) }}</p>
-  </div>
-  <div>
-    <p id="tugtTotalTime">Total time: {{ this.data && getTotalTime() }}</p>
-  </div>
-  <div>
-    <q-toggle @click=" this.data && handleFTToggleChange()" v-model="isACCombined">{{ isACCombined ? 'Module' : 'XYZ' }}</q-toggle>
-    <canvas id="tugtChart"></canvas>
-  </div>
-    <div class="resetChart">
-      <q-btn @click="tugtChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
+  <div id="container">
+    <div>
+      <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(this.taskProps.row.summary.completedTS) }}</p>
     </div>
-  <div>
-    <q-toggle @click="this.data && handleRoterToggleChange()" v-model="isRCombined">{{ isRCombined ? 'Module' : 'XYZ' }}</q-toggle>
-    <canvas id="tugtRotarChart"></canvas>
-  </div>
-    <div class="resetChart">
-      <q-btn @click="tugtRotarChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
+    <div>
+      <p id="tugtTotalTime">Total time: {{ this.data && getTotalTime() }}</p>
     </div>
+    <div>
+      <q-toggle @click=" this.data && handleFTToggleChange()" v-model="isACCombined">{{ isACCombined ? 'Module' : 'XYZ' }}</q-toggle>
+      <canvas id="tugtChart"></canvas>
+    </div>
+      <div class="resetChart">
+        <q-btn @click="tugtChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
+      </div>
+    <div>
+      <q-toggle @click="this.data && handleRoterToggleChange()" v-model="isRCombined">{{ isRCombined ? 'Module' : 'XYZ' }}</q-toggle>
+      <canvas id="tugtRotarChart"></canvas>
+    </div>
+      <div class="resetChart">
+        <q-btn @click="tugtRotarChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
+      </div>
+  </div>
 </template>
 
 <script>
@@ -475,5 +477,9 @@ export default {
 }
 #tugtTotalTime {
   text-align: center;
+}
+#container {
+  padding-left: 70px;
+  padding-right: 70px;
 }
 </style>

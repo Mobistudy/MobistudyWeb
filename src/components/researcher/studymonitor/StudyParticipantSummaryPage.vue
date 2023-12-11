@@ -54,7 +54,7 @@
                 </q-td>
               </template>
             </q-table>
-            <q-dialog v-model="taskDataModal" persistent transition-show="flip-down" transition-hide="flip-up">
+            <q-dialog v-model="taskDataModal" persistent transition-show="jump-down" transition-hide="jump-up">
               <q-card style="min-width: 400px; max-width: 900px;">
                 <q-bar class="my-q-bar bg-primary">
                   <div class="text-h6 text-white text-bold text-uppercase">
