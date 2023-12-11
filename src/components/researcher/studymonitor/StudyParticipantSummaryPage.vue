@@ -464,7 +464,6 @@ export default {
       }))
     },
     taskSummary (props, data) {
-      console.log(props, data)
       const list = []
 
       if (props.discarded === true) {
@@ -494,6 +493,9 @@ export default {
         } else if (data === 'tugt') {
           key = key.slice(0, 8)
           value = Math.round(Number(value) / 1000) + ' sec'
+        } else if (data === 'po60' && key === 'SPO2') {
+          list.push(`${key}: ${value}`)
+          continue
         }
 
         if (typeof value === 'number' && data !== 'holdPhone' && data !== 'vocalization' && data !== 'tugt') {
