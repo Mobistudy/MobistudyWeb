@@ -49,7 +49,9 @@
       </template>
       <template #body-cell-isPreferred="props">
         <q-td>
-          <q-rating @click="setParticipantPreference(props.row)" v-model="props.row.isPreferred" size="3.5em" color="blue" icon="star_border" icon-selected="star" :max="1"/>
+          <div style= "display: flex; align-items: center; justify-content: center;">
+            <q-rating @click="setParticipantPreference(props.row)" v-model="props.row.isPreferred" size="3.5em" color="blue" icon="star_border" icon-selected="star" :max="1"/>
+          </div>
         </q-td>
       </template>
       <template #body-cell-data="props">
