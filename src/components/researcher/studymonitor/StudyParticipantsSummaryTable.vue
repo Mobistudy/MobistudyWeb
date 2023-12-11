@@ -46,8 +46,10 @@
         <q-td :props="props">
           {{ niceTimestamp(props.value) }}
         </q-td>
+      </template>
+      <template #body-cell-isPreferred="props">
         <q-td>
-          <q-rating v-model="ratingModel" size="3.5em" color="blue" icon="star_border" icon-selected="star" :max="1"/>
+          <q-rating @click="setParticipantPreference(props.row)" v-model="props.row.isPreferred" size="3.5em" color="blue" icon="star_border" icon-selected="star" :max="1"/>
         </q-td>
       </template>
       <template #body-cell-data="props">
@@ -63,7 +65,6 @@
 </template>
 
 <script>
-import { ref } from 'vue'
 import API from '@shared/API.js'
 import { date } from 'quasar'
 
@@ -76,7 +77,6 @@ export default {
   data () {
     return {
       participants: [],
-      ratingModel: ref(3),
       columns: [
         { name: 'data', required: false, label: '', align: 'center', field: 'data', sortable: false },
         { name: 'FullName', required: true, label: 'Full Name', align: 'center', field: 'fullName', sortable: false, format: (value, row) => `${row.name} ` },
@@ -85,7 +85,7 @@ export default {
         { name: 'status', required: true, label: 'Status', align: 'center', field: 'status', sortable: false },
         { name: 'taskResultCount', required: true, label: 'Task Count', align: 'center', field: 'taskResultCount', sortable: true },
         { name: 'lastTaskDate', required: true, label: 'Last task', align: 'center', field: 'lastTaskDate', sortable: true },
-        { name: 'favorite', required: true, label: 'Favorite', align: 'center', field: 'favorite', sortable: true }
+        { name: 'isPreferred', required: true, label: 'Preferred', align: 'center', field: 'isPreferred', sortable: true }
       ],
       filter: {
         name: undefined,
@@ -110,7 +110,6 @@ export default {
     }
   },
   watch: {
-    // update the table if the study key changes
     async studyKey () {
       this.loadParticipants()
     }
@@ -120,7 +119,7 @@ export default {
       return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
     },
     async updateFilter () {
-      return this.loadParticipants()
+      return await this.loadParticipants()
     },
     async loadParticipants (params) {
       this.loading = true
@@ -138,6 +137,12 @@ export default {
         }
         const stats = await API.getStudyStats(queryParams)
         this.participants = stats.subset
+
+        const preferedParticipants = await this.getParticipantPreferences()
+        this.participants.forEach((participant) => {
+          participant.isPreferred = preferedParticipants.includes(participant.userKey)
+        })
+
         this.pagination.rowsNumber = stats.totalCount
       } catch (err) {
         console.error(err)
@@ -154,6 +159,13 @@ export default {
       const userKey = row.userKey
       const urlCompleta = `${window.location.origin}/#${currentUrl}/participant/${userKey}`
       window.open(urlCompleta, '_blank')
+    },
+    async getParticipantPreferences () {
+      return await API.getPreferredParticipans(this.studyKey)
+    },
+    async setParticipantPreference (row) {
+      await API.setPreferredParticipant(this.studyKey, row.userKey)
+      await this.loadParticipants()
     }
   }
 }

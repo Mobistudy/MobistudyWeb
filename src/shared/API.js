@@ -244,5 +244,13 @@ export default {
   // Test stuff
   async sendTestEmail (email, subject, content) {
     return axios.post(BASE_URL + '/techadmin/sendemail/', { address: email, subject, content }, axiosConfig)
+  },
+  async getPreferredParticipans (studyKey) {
+    const resp = await axios.get(BASE_URL + `/researchers/${studyKey}/`, axiosConfig)
+    return resp.data
+  },
+  async setPreferredParticipant (studyKey, userKey) {
+    const resp = await axios.post(BASE_URL + '/researchers/', { studyKey, userKey }, axiosConfig)
+    return resp.data
   }
 }
