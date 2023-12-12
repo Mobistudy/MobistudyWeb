@@ -58,6 +58,11 @@ export default {
           labels: this.getTugtSummeryLabels()
         },
         options: {
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
           scales: {
             x: {
               position: 'bottom',

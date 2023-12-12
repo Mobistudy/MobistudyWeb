@@ -56,6 +56,11 @@ export default {
           labels: this.getPeakFlowSummeryLabels()
         },
         options: {
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
           scales: {
             x: {
               position: 'bottom',

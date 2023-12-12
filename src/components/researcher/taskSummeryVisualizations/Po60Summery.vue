@@ -62,6 +62,11 @@ export default {
           labels: this.getPO60SummeryLabels()
         },
         options: {
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
           responsive: true,
           scales: {
             x: {
@@ -102,6 +107,11 @@ export default {
         },
         options: {
           responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
           scales: {
             x: {
               position: 'bottom',

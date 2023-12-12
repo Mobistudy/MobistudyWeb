@@ -58,6 +58,11 @@ export default {
           labels: this.getFingerTappingSummeryLabels()
         },
         options: {
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
           scales: {
             x: {
               position: 'bottom',
