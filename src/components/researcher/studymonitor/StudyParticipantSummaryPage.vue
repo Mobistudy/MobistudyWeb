@@ -502,6 +502,10 @@ export default {
           value = Math.round(Number(value))
           value.toString()
         }
+        if (typeof value === 'string') {
+          value = this.firstLetterUpperCase(value)
+        }
+
         key = this.firstLetterUpperCase(key)
         key = key.match(/[A-Z][a-z]+|[0-9]+/g).join(' ')
         list.push(`${key}: ${value}`)
