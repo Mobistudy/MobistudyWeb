@@ -138,3 +138,8 @@ export default {
   }
 }
 </script>
+<style>
+  canvas {
+    margin: 50px 0;
+  }
+</style>

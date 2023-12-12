@@ -38,3 +38,8 @@ export default {
 <style>
 
 </style>
+<style>
+  canvas {
+    margin: 50px 0;
+  }
+</style>
