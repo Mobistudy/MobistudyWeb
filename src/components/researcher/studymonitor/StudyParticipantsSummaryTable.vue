@@ -145,6 +145,14 @@ export default {
           participant.isPreferred = preferedParticipants.includes(participant.userKey)
         })
 
+        if (this.pagination.sortBy === 'isPreferred') {
+          this.participants.sort((a, b) => {
+            if (this.pagination.descending) {
+              return b.isPreferred - a.isPreferred
+            } else { return a.isPreferred - b.isPreferred }
+          })
+        }
+
         this.pagination.rowsNumber = stats.totalCount
       } catch (err) {
         console.error(err)
