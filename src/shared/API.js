@@ -95,6 +95,15 @@ export default {
   async updateStudy (studyKey, design) {
     return axios.put(BASE_URL + '/studies/' + studyKey, design, axiosConfig)
   },
+  async updateResearcherStudyOptionInTeam (teamKey, studyKey) {
+    // query params: teamKey and studyKey, body: studiesOptions for that study
+    const resp = await axios.patch(BASE_URL + '/teams/' + teamKey + '/researchers/studiesOptions/' + studyKey, axiosConfig)
+    return resp.data
+  },
+  async updateResearcherPreferredParticipantInTeam (studyKey, participantUserKey, isPreferred) {
+    // query params: teamKey, studyKey and participantUserKey, body: { isPreferred: true / false }
+    return axios.patch(BASE_URL + '/teams/researchers/studiesOptions/' + studyKey + '/preferredParticipantsKey/' + participantUserKey, { isPreferred }, axiosConfig)
+  },
   async getStudy (studyKey) {
     const resp = await axios.get(BASE_URL + '/studies/' + studyKey, axiosConfig)
     return resp.data
