@@ -100,7 +100,6 @@ export default {
       try {
         // supported params for this API: studyKey, participantName, statusType, includePreferredParticipants ('none', 'both', 'only'), offset, count
         const queryParams = {
-          studyKey: this.studyKey,
           participantName: this.filter.name,
           statusType: this.filter.statusType === 'all' ? undefined : this.filter.statusType,
           includePreferredParticipants: this.filter.preferredOnly ? 'only' : 'both',
@@ -109,7 +108,7 @@ export default {
           sortBy: this.pagination.sortBy,
           descending: this.pagination.descending
         }
-        const stats = await API.getStudyStats(queryParams)
+        const stats = await API.getStudyStats(this.studyKey, queryParams)
         this.participants = stats.subset
         this.pagination.rowsNumber = stats.totalCount
       } catch (err) {

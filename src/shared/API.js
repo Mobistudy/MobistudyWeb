@@ -108,7 +108,12 @@ export default {
     const resp = await axios.get(BASE_URL + '/studies/' + studyKey, axiosConfig)
     return resp.data
   },
-  async getStudyStats (filter) {
+  // STUDY STATS
+  async getParticipantsStatusStats (studyKey) {
+    const resp = await axios.get(BASE_URL + '/studyStats/' + studyKey + '/participantsStatusStats', axiosConfig)
+    return resp.data
+  },
+  async getStudyStats (studyKey, filter) {
     let queryParams = ''
     let hasParams = false
     for (const param in filter) {
@@ -118,7 +123,7 @@ export default {
         hasParams = true
       }
     }
-    const URL = BASE_URL + '/studyStats' + (hasParams ? '?' : '') + queryParams
+    const URL = BASE_URL + '/studyStats/' + studyKey + '/lastTasksSummary' + (hasParams ? '?' : '') + queryParams
     const resp = await axios.get(URL, axiosConfig)
     return resp.data
   },
@@ -186,18 +191,25 @@ export default {
     const resp = await axios.delete(BASE_URL + '/participants/' + participantKey, axiosConfig)
     return resp.data
   },
-  async getParticipantsStatusStats (studyKey) {
-    const resp = await axios.get(BASE_URL + '/participants/statusStats/' + studyKey, axiosConfig)
-    return resp.data
-  },
   // Answers
   async getAnswersOfStudy (studyKey) {
     const resp = await axios.get(BASE_URL + '/answers?studyKey=' + studyKey, axiosConfig)
     return resp.data
   },
   // Tasks Results
-  async getTasksResults (studyKey, userKey) {
-    const resp = await axios.get(BASE_URL + '/tasksResults?studyKey=' + studyKey + '&userKey=' + userKey, axiosConfig)
+  async getTasksResults (studyKey, participantUserKey, taskIds, offset, count) {
+    const queryParams = {
+      studyKey,
+      participantUserKey,
+      taskIds,
+      offset,
+      count
+    }
+    let newOpts = {
+      params: queryParams
+    }
+    newOpts = Object.assign(newOpts, axiosConfig)
+    const resp = await axios.get(BASE_URL + '/tasksResults', newOpts)
     return resp.data
   },
   async getTaskAttachment (studyKey, userKey, taskId, fileName) {

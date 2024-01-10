@@ -81,7 +81,8 @@ module.exports = configure(function (ctx) {
           ...cfg.resolve.alias,
           '@components': path.resolve(__dirname, './src/components'),
           '@mixins': path.resolve(__dirname, './src/mixins'),
-          '@shared': path.resolve(__dirname, './src/shared')
+          '@shared': path.resolve(__dirname, './src/shared'),
+          '@i18n': path.resolve(__dirname, './src/i18n')
         }
       }
     },

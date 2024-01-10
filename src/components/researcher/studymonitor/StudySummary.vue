@@ -44,23 +44,18 @@
     </q-card-section>
     <q-card-section>
       <div class="row q-ma-lg justify-around">
-        <q-btn
-          color="secondary"
-          icon-right="archive"
-          label="Download study data"
-          @click="downloadData()"
-          :loading="creatingDownload"
-        ></q-btn>
+        <q-btn color="secondary" icon-right="archive" label="Download study data" @click="downloadData()"
+          :loading="creatingDownload"></q-btn>
       </div>
     </q-card-section>
-    <q-separator/>
+    <q-separator />
     <table-participants :studyKey="studyKey" />
   </q-card>
 </template>
 
 <script>
 import API from '@shared/API'
-import TableParticipants from '@components/researcher/studymonitor/StudyParticipantsSummaryTable'
+import TableParticipants from '@components/researcher/studymonitor/ParticipantsSummaryTable'
 
 export default {
   name: 'StudyParticipants',
