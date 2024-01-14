@@ -4,7 +4,7 @@
     <q-card class="q-dialog-plugin">
       <q-bar class="my-q-bar bg-primary">
         <div class="text-h6 text-white text-bold text-uppercase">
-          <span>{{ formTitle }}</span>
+          <span>{{ taskName }}</span>
         </div>
         <q-space />
         <q-btn dense flat icon="minimize" @click="maximizedToggle = false" :disable="!maximizedToggle">
@@ -64,7 +64,7 @@ import API from '@shared/API.js'
 import { bestLocale } from '@mixins/bestLocale'
 
 export default {
-  props: ['taskResult'],
+  props: ['taskResult', 'taskName'],
 
   mixins: [bestLocale],
 
@@ -76,7 +76,6 @@ export default {
   data () {
     return {
       maximizedToggle: false,
-      formTitle: 'Questionnaire',
       answers: []
     }
   },
@@ -94,9 +93,7 @@ export default {
         const attachment = this.taskResult.attachments[0] // forms should come with only one attachment
 
         this.answers = await API.getTaskAttachment(studyKey, userKey, taskId, attachment)
-        console.log(this.answers)
       } catch (err) {
-        console.error(err)
         this.$emit('hide')
         this.$q.notify({
           color: 'negative',

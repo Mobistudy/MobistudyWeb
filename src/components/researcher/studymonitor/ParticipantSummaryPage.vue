@@ -134,6 +134,8 @@ import { taskTypeToString } from '@i18n/utils'
 import { date } from 'quasar'
 
 import AnswersDialog from './taskResultsDialogs/AnswersDialog.vue'
+import DrawingDialog from './taskResultsDialogs/DrawingDialog.vue'
+
 import TaskProgressionCharts from './TaskProgressionCharts.vue'
 
 export default {
@@ -323,12 +325,14 @@ export default {
     async showTaskData (taskResult) {
       let component
       if (taskResult.taskType === 'form') component = AnswersDialog
+      if (taskResult.taskType === 'drawing') component = DrawingDialog
       this.$q.dialog({
         // component loaded into the dialog
         component,
         // props forwarded to custom component
         componentProps: {
-          taskResult
+          taskResult,
+          taskName: this.showTaskName(taskResult.taskId)
         }
       })
     },

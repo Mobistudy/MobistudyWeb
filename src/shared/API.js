@@ -158,7 +158,7 @@ export default {
     return resp.data
   },
   // FORMS
-  async getSpecificForm (formKey) {
+  async getForm (formKey) {
     const resp = await axios.get(BASE_URL + '/forms/' + formKey, axiosConfig)
     return resp.data
   },
