@@ -21,23 +21,13 @@
       <q-card-section>
         <p class="taskVisualizationHeader">Completed: {{ niceTimestamp(taskResult.summary.completedTS) }}</p>
         <div class="figureContainer">
-          <div class="figureSquare">
+          <div class="figureContainerWrapper">
             <p>Square</p>
-            <canvas class="drawingCanvas" ref="originalSquareCanvas"></canvas>
+            <canvas class="drawingCanvas" ref="squareCanvas"></canvas>
           </div>
-          <div class="figureSquare">
-            <p>User Square</p>
-            <canvas class="drawingCanvas" ref="userSquareCanvas"></canvas>
-          </div>
-        </div>
-        <div class="figureContainer">
-          <div class="figureSpiral">
+          <div class="figureContainerWrapper">
             <p>Spiral</p>
-            <canvas class="drawingCanvas" ref="originalSpiralCanvas"></canvas>
-          </div>
-          <div class="figureSpiral">
-            <p>User Spiral</p>
-            <canvas class="drawingCanvas" ref="userSpiralCanvas"></canvas>
+            <canvas class="drawingCanvas" ref="spiralCanvas"></canvas>
           </div>
         </div>
       </q-card-section>
@@ -87,9 +77,8 @@ export default {
 
         this.drawSquare()
         this.drawSpiral()
-        this.drawUserSquare()
-        this.drawUserSpiral()
       } catch (err) {
+        console.error(err)
         this.$emit('hide')
 
         this.$q.notify({
@@ -105,24 +94,36 @@ export default {
     },
 
     drawSquare () {
-      const canvas = this.$refs.originalSquareCanvas
+      const canvas = this.$refs.squareCanvas
       const ctx = canvas.getContext('2d')
-      // Hardcoded square coordinates
-      const originalSquare = [{ x: 300, y: 200 }, { x: 300, y: 50 }, { x: 50, y: 50 }, { x: 50, y: 300 }, { x: 300, y: 300 }, { x: 300, y: 200 }]
+      const originalSquare = [
+        { x: 300, y: 200 }, { x: 300, y: 50 }, { x: 50, y: 50 },
+        { x: 50, y: 300 }, { x: 300, y: 300 }, { x: 300, y: 200 }
+      ]
       canvas.width = 350
       canvas.height = 350
       ctx.beginPath()
       ctx.moveTo(originalSquare[0].x, originalSquare[0].y)
+      ctx.strokeStyle = 'black'
+      ctx.lineWidth = 2
       for (const point of originalSquare) {
         ctx.lineTo(point.x, point.y)
       }
       ctx.closePath()
       ctx.stroke()
+      const userSquareCoordinates = this.taskData.square.touchCoordinates
+      ctx.beginPath()
+      ctx.moveTo(userSquareCoordinates[0].x, userSquareCoordinates[0].y)
+      ctx.strokeStyle = 'red'
+      ctx.lineWidth = 2
+      for (const point of userSquareCoordinates) {
+        ctx.lineTo(point.x, point.y)
+      }
+      ctx.stroke()
     },
     drawSpiral () {
-      const canvas = this.$refs.originalSpiralCanvas
+      const canvas = this.$refs.spiralCanvas
       const ctx = canvas.getContext('2d')
-      // Hardcoded spiral coordinates
       const originalSpiral = [
         { x: 300, y: 200 }, { x: 300, y: 50 }, { x: 50, y: 50 }, { x: 50, y: 300 }, { x: 250, y: 300 }, { x: 250, y: 100 },
         { x: 100, y: 100 }, { x: 100, y: 250 }, { x: 200, y: 250 }, { x: 200, y: 150 }, { x: 150, y: 150 }, { x: 150, y: 200 }
@@ -131,49 +132,19 @@ export default {
       canvas.height = 350
       ctx.beginPath()
       ctx.moveTo(originalSpiral[0].x, originalSpiral[0].y)
+      ctx.strokeStyle = 'black'
+      ctx.lineWidth = 2
       for (const point of originalSpiral) {
         ctx.lineTo(point.x, point.y)
       }
       ctx.stroke()
-    },
-    drawUserSquare () {
-      const canvas = this.$refs.userSquareCanvas
-      const ctx = canvas.getContext('2d')
-      const touchCoordinates = this.taskData.square.touchCoordinates
-      const minX = Math.min(...touchCoordinates.map((point) => point.x))
-      const minY = Math.min(...touchCoordinates.map((point) => point.y))
-      const maxX = Math.max(...touchCoordinates.map((point) => point.x))
-      const maxY = Math.max(...touchCoordinates.map((point) => point.y))
-      canvas.width = 350
-      canvas.height = 350
-      const scale = 1
-      ctx.translate(canvas.width / 2, canvas.height / 2)
-      ctx.scale(scale, scale)
-      ctx.translate(-((maxX + minX) / 2), -((maxY + minY) / 2))
+
+      const userSpiralCoordinates = this.taskData.spiral.touchCoordinates
       ctx.beginPath()
-      ctx.moveTo(touchCoordinates[0].x, touchCoordinates[0].y)
-      for (const point of touchCoordinates) {
-        ctx.lineTo(point.x, point.y)
-      }
-      ctx.stroke()
-    },
-    drawUserSpiral () {
-      const canvas = this.$refs.userSpiralCanvas
-      const ctx = canvas.getContext('2d')
-      const touchCoordinates = this.taskData.spiral.touchCoordinates
-      const minX = Math.min(...touchCoordinates.map((point) => point.x))
-      const minY = Math.min(...touchCoordinates.map((point) => point.y))
-      const maxX = Math.max(...touchCoordinates.map((point) => point.x))
-      const maxY = Math.max(...touchCoordinates.map((point) => point.y))
-      canvas.width = 350
-      canvas.height = 350
-      const scale = 1
-      ctx.translate(canvas.width / 2, canvas.height / 2)
-      ctx.scale(scale, scale)
-      ctx.translate(-((maxX + minX) / 2), -((maxY + minY) / 2))
-      ctx.beginPath()
-      ctx.moveTo(touchCoordinates[0].x, touchCoordinates[0].y)
-      for (const point of touchCoordinates) {
+      ctx.moveTo(userSpiralCoordinates[0].x, userSpiralCoordinates[0].y)
+      ctx.strokeStyle = 'red'
+      ctx.lineWidth = 2
+      for (const point of userSpiralCoordinates) {
         ctx.lineTo(point.x, point.y)
       }
       ctx.stroke()
@@ -211,22 +182,23 @@ export default {
 </script>
 
 <style>
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .taskVisualizationHeader {
+  width: 100%;
   text-align: center;
   font-weight: bold;
   color: #459399;
 }
 
 .figureContainer {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
-}
-
-.figureSquare,
-.figureSpiral {
-  width: 50%;
-  box-sizing: border-box;
 }
 
 .drawingCanvas {
@@ -234,8 +206,7 @@ export default {
   height: 100%;
 }
 
-.figureSquare p,
-.figureSpiral p {
+.figureContainer p {
   text-align: center;
   font-size: 16px;
   font-weight: bold;
