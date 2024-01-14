@@ -65,36 +65,7 @@
           </q-btn>
         </q-bar>
         <q-card-section>
-          <div v-if="taskDataType === 'form'">
-            <div v-for="(answer, index) in taskDataContent" :key="index">
-              <p class="q-title text-bold">
-                {{ getBestLocale(answer.questionText) }}
-              </p>
-              <p v-if="answer.questionType == 'freetext'">
-                {{ answer.answer }}
-              </p>
-              <p v-if="answer.questionType == 'slider'">
-                {{ answer.answer }}
-              </p>
-              <p v-if="answer.questionType == 'number'">
-                {{ answer.answer }}
-              </p>
-              <p v-if="answer.questionType == 'singleChoice'">
-                {{ answer.answer.answerText }}
-              </p>
-              <div v-if="answer.questionType == 'multiChoice'">
-                <p v-for="(subanswer, index1) in answer.answer" :key="index1">
-                  {{ subanswer.answerText }}
-                </p>
-              </div>
-              <q-img v-if="answer.questionType === 'photo' && answer.answer" :src="answer.answer" @click="showImage" />
-              <q-img v-if="answer.questionType === 'photo' && !answer.answer" :src="photoUrl" />
-              <div v-show="isImageVisible" class="fullscreen-image">
-                <span class="close-btn" @click="hideImage">&times;</span>
-                <img :src="answer.answer" alt="Full screen Image" />
-              </div>
-            </div>
-          </div>
+
           <div v-if="taskDataType === 'fingerTapping'">
             <FingerTappingDrawingVisualization :taskProps="taskProps" />
           </div>
@@ -161,36 +132,9 @@ import API from '@shared/API.js'
 import { bestLocale } from '@mixins/bestLocale'
 import { taskTypeToString } from '@i18n/utils'
 import { date } from 'quasar'
-// import { ref } from 'vue'
-// import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, TimeScale } from 'chart.js'
-// import 'chartjs-adapter-date-fns'
 
-import AnswersDialog from './taskResults/AnswersDialog.vue'
+import AnswersDialog from './taskResultsDialogs/AnswersDialog.vue'
 import TaskProgressionCharts from './TaskProgressionCharts.vue'
-
-// ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, TimeScale)
-
-// import MiBand3Visualization from '../taskvisualizations/MiBand3Visualization.vue'
-// import SmwtMapVisualization from '../taskvisualizations/SmwtMapVisualization.vue'
-// import SmwtChartVisualization from '../taskvisualizations/SmwtChartVisualization.vue'
-// import FingerTappingDrawingVisualization from '../taskvisualizations/FingerTappingDrawingVisualization.vue'
-// import HoldPhoneVisualization from '../taskvisualizations/HoldPhoneVisualization.vue'
-// import DrawingVisualization from '../taskvisualizations/DrawingVisualization.vue'
-// import TugtVisualization from '../taskvisualizations/TugtVisualization.vue'
-// import VocalizationVisualization from '../taskvisualizations/VocalizationVisualization.vue'
-// import PeakFlowVisualization from '../taskvisualizations/PeakFlowVisualization.vue'
-// import PositionVisualization from '../taskvisualizations/PositionVisualization.vue'
-// import MibandVisualization from '../taskvisualizations/MibandVisualization.vue'
-// import Po60Visualization from '../taskvisualizations/Po60Visualization.vue'
-// import FingerTappingSummery from '../taskSummeryVisualizations/FingerTappingSummery.vue'
-// import HoldPhoneSummery from '../taskSummeryVisualizations/HoldPhoneSummery.vue'
-// import DrawingSummery from '../taskSummeryVisualizations/DrawingSummery.vue'
-// import VocalizationSummery from '../taskSummeryVisualizations/VocalizationSummery.vue'
-// import PeakFlowSummery from '../taskSummeryVisualizations/PeakFlowSummery.vue'
-// import PositionSummery from '../taskSummeryVisualizations/PositionSummery.vue'
-// import MiBandSummery from '../taskSummeryVisualizations/MiBandSummery.vue'
-// import Po60Summery from '../taskSummeryVisualizations/Po60Summery.vue'
-// import SmwtSummery from '../taskSummeryVisualizations/SmwtSummery.vue'
 
 export default {
   name: 'ParticipantSummaryPage',
@@ -375,45 +319,18 @@ export default {
     },
     /**
      * Opens a dialog with the task results details
-     * @param {*} row - the table row data, including:
-     * row.taskType
      */
-    async showTaskData (row) {
+    async showTaskData (taskResult) {
+      let component
+      if (taskResult.taskType === 'form') component = AnswersDialog
       this.$q.dialog({
-        component: AnswersDialog,
-
-        // props forwarded to your custom component
+        // component loaded into the dialog
+        component,
+        // props forwarded to custom component
         componentProps: {
-          text: 'something'
-          // ...more..props...
+          taskResult
         }
-      }).onOk(() => {
-        console.log('OK')
-      }).onCancel(() => {
-        console.log('Cancel')
-      }).onDismiss(() => {
-        console.log('Called on OK or Cancel')
       })
-
-      // try {
-      //   this.taskDataContent = await API.getTaskAttachment(this.studyKey, this.userKey, props.row.taskId, props.row.attachments[0])
-      //   this.taskDataType = props.row.taskType
-      //   this.taskCompletedDate = props.row.summary.completedTS
-      //   if (this.taskDataType === 'smwt') {
-      //     this.smwtSteps = props.row.summary.steps
-      //     const smwtDistanceDecimals = props.row.summary.distance
-      //     this.smwtDistance = Math.round(smwtDistanceDecimals)
-      //   }
-      //   this.taskDataModal = true
-      //   this.taskProps = props
-      //   this.getParticipant()
-      // } catch (err) {
-      //   this.$q.notify({
-      //     color: 'negative',
-      //     message: 'Cannot retrieve the task content',
-      //     icon: 'report_problem'
-      //   })
-      // }
     },
     /**
      * Formats the task summary to a readable string
