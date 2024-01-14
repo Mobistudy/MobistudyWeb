@@ -106,6 +106,12 @@ Development:
 - [Daniel Abella](https://github.com/assimilate)
 - [Kevin Tsang](https://github.com/kevinchtsang)
 - [Gent Ymeri](https://github.com/gentymeri)
+- [Simon Andersson](https://github.com/simm99)
+- [Lukas Jönsson](https://github.com/LukasJnsson)
+- [Emilia Johansson](https://github.com/emilia-joha)
+- [Marcus Lennartsson](https://github.com/mackelele)
+- Alexander Elleström
+- David Alvarez Perales
 
 ## License
 
