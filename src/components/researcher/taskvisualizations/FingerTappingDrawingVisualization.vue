@@ -1,25 +1,23 @@
 <template>
-  <div id="container">
-    <div>
-      <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(this.taskProps.row.summary.completedTS) }}</p>
-    </div>
-    <div id="fingerTappingResult">
-      <p>Total Taps: {{ this.data && this.data.length }}</p>
-      <p>Average Tap Time Difference: {{ this.data && this.getAverageTapTime() }}ms</p>
-    </div>
-      <div>
-        <canvas id="fingerTappingChart"></canvas>
-      </div>
-        <div class="resetChart">
-          <q-btn @click="fingerTapping.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
-        </div>
-      <div>
-        <canvas id="fingerTappingDelayChart"></canvas>
-      </div>
-        <div class="resetChart">
-          <q-btn @click="interTapping.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
-        </div>
+  <div>
+    <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(this.taskProps.row.summary.completedTS) }}</p>
   </div>
+    <div>
+      <canvas id="fingerTappingChart"></canvas>
+    </div>
+      <div class="resetChart">
+        <q-btn @click="fingerTapping.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
+      </div>
+      <div id="fingerTappingResult">
+        <p>Total Taps: {{ this.data && this.data.length }}</p>
+        <p>Average Tap Time Difference: {{ this.data && this.getAverageTapTime() }}ms</p>
+      </div>
+    <div>
+      <canvas id="fingerTappingDelayChart"></canvas>
+    </div>
+      <div class="resetChart">
+        <q-btn @click="interTapping.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
+      </div>
 </template>
 
 <script>
@@ -281,9 +279,5 @@ button {
 }
 .reset_btn {
   font-size: 12px; padding: 4px 8px
-}
-#container {
-  padding-left: 70px;
-  padding-right: 70px;
 }
 </style>
