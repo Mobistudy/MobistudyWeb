@@ -135,6 +135,7 @@ import { date } from 'quasar'
 
 import AnswersDialog from './taskResultsDialogs/AnswersDialog.vue'
 import DrawingDialog from './taskResultsDialogs/DrawingDialog.vue'
+import FingerTappingDialog from './taskResultsDialogs/FingerTappingDialog.vue'
 
 import TaskProgressionCharts from './TaskProgressionCharts.vue'
 
@@ -326,6 +327,7 @@ export default {
       let component
       if (taskResult.taskType === 'form') component = AnswersDialog
       if (taskResult.taskType === 'drawing') component = DrawingDialog
+      if (taskResult.taskType === 'fingerTapping') component = FingerTappingDialog
       this.$q.dialog({
         // component loaded into the dialog
         component,
