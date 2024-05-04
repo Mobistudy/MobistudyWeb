@@ -19,7 +19,7 @@
     "test:unit:watchAll": "jest --watchAll"
   },
   "dependencies": {
-    "@quasar/extras": "^1.16.9",
+    "@quasar/extras": "^1.16.10",
     "axios": "^1.6.8",
     "chart.js": "^4.4.2",
     "chartjs-adapter-date-fns": "^3.0.0",
