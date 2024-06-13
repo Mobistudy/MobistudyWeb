@@ -10,42 +10,18 @@
             </q-card-section>
             <q-separator />
             <q-card-section>
-              <q-input
-                v-model.trim="email"
-                label="Email"
-                type="email"
-                placeholder=" e.g. email@email.com"
-                :rules="emailRules"
-              />
-              <q-input
-                v-model.trim="password"
-                label="Password"
-                type="password"
-                :rules="passwordRules"
-              />
-              <q-input
-                v-model.trim="password2"
-                label="Repeat Password"
-                type="password"
-                :rules="password2Rules"
-              />
+              <q-input v-model.trim="email" label="Email" type="email" placeholder=" e.g. email@email.com"
+                :rules="emailRules" />
+              <q-input v-model.trim="password" label="Password" type="password" :rules="passwordRules" />
+              <q-input v-model.trim="password2" label="Repeat Password" type="password" :rules="password2Rules" />
               <div class="row q-mt-md">
                 <div class="col-5">
-                  <q-btn
-                    label="Cancel"
-                    color="warning"
-                    @click="cancelRegistration"
-                  />
+                  <q-btn label="Cancel" color="warning" @click="cancelRegistration" />
                 </div>
                 <div class="col-4">
                 </div>
                 <div class="col-3">
-                  <q-btn
-                    label="Register"
-                    color="primary"
-                    :loading="registering"
-                    @click="registerUser"
-                  />
+                  <q-btn label="Register" color="primary" :loading="registering" @click="registerUser" />
                 </div>
               </div>
             </q-card-section>
@@ -66,7 +42,8 @@
 import owasp from 'owasp-password-strength-test'
 import zxcvbn from 'zxcvbn'
 import API from '@shared/API.js'
-import { testPattern } from 'quasar/src/utils/patterns'
+import { patterns } from 'quasar'
+const { testPattern } = patterns
 
 owasp.config({
   allowPassphrases: true,

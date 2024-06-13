@@ -9,44 +9,18 @@
             </q-card-section>
             <q-card-section>
               <form autocomplete="on">
-                <q-input
-                  v-model.trim="email"
-                  type="email"
-                  label="Email"
-                  placeholder="e.g. email@email.com"
-                  autocomplete="on"
-                  :rules="emailRules"
-                />
-                <q-input
-                  v-model.trim="password"
-                  type="password"
-                  label="Password"
-                  autocomplete="on"
-                  @keyup.enter="login()"
-                  :rules="[val => !!val || 'Field is required']"
-                />
+                <q-input v-model.trim="email" type="email" label="Email" placeholder="e.g. email@email.com"
+                  autocomplete="on" :rules="emailRules" />
+                <q-input v-model.trim="password" type="password" label="Password" autocomplete="on"
+                  @keyup.enter="login()" :rules="[val => !!val || 'Field is required']" />
               </form>
             </q-card-section>
             <q-card-actions>
-              <q-btn
-                label="login"
-                color="primary"
-                @click="login()"
-              />
-              <q-btn
-                label="New researcher"
-                color="secondary"
-                @click="newUser()"
-              />
+              <q-btn label="login" color="primary" @click="login()" />
+              <q-btn label="New researcher" color="secondary" @click="newUser()" />
             </q-card-actions>
             <q-card-actions>
-              <q-btn
-                label="Reset password"
-                flat
-                color="primary"
-                :disable="email == ''"
-                @click="resetPassword()"
-              />
+              <q-btn label="Reset password" flat color="primary" :disable="email == ''" @click="resetPassword()" />
             </q-card-actions>
           </q-card>
         </q-form>
@@ -64,7 +38,8 @@
 <script>
 import API from '@shared/API'
 import userinfo from '@shared/userinfo.js'
-import { testPattern } from 'quasar/src/utils/patterns'
+import { patterns } from 'quasar'
+const { testPattern } = patterns
 
 export default {
   name: 'LoginPage',

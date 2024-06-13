@@ -9,42 +9,24 @@
         <div class="row q-ma-sm">
           <div class="col-2 text-bold">Email address: </div>
           <div class="col">
-            <q-input
-              type="email"
-              v-model="emailAddress"
-              :rules="emailRules"
-            />
+            <q-input type="email" v-model="emailAddress" :rules="emailRules" />
           </div>
         </div>
         <div class="row q-ma-sm">
           <div class="col-2 text-bold">Subject: </div>
           <div class="col">
-            <q-input
-              type="text"
-              v-model="emailSubject"
-              :rules="[val => !!val || 'Field is required']"
-            />
+            <q-input type="text" v-model="emailSubject" :rules="[val => !!val || 'Field is required']" />
           </div>
         </div>
         <div class="row q-ma-sm">
           <div class="col-2 text-bold"> Content: </div>
           <div class="col">
-            <q-input
-              type="textarea"
-              rows="3"
-              v-model="emailContent"
-              :rules="[val => !!val || 'Field is required']"
-            />
+            <q-input type="textarea" rows="3" v-model="emailContent" :rules="[val => !!val || 'Field is required']" />
           </div>
         </div>
       </q-card-section>
       <q-card-actions>
-        <q-btn
-          label="Send"
-          color="primary"
-          :loading="sending"
-          @click="sendEmail"
-        />
+        <q-btn label="Send" color="primary" :loading="sending" @click="sendEmail" />
       </q-card-actions>
     </q-form>
   </q-card>
@@ -52,7 +34,9 @@
 
 <script>
 import API from '@shared/API'
-import { testPattern } from 'quasar/src/utils/patterns'
+import { patterns } from 'quasar'
+const { testPattern } = patterns
+
 export default {
   name: 'EmailTesterCard',
   data () {
