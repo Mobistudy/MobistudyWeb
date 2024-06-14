@@ -19,28 +19,12 @@
             </div>
           </div>
           <div class="col q-pl-sm">
-            <q-field
-              :error="studyDesign.inclusionCriteria.countries.length == 0"
-              error-message="At least one country must be specified"
-            >
-              <q-checkbox
-                v-model="studyDesign.inclusionCriteria.countries"
-                label="Sweden"
-                val="se"
-                @input="update()"
-              />
-              <q-checkbox
-                v-model="studyDesign.inclusionCriteria.countries"
-                label="United Kingdom"
-                val="gb"
-                @input="update()"
-              />
-              <q-checkbox
-                v-model="studyDesign.inclusionCriteria.countries"
-                label="Spain"
-                val="es"
-                @input="update()"
-              />
+            <q-field :error="studyDesign.inclusionCriteria.countries.length == 0"
+              error-message="At least one country must be specified">
+              <q-checkbox v-model="studyDesign.inclusionCriteria.countries" label="Sweden" val="se" @input="update()" />
+              <q-checkbox v-model="studyDesign.inclusionCriteria.countries" label="United Kingdom" val="gb"
+                @input="update()" />
+              <q-checkbox v-model="studyDesign.inclusionCriteria.countries" label="Spain" val="es" @input="update()" />
             </q-field>
           </div>
         </div>
@@ -58,24 +42,14 @@
             </div>
           </div>
           <div class="col q-pl-sm">
-            <q-input
-              type="number"
-              min="18"
-              v-model.number="studyDesign.inclusionCriteria.minAge"
-              hint="Minimum age."
+            <q-input type="number" min="18" v-model.number="studyDesign.inclusionCriteria.minAge" hint="Minimum age."
               @input="update()"
-              :rules="[val => !!val || 'Field is required', val => (val && (val >=18)) || 'A minimum age of 18 is required']"
-            />
+              :rules="[val => !!val || 'Field is required', val => (val && (val >= 18)) || 'A minimum age of 18 is required']" />
           </div>
           <div class="col q-ml-sm">
-            <q-input
-              type="number"
-              min="18"
-              v-model.number="studyDesign.inclusionCriteria.maxAge"
-              hint="Maximum age."
+            <q-input type="number" min="18" v-model.number="studyDesign.inclusionCriteria.maxAge" hint="Maximum age."
               @input="update()"
-              :rules="[val => !!val || 'Field is required', val => (val && (val >=18)) || 'A minimum age of 18 is required']"
-            />
+              :rules="[val => !!val || 'Field is required', val => (val && (val >= 18)) || 'A minimum age of 18 is required']" />
           </div>
         </div>
       </q-card-section>
@@ -92,28 +66,11 @@
             </div>
           </div>
           <div class="col q-pl-sm">
-            <q-field
-              :error="studyDesign.inclusionCriteria.sex.length == 0"
-              error-message="At least one sex must be specified"
-            >
-              <q-checkbox
-                v-model="studyDesign.inclusionCriteria.sex"
-                label="Male"
-                val="male"
-                @input="update()"
-              />
-              <q-checkbox
-                v-model="studyDesign.inclusionCriteria.sex"
-                label="Female"
-                val="female"
-                @input="update()"
-              />
-              <q-checkbox
-                v-model="studyDesign.inclusionCriteria.sex"
-                label="Other"
-                val="other"
-                @input="update()"
-              />
+            <q-field :error="studyDesign.inclusionCriteria.sex.length == 0"
+              error-message="At least one sex must be specified">
+              <q-checkbox v-model="studyDesign.inclusionCriteria.sex" label="Male" val="male" @input="update()" />
+              <q-checkbox v-model="studyDesign.inclusionCriteria.sex" label="Female" val="female" @input="update()" />
+              <q-checkbox v-model="studyDesign.inclusionCriteria.sex" label="Other" val="other" @input="update()" />
             </q-field>
           </div>
         </div>
@@ -127,18 +84,13 @@
               Maximum number of participants:
             </div>
             <div class="text-caption">
-              Optional. Mobistudy will stop proposing this study when this number of participants has joined this study. Withdrawals are included.
+              Optional. Mobistudy will stop proposing this study when this number of participants has joined this study.
+              Withdrawals are included.
             </div>
           </div>
           <div class="col q-pl-sm">
-            <q-input
-              type="number"
-              min="1"
-              v-model.number="studyDesign.numberOfParticipants"
-              onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-              clearable
-              @input="update()"
-            />
+            <q-input type="number" min="1" v-model.number="studyDesign.numberOfParticipants"
+              onkeypress="return event.charCode >= 48 && event.charCode <= 57" clearable @input="update()" />
           </div>
         </div>
       </q-card-section>
@@ -151,21 +103,13 @@
               List of diseases:
             </div>
             <div class="text-caption">
-              Type in and select the list of diseases (in English) that the patient will need to have. The disease name is searched on SNOMED.
+              Type in and select the list of diseases (in English) that the patient will need to have. The disease name
+              is searched on SNOMED.
             </div>
           </div>
           <div class="col q-pl-sm">
-            <q-select
-              ref="diseasesSelect"
-              v-model="diseasesVue"
-              use-input
-              use-chips
-              multiple
-              :options="diseaseOptions"
-              input-debounce="500"
-              @filter="searchDisease"
-              @input="clearDiseasesFilter"
-            >
+            <q-select ref="diseasesSelect" v-model="diseasesVue" use-input use-chips multiple :options="diseaseOptions"
+              input-debounce="500" @filter="searchDisease" @input="clearDiseasesFilter">
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -186,21 +130,14 @@
               List of medications:
             </div>
             <div class="text-caption">
-              Type in and select the list of medications the patient has to be taking (only generics). The medication name is searched on SNOMED.
+              Type in and select the list of medications the patient has to be taking (only generics). The medication
+              name is
+              searched on SNOMED.
             </div>
           </div>
           <div class="col q-pl-sm">
-            <q-select
-              ref="medsSelect"
-              v-model="medsVue"
-              use-input
-              use-chips
-              multiple
-              :options="medsOptions"
-              input-debounce="500"
-              @filter="searchMeds"
-              @input="clearMedsFilter"
-            >
+            <q-select ref="medsSelect" v-model="medsVue" use-input use-chips multiple :options="medsOptions"
+              input-debounce="500" @filter="searchMeds" @input="clearMedsFilter">
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey"> No medications found </q-item-section>
@@ -224,26 +161,14 @@
             </div>
           </div>
           <div class="col q-pl-sm">
-            <q-input
-              type="number"
-              min="5"
-              max="210"
-              v-model.number="studyDesign.inclusionCriteria.minBMI"
-              hint="Minimum BMI."
-              @input="update()"
-              :rules="[val => !!val || 'Field is required', val => (val>=5 && val<=210) || 'A BMI between 5 and 210 is required']"
-            />
+            <q-input type="number" min="5" max="210" v-model.number="studyDesign.inclusionCriteria.minBMI"
+              hint="Minimum BMI." @input="update()"
+              :rules="[val => !!val || 'Field is required', val => (val >= 5 && val <= 210) || 'A BMI between 5 and 210 is required']" />
           </div>
           <div class="col q-ml-sm">
-            <q-input
-              type="number"
-              min="5"
-              max="210"
-              v-model.number="studyDesign.inclusionCriteria.maxBMI"
-              hint="Maximum BMI."
-              :input="update()"
-              :rules="[val => !!val || 'Field is required', val => (val>=5 && val<=210) || 'A BMI between 5 and 210 is required']"
-            />
+            <q-input type="number" min="5" max="210" v-model.number="studyDesign.inclusionCriteria.maxBMI"
+              hint="Maximum BMI." :input="update()"
+              :rules="[val => !!val || 'Field is required', val => (val >= 5 && val <= 210) || 'A BMI between 5 and 210 is required']" />
           </div>
         </div>
       </q-card-section>
@@ -256,10 +181,7 @@
         <div class="text-subtitle1"> Questions for additional custom inclusion criteria. </div>
       </q-card-section>
       <q-card-section>
-        <div
-          v-for="(criteriaQuestion, index) in studyDesign.inclusionCriteria.criteriaQuestions"
-          :key="index"
-        >
+        <div v-for="(criteriaQuestion, index) in studyDesign.inclusionCriteria.criteriaQuestions" :key="index">
           <div class="row">
             <div class="col-4 q-pt-lg">
               <div class="text-bold">
@@ -271,12 +193,8 @@
               </div>
             </div>
             <div class="col q-pl-sm">
-              <multilang-input
-                v-model="criteriaQuestion.title"
-                @input="update()"
-                :languages="studyDesign.generalities.languages"
-                required
-              />
+              <multilang-input v-model="criteriaQuestion.title" @input="update()"
+                :languages="studyDesign.generalities.languages" required />
             </div>
           </div>
           <div class="row">
@@ -289,54 +207,24 @@
               </div>
             </div>
             <div class="col q-pl-sm">
-              <q-radio
-                v-model="criteriaQuestion.answer"
-                val="yes"
-                label="Yes"
-                @input="update()"
-              />
-              <q-radio
-                v-model="criteriaQuestion.answer"
-                val="no"
-                label="No"
-                @input="update()"
-              />
+              <q-radio v-model="criteriaQuestion.answer" val="yes" label="Yes" @input="update()" />
+              <q-radio v-model="criteriaQuestion.answer" val="no" label="No" @input="update()" />
             </div>
           </div>
           <div class="row justify-center">
             <div class="col">
-              <q-btn
-                class="float-left"
-                label="Remove Question"
-                color="negative"
-                icon="remove"
-                @click="removeRowCriteriaQuestion(index)"
-              />
-              <q-btn
-                class="float-right"
-                v-show="index == studyDesign.inclusionCriteria.criteriaQuestions.length-1"
-                label="Add Question"
-                color="primary"
-                icon="add"
-                @click="addRowCriteriaQuestion()"
-              />
+              <q-btn class="float-left" label="Remove Question" color="negative" icon="remove"
+                @click="removeRowCriteriaQuestion(index)" />
+              <q-btn class="float-right" v-show="index == studyDesign.inclusionCriteria.criteriaQuestions.length - 1"
+                label="Add Question" color="primary" icon="add" @click="addRowCriteriaQuestion()" />
             </div>
           </div>
-          <q-separator
-            class="q-mt-sm"
-            v-show="index != studyDesign.inclusionCriteria.criteriaQuestions.length-1"
-          />
+          <q-separator class="q-mt-sm" v-show="index != studyDesign.inclusionCriteria.criteriaQuestions.length - 1" />
         </div>
         <div class="row">
           <div class="col">
-            <q-btn
-              class="float-right"
-              v-show="studyDesign.inclusionCriteria.criteriaQuestions.length == 0"
-              label="Add Question"
-              color="primary"
-              icon="add"
-              @click="addRowCriteriaQuestion()"
-            />
+            <q-btn class="float-right" v-show="studyDesign.inclusionCriteria.criteriaQuestions.length == 0"
+              label="Add Question" color="primary" icon="add" @click="addRowCriteriaQuestion()" />
           </div>
         </div>
       </q-card-section>
@@ -494,7 +382,8 @@ export default {
         title: {
           en: '',
           sv: '',
-          es: ''
+          es: '',
+          it: ''
         },
         answer: 'yes'
       })

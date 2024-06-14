@@ -17,12 +17,8 @@
             </div>
           </div>
           <div class="col q-pl-sm">
-            <multilang-input
-              type="textarea"
-              v-model="studyDesign.consent.invitation"
-              :languages="studyDesign.generalities.languages"
-              required
-            />
+            <multilang-input type="textarea" v-model="studyDesign.consent.invitation"
+              :languages="studyDesign.generalities.languages" required />
           </div>
         </div>
         <div class="row q-mt-sm">
@@ -35,17 +31,9 @@
             </div>
           </div>
           <div class="col q-pl-sm">
-            <multilang-editor
-              v-model="studyDesign.consent.privacyPolicy"
-              :languages="studyDesign.generalities.languages"
-              required
-            />
-            <q-btn
-              class="q-mt-sm"
-              label="Generate example policy"
-              color="primary"
-              @click="generatePrivacy()"
-            />
+            <multilang-editor v-model="studyDesign.consent.privacyPolicy"
+              :languages="studyDesign.generalities.languages" required />
+            <q-btn class="q-mt-sm" label="Generate example policy" color="primary" @click="generatePrivacy()" />
           </div>
         </div>
         <div class="row q-mt-sm">
@@ -54,43 +42,28 @@
               Tasks-related consent items:
             </div>
             <div class="text-caption">
-              These are automatically generated items from tasks. You can rephrase them, but they will be overwritten each time you change the tasks. These consent items are not mandatory.
+              These are automatically generated items from tasks. You can rephrase them, but they will be overwritten
+              each time you change the tasks. These consent items are not mandatory.
             </div>
           </div>
           <div class="col q-pl-sm">
             <q-list>
-              <q-item
-                v-for="(tt, tindex) in studyDesign.consent.taskItems"
-                :key="tindex"
-              >
+              <q-item v-for="(tt, tindex) in studyDesign.consent.taskItems" :key="tindex">
                 <q-item-section avatar>Task {{ (tindex + 1) }}</q-item-section>
                 <q-item-section>
                   <div class="row items-center">
                     <div class="col-10">
-                      <multilang-input
-                        type="textarea"
-                        v-model="tt.description"
-                        :languages="studyDesign.generalities.languages"
-                        required
-                      />
+                      <multilang-input type="textarea" v-model="tt.description"
+                        :languages="studyDesign.generalities.languages" required />
                     </div>
                     <div class="col-2">
-                      <q-checkbox
-                        label="Optional"
-                        v-model="alwaysTrue"
-                        disable
-                      />
+                      <q-checkbox label="Optional" v-model="alwaysTrue" disable />
                     </div>
                   </div>
                 </q-item-section>
               </q-item>
             </q-list>
-            <q-btn
-              class="q-mt-sm"
-              label="Generate consent items"
-              color="primary"
-              @click="generateConsent(false)"
-            />
+            <q-btn class="q-mt-sm" label="Generate consent items" color="primary" @click="generateConsent(false)" />
           </div>
         </div>
         <div class="row q-mt-sm">
@@ -100,51 +73,33 @@
             </div>
             <div class="text-caption">
               Use these if you have other items in addition to the ones listed above.
-              For example if you have items that are not related to the mobile phone data collection, like visits or analysis.
+              For example if you have items that are not related to the mobile phone data collection, like visits or
+              analysis.
               If an item is not set to "optional", participants cannot join the study if they do not consent to it.
             </div>
           </div>
           <div class="col q-pl-sm">
             <q-list class="q-mt-md">
-              <q-item
-                v-for="(et, eindex) in studyDesign.consent.extraItems"
-                :key="eindex"
-              >
+              <q-item v-for="(et, eindex) in studyDesign.consent.extraItems" :key="eindex">
                 <q-item-section avatar>
                   Item {{ (eindex + 1) }}
-                  <q-btn
-                    round
-                    icon="remove"
-                    size="xs"
-                    color="negative"
-                    class="q-mt-xs"
-                    @click="removeExtraItem(eindex)"
-                  ></q-btn>
+                  <q-btn round icon="remove" size="xs" color="negative" class="q-mt-xs"
+                    @click="removeExtraItem(eindex)"></q-btn>
                 </q-item-section>
                 <q-item-section>
                   <div class="row items-center">
                     <div class="col-10">
-                      <multilang-input
-                        type="textarea"
-                        v-model="et.description"
-                        :languages="studyDesign.generalities.languages"
-                        required
-                      />
+                      <multilang-input type="textarea" v-model="et.description"
+                        :languages="studyDesign.generalities.languages" required />
                     </div>
                     <div class="col-2">
-                      <q-checkbox
-                        label="Optional"
-                        v-model="et.optional"
-                      />
+                      <q-checkbox label="Optional" v-model="et.optional" />
                     </div>
                   </div>
                 </q-item-section>
               </q-item>
             </q-list>
-            <q-btn
-              icon="add"
-              @click="addExtraItem()"
-            >Add a custom item</q-btn>
+            <q-btn icon="add" @click="addExtraItem()">Add a custom item</q-btn>
           </div>
         </div>
       </q-card-section>
@@ -267,7 +222,8 @@ export default {
         description: {
           en: undefined,
           sv: undefined,
-          es: undefined
+          es: undefined,
+          it: undefined
         },
         optional: true
       })
