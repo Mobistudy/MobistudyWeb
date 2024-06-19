@@ -1,7 +1,5 @@
 {
   "@quasar/testing-unit-jest": {
-    "options": [
-      "scripts"
-    ]
+    "options": []
   }
 }
