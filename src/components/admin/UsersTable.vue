@@ -1,52 +1,20 @@
 <template>
   <div>
-    <q-table
-      title="Users"
-      ref="table"
-      color="primary"
-      :rows="users"
-      selection="none"
-      :columns="columns"
-      :filter="filter"
-      row-key="_key"
-      v-model:pagination="pagination"
-      @request="loadUsers"
-      :loading="loading"
-    >
+    <q-table title="Users" ref="table" color="primary" :rows="users" selection="none" :columns="columns"
+      :filter="filter" row-key="_key" v-model:pagination="pagination" @request="loadUsers" :loading="loading">
       <template #top-right>
-        <q-select
-          emit-value
-          map-options
-          :options="roleTypesOpts"
-          v-model="filter.roleType"
-          hint="Event"
-          class="q-mr-sm"
-          style="width: 150px"
-        />
-        <q-input
-          type="text"
-          v-model="filter.userEmail"
-          hint="User email"
-          clearable
-          debounce="500"
-        />
+        <q-select emit-value map-options :options="roleTypesOpts" v-model="filter.roleType" hint="Event" class="q-mr-sm"
+          style="width: 150px" />
+        <q-input type="text" v-model="filter.userEmail" hint="User email" clearable debounce="500" />
       </template>
       <template #body-cell-testuser="props">
         <q-td :props="props">
-          <q-toggle
-            :value="props.row.testUser"
-            @input="toggleTestUser(props.row)"
-          />
+          <q-toggle :value="props.row.testUser" @input="toggleTestUser(props.row)" />
         </q-td>
       </template>
       <template #body-cell-delete="props">
         <q-td :props="props">
-          <q-btn
-            label="Delete"
-            color="negative"
-            icon="remove"
-            @click="deleteUser(props.row)"
-          />
+          <q-btn label="Delete" color="negative" icon="remove" @click="deleteUser(props.row)" />
         </q-td>
       </template>
     </q-table>
@@ -64,7 +32,7 @@ export default {
       users: [],
       pagination: { page: 1, rowsPerPage: 20, rowsNumber: 0, sortBy: 'userkey', descending: true },
       columns: [
-        { name: 'userkey', required: true, label: 'User Key', align: 'left', field: 'userkey', sortable: false }, // Change "_key" to "key" eventually
+        { name: 'userkey', required: true, label: 'User Key', align: 'left', field: '_key', sortable: false }, // Change "_key" to "key" eventually
         { name: 'email', required: true, label: 'Email', align: 'left', field: 'email', sortable: true },
         { name: 'role', required: true, label: 'Role', align: 'left', field: 'role', sortable: false },
         { name: 'testuser', required: false, label: 'Test user', align: 'left', field: 'testUser', sortable: false },
@@ -97,8 +65,9 @@ export default {
           count: params.pagination.rowsPerPage === 0 ? undefined : params.pagination.rowsPerPage
         }
         const usersR = await API.getAllUsers(queryParams)
+        console.log(usersR)
         this.pagination.rowsNumber = usersR.totalCount
-        this.users = usersR.totalCount.subset
+        this.users = usersR.subset
       } catch (err) {
         this.$q.notify({
           color: 'negative',
@@ -161,9 +130,11 @@ export default {
 .q-table td {
   border-color: black;
 }
+
 .q-table th {
   border-bottom-color: black;
 }
+
 .q-table__bottom {
   border-top: 1px solid black;
 }
