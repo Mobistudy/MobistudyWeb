@@ -128,7 +128,7 @@ export default {
     return resp.data
   },
   // NEW GET STUDIES FUNCTION FOR TableStudies.vue
-  async getAllStudies (countOnly, filter) {
+  async getAllStudies (filter) {
     let queryParams = ''
     let firstParam = true
     for (const param in filter) {
@@ -137,12 +137,8 @@ export default {
         firstParam = false
       }
     }
-    const URL = BASE_URL + '/getStudies' + (countOnly ? '/count' : '') + (firstParam ? '' : '?') + queryParams
+    const URL = BASE_URL + '/studies' + (firstParam ? '' : '?') + queryParams
     const resp = await axios.get(URL, axiosConfig)
-    return resp.data
-  },
-  async getStudies () {
-    const resp = await axios.get(BASE_URL + '/studies/', axiosConfig)
     return resp.data
   },
   async getAllTeamStudies (teamKey) {
@@ -154,7 +150,7 @@ export default {
     return resp.data
   },
   async getInvitationCode () {
-    const resp = await axios.get(BASE_URL + '/newInvitationCode', axiosConfig)
+    const resp = await axios.get(BASE_URL + '/studies/newInvitationCode', axiosConfig)
     return resp.data
   },
   // FORMS

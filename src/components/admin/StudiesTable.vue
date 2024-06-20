@@ -1,40 +1,16 @@
 <template>
   <div>
-    <q-table
-      title="Studies"
-      ref="table"
-      color="primary"
-      :rows="studies"
-      selection="none"
-      :columns="columns"
-      :filter="filter"
-      row-key="_key"
-      v-model:pagination="pagination"
-      @request="loadStudies"
-      :loading="loading"
-    >
+    <q-table title="Studies" ref="table" color="primary" :rows="studies" selection="none" :columns="columns"
+      :filter="filter" row-key="_key" v-model:pagination="pagination" @request="loadStudies" :loading="loading">
       <template #top-right>
-        <q-input
-          v-model="filter.after"
-          type="date"
-          hint="From date"
-          clearable
-          class="q-mr-sm"
-        />
-        <q-input
-          v-model="filter.before"
-          type="date"
-          hint="To date"
-          clearable
-          class="q-mr-sm"
-        />
-        <q-input
-          type="text"
-          v-model="filter.studyTitle"
-          hint="Study Title"
-          clearable
-          debounce="500"
-        />
+        <q-input v-model="filter.after" type="date" hint="From date" clearable class="q-mr-sm" />
+        <q-input v-model="filter.before" type="date" hint="To date" clearable class="q-mr-sm" />
+        <q-input type="text" v-model="filter.studyTitle" hint="Study Title" clearable debounce="500" />
+      </template>
+      <template #body-cell-studyTitle="props">
+        <q-td :props="props">
+          {{ getBestLocale(props.value) }}
+        </q-td>
       </template>
       <template #body-cell-created="props">
         <q-td :props="props">
@@ -56,19 +32,10 @@
           {{ niceDate(props.value) }}
         </q-td>
       </template>
-      <template #body-cell-studyTitle="props">
-        <q-td :props="props">
-          {{ niceTitle(props.row.studytitle) }}
-        </q-td>
-      </template>
+
       <template #body-cell-delete="props">
         <q-td :props="props">
-          <q-btn
-            label="Delete"
-            color="negative"
-            icon="remove"
-            @click="deleteStudy(props.row)"
-          />
+          <q-btn label="Delete" color="negative" icon="remove" @click="deleteStudy(props.row)" />
         </q-td>
       </template>
     </q-table>
@@ -78,17 +45,19 @@
 <script>
 import API from '@shared/API.js'
 import { date } from 'quasar'
+import { bestLocale } from '@mixins/bestLocale'
 
 export default {
   name: 'StudiesTable',
+  mixins: [bestLocale],
   data () {
     return {
       studies: [],
       pagination: { page: 1, rowsPerPage: 20, rowsNumber: 0, sortBy: 'published', descending: true },
       columns: [
-        { name: 'studyKey', required: true, label: 'Study Key', align: 'left', field: 'studykey', sortable: false }, // Change "_key" to "key" eventually
+        { name: 'studyKey', required: true, label: 'Study Key', align: 'left', field: '_key', sortable: false },
         { name: 'studyTitle', required: true, label: 'Title', align: 'left', field: 'title', sortable: true },
-        { name: 'teamName', required: true, label: 'Team Name', align: 'left', field: 'teamname', sortable: false },
+        // { name: 'teamName', required: true, label: 'Team Name', align: 'left', field: 'teamname', sortable: false },
         { name: 'created', required: true, label: 'Created', align: 'left', field: 'createdTS', sortable: true },
         { name: 'published', required: true, label: 'Published', align: 'left', field: 'publishedTS', sortable: true },
         { name: 'startDate', required: true, label: 'Start', align: 'left', field: 'startDate', sortable: false },
@@ -116,19 +85,6 @@ export default {
     niceDate (dateStamp) {
       return date.formatDate(dateStamp, 'YYYY-MM-DD')
     },
-    niceTitle (titles) {
-      let titleString = ''
-      let firstItem = true
-      const studyTitles = Object.entries(titles)
-
-      for (const [lang, val] of studyTitles) {
-        if (val !== '') {
-          titleString += (firstItem ? '' : ', ') + `${lang}: ${val}`
-          firstItem = false
-        }
-      }
-      return titleString
-    },
     async loadStudies (params) {
       this.loading = true
       this.pagination = params.pagination
@@ -137,12 +93,15 @@ export default {
           after: params.filter.after,
           before: params.filter.before ? new Date(new Date(params.filter.before).getTime() + 24 * 60 * 60 * 1000).toISOString().substr(0, 10) : undefined, // the before must add 24 hours to include the whole day
           studyTitle: params.filter.studyTitle,
+          summary: true,
           sortDirection: params.pagination.descending ? 'DESC' : 'ASC',
           offset: (params.pagination.page - 1) * params.pagination.rowsPerPage,
           count: params.pagination.rowsPerPage
         }
-        this.pagination.rowsNumber = await API.getAllStudies(true, queryParams)
-        this.studies = await API.getAllStudies(false, queryParams)
+        const studiesR = await API.getAllStudies(queryParams)
+        console.log(studiesR)
+        this.pagination.rowsNumber = studiesR.totalCount
+        this.studies = studiesR.subset
       } catch (err) {
         this.$q.notify({
           color: 'negative',
@@ -187,9 +146,11 @@ export default {
 .q-table td {
   border-color: black;
 }
+
 .q-table th {
   border-bottom-color: black;
 }
+
 .q-table__bottom {
   border-top: 1px solid black;
 }
