@@ -343,12 +343,11 @@ export default {
     },
     async getInvitationCode () {
       // If the study is invitational only, generate a new invitational code.
-      console.log('El método getInvitationCode está siendo llamado')
-      if (this.studyDesign.invitational && !this.studyDesign.invitationCode) {
+      if (!this.studyDesign.invitationCode) {
         try {
+          console.log('getting code')
           this.studyDesign.invitationCode = await API.getInvitationCode()
           this.update()
-          return this.studyDesign.invitationCode
         } catch (err) {
           this.$q.notify({
             color: 'negative',
@@ -360,7 +359,6 @@ export default {
       } else {
         this.studyDesign.invitationCode = undefined
         this.update()
-        return this.studyDesign.invitationCode
       }
     }
   }
