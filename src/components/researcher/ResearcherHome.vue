@@ -5,34 +5,24 @@
         <div class="text-h5">Teams</div>
       </q-card-section>
       <q-card-section v-show="teamsListOptions.length === 0">
-        <div class="text-subtitle">You are not a member of any team. Please contact your Mobistudy admin to be added to one.</div>
+        <div class="text-subtitle">You are not a member of any team. Please contact your Mobistudy admin to be added to
+          one.</div>
       </q-card-section>
       <q-card-section v-show="teamsListOptions.length > 0">
-        <div class="text-subtitle">You are a member of the following team(s). Please select one from the List to continue:</div>
+        <div class="text-subtitle">You are a member of the following team(s). Please select one from the List to
+          continue:</div>
         <div class="row">
-          <q-select
-            emit-value
-            map-options
-            v-model="selectedTeamKey"
-            :options="teamsListOptions"
-            @update:model-value="selectTeam()"
-          />
+          <q-select emit-value map-options v-model="selectedTeamKey" :options="teamsListOptions"
+            @update:model-value="selectTeam()" />
         </div>
       </q-card-section>
       <q-separator />
       <q-card-actions>
-        <q-btn
-          color="primary"
-          label="Add me to a team"
-          @click="promptAddTeam()"
-        />
+        <q-btn color="primary" label="Add me to a team" @click="promptAddTeam()" />
       </q-card-actions>
     </q-card>
 
-    <q-card
-      class="q-ma-lg q-pa-lg"
-      v-show="teamsListOptions.length > 0"
-    >
+    <q-card class="q-ma-lg q-pa-lg" v-show="teamsListOptions.length > 0">
       <q-card-section>
         <div class="text-h5">Studies</div>
       </q-card-section>
@@ -47,36 +37,20 @@
           <p>
             Draft studies (not published):
           </p>
-          <q-btn
-            v-for="(pstudy, index) in unpublishedStudies"
-            :key="'d' + index"
-            class="q-ma-md"
-            :label="getBestLocale(pstudy.title)"
-            color="primary"
-            @click="goToStudyDesigner(index)"
-          />
+          <q-btn v-for="(pstudy, index) in unpublishedStudies" :key="'d' + index" class="q-ma-md"
+            :label="getBestLocale(pstudy.title)" color="primary" @click="goToStudyDesigner(index)" />
         </div>
 
         <div v-show="publishedStudies.length > 0">
           <p>
             Published studies:
           </p>
-          <q-btn
-            v-for="(pstudy, index) in publishedStudies"
-            :key="'p' + index"
-            class="q-ma-md"
-            :label="getBestLocale(pstudy.title)"
-            color="secondary"
-            @click="goToStudyStats(pstudy.study_key)"
-          />
+          <q-btn v-for="(pstudy, index) in publishedStudies" :key="'p' + index" class="q-ma-md"
+            :label="getBestLocale(pstudy.title)" color="secondary" @click="goToStudyStats(pstudy.study_key)" />
         </div>
 
         <div class="row q-mt-lg">
-          <q-btn
-            :label="'Create new study for Team: ' + selectedTeamLabel"
-            color="primary"
-            @click="createNewStudy()"
-          />
+          <q-btn :label="'Create new study for Team: ' + selectedTeamLabel" color="primary" @click="createNewStudy()" />
         </div>
       </q-card-section>
     </q-card>
@@ -166,6 +140,7 @@ export default {
         })
         this.initTeams()
       } catch (err) {
+        console.error(err)
         if (err.response.status === 409) {
           this.$q.notify({
             color: 'positive',
@@ -174,7 +149,7 @@ export default {
         } else {
           this.$q.notify({
             color: 'negative',
-            message: 'Cannot add your account to the team. Please check the invitation code again or ask for a new one.',
+            message: 'Cannot add your account to the team. ' + err,
             icon: 'report_problem'
           })
         }
