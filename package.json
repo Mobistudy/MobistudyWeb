@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.16.17",
-    "axios": "^1.8.2",
+    "axios": "^1.8.3",
     "chart.js": "^4.4.8",
     "chartjs-adapter-date-fns": "^3.0.0",
     "chartjs-plugin-zoom": "^2.0.1",
