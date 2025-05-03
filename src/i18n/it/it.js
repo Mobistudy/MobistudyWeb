@@ -10,7 +10,7 @@ Questi sono necessari per valutare il tuo livello di coinvolgimento nello studio
 Questi sono necessari per la sicurezza e l'auditing.
 \u2022 La marca, il modello e il sistema operativo del tuo telefono.
 Questi sono necessari per studiare come i dati cambiano da telefono a telefono.
-\u2022 Dati raccolti all'interno dei compiti assegnati in questo studio, specificamente:
+\u2022 Dati raccolti all'interno delle attività assegnate in questo studio, specificamente:
 `,
     collectedDataForm: '    \u2022 Risposte date al modulo {formName}.',
     collectedDataQuery: '    \u2022 {dataType} da GoogleFit (telefoni Android) o HealthKit (iPhone).',
@@ -32,7 +32,7 @@ Tutti questi dati saranno conservati sul server Mobistudy, gestito dall'Universi
 
 Per quanto tempo saranno conservati questi dati?
 Il tuo profilo e la tua partecipazione a uno studio saranno conservati finché manterrai un account su Mobistudy.
-I dati raccolti all'interno dei compiti assegnati in questo studio saranno conservati sul server Mobistudy fino alla fine dello studio, il {studyEndDate}.
+I dati raccolti all'interno delle attività assegnate in questo studio saranno conservati sul server Mobistudy fino alla fine dello studio, il {studyEndDate}.
 I log tecnici saranno eliminati dopo 1 anno dalla loro produzione.
 
 [SPECIFICARE PER QUANTO TEMPO I DATI DELLO STUDIO SARANNO CONSERVATI DAI RICERCATORI]
