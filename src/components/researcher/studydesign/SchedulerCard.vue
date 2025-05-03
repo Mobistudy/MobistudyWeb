@@ -13,26 +13,15 @@
       <div class="row">
         <div class="col-2 q-pt-lg">Start event:</div>
         <div class="col">
-          <q-select
-            v-model="startEvent"
-            :options="startEventOptions"
-            emit-value
-            map-options
-            hint="The event that triggers the start of the task."
-          />
+          <q-select v-model="startEvent" :options="startEventOptions" emit-value map-options
+            hint="The event that triggers the start of the task." />
         </div>
       </div>
       <div class="row">
         <div class="col-2 q-pt-lg">Event task Id:</div>
         <div class="col">
-          <q-select
-            type="number"
-            v-model.number="eventTaskId"
-            :options="taskIds"
-            :disable="startEvent != 'taskExecution'"
-            emit-value
-            hint="The task that triggers the event."
-          />
+          <q-select type="number" v-model.number="eventTaskId" :options="taskIds"
+            :disable="startEvent != 'taskExecution'" emit-value hint="The task that triggers the event." />
         </div>
       </div>
       <q-separator />
@@ -42,23 +31,22 @@
         <div class="row">
           <div class="col-2 q-pt-lg">From:</div>
           <div class="col">
-            <q-input
-              type="number"
-              v-model.number="start"
-              clearable
-              hint="Optional. Enter the number of days from the start event."
-            />
+            <q-input type="number" v-model.number="startDays" clearable
+              hint="Optional. Enter the number of days from the start event." />
           </div>
         </div>
         <div class="row">
           <div class="col-2 q-pt-lg">To:</div>
           <div class="col">
-            <q-input
-              type="number"
-              v-model.number="until"
-              clearable
-              hint="Optional. In number of days from the start event. If To and Occurrences are not specified, this task will run until the end date of the study."
-            />
+            <q-input type="number" v-model.number="untilDays" clearable
+              hint="Optional. In number of days from the start event. If To and Occurrences are not specified, this task will run until the end date of the study." />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-2 q-pt-lg">For:</div>
+          <div class="col">
+            <q-input type="number" v-model.number="validityMins" clearable
+              hint="Optional. Number of minutes the task should be visible since it is supposed to be scheduled. Typically combined with an hourly scheduling. Choose values >30." />
           </div>
         </div>
         <div class="row">
@@ -72,18 +60,11 @@
           </div>
         </div>
       </div>
-      <div
-        v-if="!alwaysOn"
-        class="row"
-      >
+      <div v-if="!alwaysOn" class="row">
         <div class="col-2 q-pt-lg">Occurrences:</div>
         <div class="col">
-          <q-input
-            type="number"
-            v-model.number="occurrences"
-            clearable
-            hint="Optional. The maximum number of occurrences. If Occurrences and To are not specified, this task will run until the end date of the study."
-          />
+          <q-input type="number" v-model.number="occurrences" clearable
+            hint="Optional. The maximum number of occurrences. If Occurrences and To are not specified, this task will run until the end date of the study." />
         </div>
       </div>
       <q-separator />
@@ -92,76 +73,39 @@
         <div class="row">
           <div class="col-2 q-pt-lg">Frequency:</div>
           <div class="col">
-            <q-select
-              type="number"
-              v-model="intervalType"
-              :options="intervalTypeOptions"
-              emit-value
-              map-options
-              hint="Enter the desired frequency."
-            />
+            <q-select type="number" v-model="intervalType" :options="intervalTypeOptions" emit-value map-options
+              hint="Enter the desired frequency." />
           </div>
         </div>
         <div class="row">
           <div class="col-2 q-pt-lg">Interval:</div>
           <div class="col">
-            <q-select
-              v-show="intervalType == 'd'"
-              emit-value
-              map-options
-              v-model.number="dailyInterval"
-              :options="dailyIntervalOptions"
-            />
-            <q-select
-              v-show="intervalType == 'w'"
-              emit-value
-              map-options
-              v-model.number="weeklyInterval"
-              :options="weeklyIntervalOptions"
-            />
-            <q-select
-              v-show="intervalType == 'm'"
-              emit-value
-              map-options
-              v-model.number="monthlyInterval"
-              :options="monthlyIntervalOptions"
-            />
-            <q-select
-              v-show="intervalType == 'y'"
-              emit-value
-              map-options
-              v-model.number="yearlyInterval"
-              :options="yearlyIntervalOptions"
-            />
+            <q-select v-show="intervalType == 'd'" emit-value map-options v-model.number="dailyInterval"
+              :options="dailyIntervalOptions" />
+            <q-select v-show="intervalType == 'w'" emit-value map-options v-model.number="weeklyInterval"
+              :options="weeklyIntervalOptions" />
+            <q-select v-show="intervalType == 'm'" emit-value map-options v-model.number="monthlyInterval"
+              :options="monthlyIntervalOptions" />
+            <q-select v-show="intervalType == 'y'" emit-value map-options v-model.number="yearlyInterval"
+              :options="yearlyIntervalOptions" />
           </div>
         </div>
         <div class="row">
           <div class="col-2 q-py-lg">Hours:</div>
           <div class="col">
-            <q-select
-              v-model="hours"
-              use-input
-              use-chips
-              multiple
-              hide-dropdown-icon
-              input-debounce="0"
+            <q-select v-model="hours" use-input use-chips multiple hide-dropdown-icon input-debounce="0"
               new-value-mode="add-unique"
-              hint="Optional. Tasks are scheduled soon after midnight, but you can specify an hour (0 to 23) or multiple hours. Write a number and press retrun to add an hour."
-            />
+              hint="Optional. Tasks are scheduled soon after midnight, but you can specify an hour (0 to 23) or multiple hours. Write a number and press retrun to add an hour." />
           </div>
         </div>
         <div class="row q-pt-lg">
           <div class="col-2 q-pt-lg">Week days:</div>
           <div class="col">
-            <q-field hint="Optional. Specify the days in the week when this task is allowed. If not specified, all week days are eligible.">
+            <q-field
+              hint="Optional. Specify the days in the week when this task is allowed. If not specified, all week days are eligible.">
               <div class="row">
-                <q-checkbox
-                  v-for="(opt, ind) in weekDaysOpts"
-                  :key="ind"
-                  v-model="weekDays"
-                  :val="opt.value"
-                  :label="opt.label"
-                />
+                <q-checkbox v-for="(opt, ind) in weekDaysOpts" :key="ind" v-model="weekDays" :val="opt.value"
+                  :label="opt.label" />
               </div>
             </q-field>
           </div>
@@ -171,13 +115,8 @@
           <div class="col">
             <q-field hint="Optional. Specify months.">
               <div class="row">
-                <q-checkbox
-                  v-for="(monOpt, ind2) in monthsOpts"
-                  :key="ind2"
-                  v-model="months"
-                  :val="monOpt.value"
-                  :label="monOpt.label"
-                />
+                <q-checkbox v-for="(monOpt, ind2) in monthsOpts" :key="ind2" v-model="months" :val="monOpt.value"
+                  :label="monOpt.label" />
               </div>
             </q-field>
           </div>
@@ -187,13 +126,8 @@
           <div class="col">
             <q-field hint="Optional. Specify the days of the month when this task is allowed.">
               <div class="row">
-                <q-checkbox
-                  v-for="monthday in 31"
-                  :key="monthday"
-                  v-model="monthDays"
-                  :val="monthday"
-                  :label="monthday.toString()"
-                />
+                <q-checkbox v-for="monthday in 31" :key="monthday" v-model="monthDays" :val="monthday"
+                  :label="monthday.toString()" />
               </div>
             </q-field>
           </div>
@@ -222,8 +156,9 @@ export default {
         }
       ],
       eventTaskId: this.modelValue.eventTaskId,
-      startDelaySecs: undefined,
-      validitySecs: this.modelValue.untilSecs,
+      startDelaySecs: this.modelValue.startDelaySecs,
+      untilSecs: this.modelValue.untilSecs,
+      validitySecs: this.modelValue.validitySecs,
       alwaysOn: this.modelValue.alwaysOn,
       occurrences: this.modelValue.occurrences,
       intervalType: this.modelValue.intervalType,
@@ -681,6 +616,9 @@ export default {
     startDelaySecs (newQuestion, oldQuestion) {
       this.update()
     },
+    untilSecs (newQuestion, oldQuestion) {
+      this.update()
+    },
     validitySecs (newQuestion, oldQuestion) {
       this.update()
     },
@@ -719,7 +657,7 @@ export default {
     }
   },
   computed: {
-    start: {
+    startDays: {
       get () {
         return Math.floor(this.startDelaySecs / (24 * 60 * 60))
       },
@@ -731,18 +669,31 @@ export default {
         }
       }
     },
-    until: {
+    untilDays: {
       get () {
-        return Math.floor(this.validitySecs / (24 * 60 * 60))
+        return Math.floor(this.untilSecs / (24 * 60 * 60))
+      },
+      set (days) {
+        if (!days) {
+          this.untilSecs = undefined
+        } else {
+          this.untilSecs = days * (24 * 60 * 60)
+        }
+      }
+    },
+    validityMins: {
+      get () {
+        return Math.floor(this.validitySecs / (60))
       },
       set (days) {
         if (!days) {
           this.validitySecs = undefined
         } else {
-          this.validitySecs = days * (24 * 60 * 60)
+          this.validitySecs = days * (60)
         }
       }
     }
+
   },
   methods: {
     update () {
@@ -750,7 +701,8 @@ export default {
         startEvent: this.startEvent,
         eventTaskId: this.eventTaskId,
         startDelaySecs: this.startDelaySecs,
-        untilSecs: this.validitySecs,
+        untilSecs: this.untilSecs,
+        validitySecs: this.validitySecs,
         alwaysOn: this.alwaysOn,
         occurrences: this.occurrences,
         intervalType: this.intervalType,
