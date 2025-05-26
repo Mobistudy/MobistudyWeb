@@ -4,7 +4,7 @@ export default {
     Quali dati personali verranno raccolti?
 \u2022 Le tue informazioni di profilo generali come indirizzo email, nome, cognome, data di nascita, sesso, paese, lingua, condizioni di salute principali, trattamenti a lungo termine, peso e altezza.
 Questi sono necessari per identificarti e creare statistiche su chi partecipa a questo studio.
-\u2022 La tua partecipazione allo studio e le volte in cui completi un compito.
+\u2022 La tua partecipazione allo studio e le volte in cui completi un'attività.
 Questi sono necessari per valutare il tuo livello di coinvolgimento nello studio.
 \u2022 Informazioni tecniche relative all'accesso al server (come i login).
 Questi sono necessari per la sicurezza e l'auditing.
@@ -20,7 +20,7 @@ Questi sono necessari per studiare come i dati cambiano da telefono a telefono.
     collectedDataPO60: '    \u2022 La tua saturazione di ossigeno nel sangue e frequenza cardiaca misurate dal pulsossimetro.',
     collectedDataPeakFlow: '    \u2022 Il tuo picco di flusso misurato dal misuratore smart di picco di flusso.',
     collectedDataPosition: '    \u2022 La tua posizione geografica.',
-    collectedDataFingerTapping: '    \u2022 Il tempo in cui tocchi lo schermo durante il compito di finger tapping.',
+    collectedDataFingerTapping: '    \u2022 Il tempo in cui tocchi lo schermo durante l\'attività di finger tapping.',
     collectedDataTUGT: '    \u2022 L\'accelerazione e l\'orientamento del telefono e i passi compiuti durante il test Timed up and go.',
     collectedDataHoldPhone: '    \u2022 L\'accelerazione e l\'orientamento del telefono durante il test di mantenimento del telefono.',
     collectedDataVocalization: '    \u2022 La tua voce registrata durante il test di vocalizzazione.',
@@ -69,12 +69,12 @@ I log tecnici saranno eliminati dopo 1 anno dalla loro produzione.
   },
   scheduling: {
     notDefined: 'Non ancora definito',
-    afterTaskExecution: 'Dopo il completamento del compito {n}',
+    afterTaskExecution: 'Dopo il completamento dell\'attività {n}',
     alwaysOn: 'Sempre disponibile',
     fromDaysConsented: 'Il giorno dopo aver dato il consenso | {n} giorni dopo aver dato il consenso',
-    fromTaskExecuted: '{days} giorni dopo aver completato il compito {taskId}',
+    fromTaskExecuted: '{days} giorni dopo aver completato l\'attività {taskId}',
     untilDaysConsented: 'Fino a {days} giorni dopo aver dato il consenso',
-    untilTaskExecuted: 'Fino a {days} giorni dopo aver completato il compito {taskId}',
+    untilTaskExecuted: 'Fino a {days} giorni dopo aver completato l\'attività {taskId}',
     occurrences: 'Ripetuto {occurrences} volte',
     repeatedDays: 'Ripetuto giornalmente | Ripetuto ogni {n} giorni',
     repeatedWeeks: 'Ripetuto settimanalmente | Ripetuto ogni {n} settimane',
