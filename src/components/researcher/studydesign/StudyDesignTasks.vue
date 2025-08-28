@@ -200,7 +200,8 @@
           <div class="col q-pl-sm">
             <q-input v-model="task.hrInterval" emit-value type="number" min="0" max="255" @input="update()" />
           </div>
-
+        </div>
+        <div v-if="task.type === 'jstyle'" class="row">
           <div class="col-4 q-pt-lg">
             <div class="text-bold">
               Heart rate variability and blood pressure interval:
@@ -212,7 +213,8 @@
           <div class="col q-pl-sm">
             <q-input v-model="task.hrvInterval" emit-value type="number" min="0" max="255" @input="update()" />
           </div>
-
+        </div>
+        <div v-if="task.type === 'jstyle'" class="row">
           <div class="col-4 q-pt-lg">
             <div class="text-bold">
               SPO2 interval:
@@ -224,7 +226,8 @@
           <div class="col q-pl-sm">
             <q-input v-model="task.spo2Interval" emit-value type="number" min="0" max="255" @input="update()" />
           </div>
-
+        </div>
+        <div v-if="task.type === 'jstyle'" class="row">
           <div class="col-4 q-pt-lg">
             <div class="text-bold">
               Temperature interval:
