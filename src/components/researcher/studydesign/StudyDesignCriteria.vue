@@ -25,6 +25,7 @@
               <q-checkbox v-model="studyDesign.inclusionCriteria.countries" label="United Kingdom" val="gb"
                 @input="update()" />
               <q-checkbox v-model="studyDesign.inclusionCriteria.countries" label="Spain" val="es" @input="update()" />
+              <q-checkbox v-model="studyDesign.inclusionCriteria.countries" label="Italy" val="it" @input="update()" />
             </q-field>
           </div>
         </div>
