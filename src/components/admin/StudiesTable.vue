@@ -113,18 +113,19 @@ export default {
     },
     // Delete STUDY from Db
     async deleteStudy (study) {
+      const studyTitle = this.getBestLocale(study.title)
+      console.log('Deleting study', study)
       this.$q.dialog({
         title: 'Deleting Study',
-        color: 'warning',
-        message: 'You are deleting the study ' + study.studytitle.en + ' from the DB. This will affect participants of that study ' +
+        message: 'You are deleting the study ' + studyTitle + ' from the DB. This will affect participants of that study ' +
           ' and they will no longer be associated to that study. This cannot be undone. Would you like to continue?',
         ok: 'Yes, delete Study',
         cancel: 'Cancel'
       }).onOk(async () => {
         try {
-          await API.deleteStudy(study.studykey)
+          await API.deleteStudy(study._key)
           this.studies.splice(study, 1)
-          this.$q.notify('Study ' + study.studytitle.en + ' Deleted')
+          this.$q.notify('Study ' + studyTitle + ' Deleted')
           this.loadStudies({
             pagination: this.pagination,
             filter: this.filter
@@ -132,7 +133,7 @@ export default {
         } catch (err) {
           this.$q.notify({
             color: 'negative',
-            message: 'Cannot delete study ' + study.studytitle.en,
+            message: 'Cannot delete study ' + studyTitle,
             icon: 'report_problem'
           })
         }
