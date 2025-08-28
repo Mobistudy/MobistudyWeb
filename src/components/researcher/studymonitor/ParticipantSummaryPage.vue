@@ -14,7 +14,7 @@
           @request="loadTasksSummary" :loading="loadingTasksSummary">
           <template #body-cell-data="props">
             <q-td :props="props">
-              <q-btn flat icon="open_in_new" @click="showTaskData(props.row)" />
+              <q-btn v-if="!props.row.discarded" flat icon="open_in_new" @click="showTaskData(props.row)" />
             </q-td>
           </template>
           <template #body-cell-formName="props">
