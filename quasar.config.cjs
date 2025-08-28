@@ -94,12 +94,12 @@ module.exports = configure(function (ctx) {
       },
       port: 8181,
       open: true, // opens browser window automatically
-      proxy: {
-        '/api': { // <- this must be the same as API_ENDPOINT
-          target: 'http://127.0.0.1:3000',
-          changeOrigin: true
+      proxy: [
+        {
+          context: ['/api'],
+          target: 'http://127.0.0.1:3000'
         }
-      }
+      ]
     },
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-framework
