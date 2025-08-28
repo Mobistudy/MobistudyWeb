@@ -25,6 +25,7 @@ Estos son necesarios para la seguridad y la auditoría.
     collectedDataHoldPhone: '    \u2022 La aceleración y orientación de tu teléfono durante la prueba de sostener el teléfono.',
     collectedDataVocalization: '    \u2022 Tu voz durante la prueba de vocalización.',
     collectedDataDrawing: '    \u2022 Los trazos que haces en la pantalla durante la prueba de dibujo.',
+    collectedDatajStyle: '    \u2022 Tu frecuencia cardíaca, nivel de oxígeno, actividad, sueño y temperatura medidos por el reloj inteligente JStyle.',
     collectedDataReason: 'Estos datos son necesarios para cumplir con los objetivos de la investigación. [ADD REASONS FOR WHY THESE DATA ARE NEEDED IN THE SPECIFIC STUDY]',
     legalBasis: 'Los datos serán utilizados con fines científicos, por lo que la base legal para el tratamiento de estos datos es el interés público (Art. 6 y Art. 89 del RGPD).',
     storage: `¿Dónde se almacenarán mis datos?
@@ -65,7 +66,8 @@ Los registros técnicos se eliminarán después de 1 año de su producción.
     taskItemTUGT: 'Acepto realizar la prueba "Levanta y anda", {scheduling}',
     taskItemHoldPhone: 'Acepto realizar la prueba de sostener el teléfono, {scheduling}',
     taskItemVocalization: 'Acepto realizar la prueba de vocalización, {scheduling}',
-    taskItemDrawing: 'Acepto realizar la prueba de dibujo, {scheduling}'
+    taskItemDrawing: 'Acepto realizar la prueba de dibujo, {scheduling}',
+    taskItemjStyle: 'Acepto enviar mis datos recopilados por el smartwatch JStyle, {scheduling}'
   },
   scheduling: {
     notDefined: 'Aún no definido',

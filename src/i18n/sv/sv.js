@@ -25,6 +25,7 @@ Denna information är nödvändig för säkerhets- och granskningssyften.
     collectedDataHoldPhone: '    \u2022 Acceleration och riktning av din telefon under testet Hålla telefonen.',
     collectedDataVocalization: '    \u2022 Din röst under vokaliseringstestet.',
     collectedDataDrawing: '    \u2022 Strecken du gör på skärmen under figurtestet.',
+    collectedDatajStyle: '    \u2022 Din hjärtfrekvens, syrenivå, aktivitet, sömn och temperatur mätt av JStyle smartklockan.',
     collectedDataReason: ' Den insamlade datan är nödvändig för att uppnå forskningssyftet. [LÄGG TILL ANLEDNINGEN FÖR INSAMLINGEN AV SPECIFIKT DEN HÄR DATAN]',
     legalBasis: 'Uppgifterna kommer att användas för vetenskapliga ändamål, därför är den rättsliga grunden för behandlingen av dessa uppgifter allmänt intresse (Art. 6 och Art. 89 i GDPR).',
     storage: `Var kommer min data att lagras?
@@ -64,8 +65,9 @@ Teknisk data (loggar) kommer att tas bort 1 år efter de producerats.
     taskItemFingerTapping: 'Jag godkänner att utföra en fingeravtryckningsuppgiften, {scheduling}',
     taskItemTUGT: 'Jag godkänner att utföra ett "Timed up and Go" test, {scheduling}',
     taskItemHoldPhone: 'Jag går med på att utföra "Håll i telefonen"-testet, {scheduling}',
-    taskItemHoldVocalization: 'Jag går med på att utföra "Vokalisering"-testet, {scheduling}',
-    taskItemHoldDrawing: 'Jag går med på att utföra "Teckning"-testet, {scheduling}'
+    taskItemVocalization: 'Jag går med på att utföra "Vokalisering"-testet, {scheduling}',
+    taskItemDrawing: 'Jag går med på att utföra "Teckning"-testet, {scheduling}',
+    taskItemjStyle: 'Jag går med på att skicka min data insamlad av JStyle-smartklockan, {scheduling}'
   },
   scheduling: {
     notDefined: 'Icke ännu definierad',

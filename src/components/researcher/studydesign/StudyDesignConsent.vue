@@ -208,6 +208,10 @@ export default {
               newTaskItem.description[lang] = this.$i18n.t('consent.taskItemDrawing', lang, {
                 scheduling: schedulingToString(task.scheduling, lang)
               })
+            } else if (task.type === 'jstyle') {
+              newTaskItem.description[lang] = this.$i18n.t('consent.taskItemjStyle', lang, {
+                scheduling: schedulingToString(task.scheduling, lang)
+              })
             }
           }
         } else {
@@ -266,6 +270,8 @@ export default {
             string += '\n' + this.$i18n.t('privacyPolicy.collectedDataVocalization', lang)
           } else if (task.type === 'drawing') {
             string += '\n' + this.$i18n.t('privacyPolicy.collectedDataDrawing', lang)
+          } else if (task.type === 'jstyle') {
+            string += '\n' + this.$i18n.t('privacyPolicy.collectedDatajStyle', lang)
           }
         }
         string += this.$i18n.t('privacyPolicy.collectedDataReason', lang)

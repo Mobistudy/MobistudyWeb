@@ -25,6 +25,7 @@ These are needed to study how data changes from phone to phone.
     collectedDataHoldPhone: '    \u2022 The acceleration and orientation of the phone during the hold the phone test.',
     collectedDataVocalization: '    \u2022 Your voice recorded during the vocalization test.',
     collectedDataDrawing: '    \u2022 Your drawing coordinates will be saved during the drawing test.',
+    collectedDatajStyle: '    \u2022 Your heart rate, oxygen level, activity, sleep, and temperature measured by the JStyle smartwatch.',
     collectedDataReason: 'These data are needed to fulfil the aims of the research. [ADD REASONS FOR WHY THESE DATA ARE NEEDED IN THE SPECIFIC STUDY]',
     legalBasis: 'The data will be used for scientific purposes, therefore the legal basis for the processing of this data is public interest (Art. 6 and Art. 89 of the GDPR).',
     storage: `Where will my data be stored?
@@ -65,7 +66,8 @@ Technical logs will be deleted after 1 year they are produced.
     taskItemTUGT: 'I agree to perform the "Timed up and go" test, {scheduling}',
     taskItemHoldPhone: 'I agree to perform "Hold the phone" test, {scheduling}',
     taskItemVocalization: 'I agree to perform "Vocalization" test, {scheduling}',
-    taskItemDrawing: 'I agree to perform "Drawing" test, {scheduling}'
+    taskItemDrawing: 'I agree to perform "Drawing" test, {scheduling}',
+    taskItemjStyle: 'I agree to send my data collected by the JStyle smartwatch, {scheduling}'
   },
   scheduling: {
     notDefined: 'Not yet defined',
