@@ -23,8 +23,8 @@
     </template>
     <template #body-cell-preferred="props">
       <q-td :props="props">
-        <q-checkbox checked-icon="star" unchecked-icon="star_border" indeterminate-icon="help" :model-value="props.value"
-          @update:model-value="newValue => updatePreferred(props.row.userKey, newValue)" />
+        <q-checkbox checked-icon="star" unchecked-icon="star_border" indeterminate-icon="help"
+          :model-value="props.value" @update:model-value="newValue => updatePreferred(props.row.userKey, newValue)" />
       </q-td>
     </template>
     <template #body-cell-data="props">

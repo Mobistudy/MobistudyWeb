@@ -10,8 +10,8 @@
     <div class="row">
 
       <div class="q-ma-md col">
-        <q-table :rows="tasks" selection="none" :columns="columns" row-key="_key" v-model:pagination="pagination"
-          @request="loadTasksSummary" :loading="loadingTasksSummary">
+        <q-table title="Activity log" :rows="tasks" selection="none" :columns="columns" row-key="_key"
+          v-model:pagination="pagination" @request="loadTasksSummary" :loading="loadingTasksSummary">
           <template #body-cell-data="props">
             <q-td :props="props">
               <q-btn v-if="!props.row.discarded" flat icon="open_in_new" @click="showTaskData(props.row)" />
@@ -40,7 +40,8 @@
       <q-card class="q-ma-md col">
         <q-card-section>
           <div class="text-h6">Progression</div>
-          <q-select square outlined v-model="progrSelectedTasks" :options="progrTaskSelectOptions" label="Select task" />
+          <q-select square outlined v-model="progrSelectedTasks" :options="progrTaskSelectOptions"
+            label="Select task" />
           <div v-show="!progrSelectedTasks">
             No task selected
           </div>
@@ -136,6 +137,7 @@ import { date } from 'quasar'
 import AnswersDialog from './taskResultsDialogs/AnswersDialog.vue'
 import DrawingDialog from './taskResultsDialogs/DrawingDialog.vue'
 import FingerTappingDialog from './taskResultsDialogs/FingerTappingDialog.vue'
+import JStyleDialog from './taskResultsDialogs/JStyleDialog.vue'
 
 import TaskProgressionCharts from './TaskProgressionCharts.vue'
 
@@ -328,6 +330,7 @@ export default {
       if (taskResult.taskType === 'form') component = AnswersDialog
       if (taskResult.taskType === 'drawing') component = DrawingDialog
       if (taskResult.taskType === 'fingerTapping') component = FingerTappingDialog
+      if (taskResult.taskType === 'jstyle') component = JStyleDialog
       this.$q.dialog({
         // component loaded into the dialog
         component,
