@@ -41,7 +41,7 @@
         </div>
         <p style="text-align: center;">Data collected between: {{ niceTimestamp(taskSummary?.firstTS) }} and {{
           niceTimestamp(taskSummary?.lastTS)
-          }}</p>
+        }}</p>
       </q-card-section>
 
       <q-card-actions align="right">
@@ -256,7 +256,6 @@ export default {
       let stopSleep = new Date('1990-01-01')
       for (const sleep of taskData.sleep) {
         const date = new Date(sleep.date)
-        console.log('Sleep entry:', sleep, date)
         if (date < startSleep) {
           startSleep = date
         }
