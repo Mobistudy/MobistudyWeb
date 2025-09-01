@@ -12,47 +12,111 @@ export default {
       }
     }
   },
+  /**
+   * User login
+   * @param {string} email - The user's email address
+   * @param {string} password - The user's password
+   * @returns {Promise<Object>} - The login response containing the user data
+   */
   async login (email, password) {
     const resp = await axios.post(BASE_URL + '/login', { email, password })
     return resp.data
   },
+  /**
+   * Request a password reset email
+   * @param {string} email - The user's email address
+   * @returns {Promise} - A promise that resolves when the email is sent
+   */
   async askPasswordResetEmail (email) {
     return axios.post(BASE_URL + '/sendResetPasswordEmail', { email })
   },
+  /**
+   * Reset the user's password
+   * @param {string} token - The password reset token
+   * @param {string} newpassword - The new password
+   * @returns {Promise} - A promise that resolves when the password is reset
+   */
   async resetPassword (token, newpassword) {
     return axios.post(BASE_URL + '/resetPassword', { token, password: newpassword })
   },
+  /**
+   * Create a new user
+   * @param {Object} newuser - The user data
+   * @returns {Promise<Object>} - The created user data
+   */
   async createUser (newuser) {
     return axios.post(BASE_URL + '/users', newuser)
   },
+  /**
+   * Search for a disease concept
+   * @param {string} disease - The disease search string
+   * @param {string} lang - The language code
+   * @returns {Promise<Object>} - The search results
+   */
   async searchDiseaseConcept (disease, lang) {
     return axios.get(BASE_URL + '/vocabulary/' + lang + '/disorder/search?term=' + disease + '&limit=10')
   },
+  /**
+   * Search for a medication concept
+   * @param {string} med - The medication search string
+   * @param {string} lang - The language code
+   * @returns {Promise<Object>} - The search results
+   */
   async searchMedicationConcept (med, lang) {
     return axios.get(BASE_URL + '/vocabulary/' + lang + '/substance/search?term=' + med + '&limit=10')
   },
+
   /// ////////////////////////////////////
   // from here on, we need to use tokens
   /// ////////////////////////////////////
+  /**
+   * Create a new team
+   * @param {string} teamName - The name of the team
+   * @returns {Promise<Object>} - The created team data
+   */
   async createTeam (teamName) {
     return axios.post(BASE_URL + '/teams', {
       name: teamName
     }, axiosConfig)
   },
+  /**
+   * Get all teams
+   * @returns {Promise<Array<Object>>} - The list of teams
+   */
   async getTeams () {
     const resp = await axios.get(BASE_URL + '/teams', axiosConfig)
     return resp.data
   },
+  /**
+   * Generate a unique invitation code for a team
+   * @param {string} teamKey - The unique identifier for the team
+   * @returns {Promise<string>} - The generated invitation code
+   */
   async generateTeamCode (teamKey) {
     const resp = await axios.get(BASE_URL + '/teams/invitationCode/' + teamKey, axiosConfig)
     return resp.data
   },
+  /**
+   * Add a user to a team
+   * @param {string} invitationCode - The invitation code for the team
+   * @returns {Promise} - A promise
+   */
   async addUserToTeam (invitationCode) {
     return axios.post(BASE_URL + '/teams/researchers/add', { invitationCode }, axiosConfig)
   },
+  /**
+   * Remove a user from a team
+   * @param {string} userRemoved - The user to remove from the team
+   * @returns {Promise} - A promise
+   */
   async removeUserFromTeam (userRemoved) {
     return axios.post(BASE_URL + '/teams/researchers/remove', { userRemoved }, axiosConfig)
   },
+  /**
+   * Delete a team
+   * @param {string} teamKey - The unique identifier for the team
+   * @returns {Promise} - A promise
+   */
   async deleteTeam (teamKey) {
     const resp = await axios.delete(BASE_URL + '/teams/' + teamKey, axiosConfig)
     return resp.data
@@ -89,6 +153,11 @@ export default {
     return resp.data
   },
   // STUDY
+  /**
+   * Create a new study
+   * @param {Object} design - The design of the study
+   * @returns {Promise<Object>} - The created study data
+   */
   async createStudy (design) {
     return axios.post(BASE_URL + '/studies', design, axiosConfig)
   },
@@ -225,10 +294,19 @@ export default {
     return resp.data
   },
   // Audit LOG
+  /**
+   * Get the list of log event types
+   * @returns {Promise<Array>} - A promise that resolves to the list of log event types
+   */
   async getLogEventTypes () {
     const resp = await axios.get(BASE_URL + '/auditlog/eventTypes', axiosConfig)
     return resp.data
   },
+  /**
+   * Get the logs based on the provided filter
+   * @param {Object} filter - The filter criteria for fetching logs
+   * @returns {Promise<Array>} - A promise that resolves to the list of logs
+   */
   async getLogs (filter) {
     let queryParams = ''
     let hasParams = false
