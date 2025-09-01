@@ -106,25 +106,36 @@ export default {
       for (const taskRes of resp) {
         if (!taskRes.discarded) {
           let date = ''
-          if (taskRes.summary.completedTS) date = taskRes.summary.completedTS.slice(0, 10)
-          else date = taskRes.createdTS.slice(0, 10)
-          // add the date to the results, so we don't need to recalcuate it later
-          taskRes.date = date
-
-          // add the label (date) if not already present
-          if (this.labels.indexOf(date) === -1) {
-            this.labels.push(date)
-            // results are sorted ascending from API, however each task comes with different dates, so we need to re-sort
-            this.labels.sort()
+          if (taskType === 'jstyle') {
+            // special case for jstyle
+            for (const dailySummary of taskRes.summary.activitySummary) {
+              const day = dailySummary.date.slice(0, 10)
+              // add the label (date) if not already present
+              if (this.labels.indexOf(day) === -1) {
+                this.labels.push(day)
+              }
+            }
+          } else {
+            if (taskRes.summary.completedTS) date = taskRes.summary.completedTS.slice(0, 10)
+            else date = taskRes.createdTS.slice(0, 10)
+            // add the date to the results, so we don't need to recalcuate it later
+            taskRes.date = date
+            // add the label (date) if not already present
+            if (this.labels.indexOf(date) === -1) {
+              this.labels.push(date)
+            }
           }
         }
       }
+
+      // results are sorted ascending from API, however each task comes with different dates, so we need to re-sort
+      this.labels.sort()
+
       // now re-iterate for the datapoints
       for (const taskRes of resp) {
         if (!taskRes.discarded) {
           const taskId = taskRes.taskId
-          // index of the datapoint with respect to its date
-          const Idx = this.labels.indexOf(taskRes.date)
+
           // get the name of the task
           let taskName = 'Unknown task'
           const task = this.studyDescription.tasks.find(t => t.id === parseInt(taskId))
@@ -159,10 +170,24 @@ export default {
                 data: []
               }
             }
-            // add the datapoint inside the dataset at the position of the date
-            const value = signal.split('.').reduce((p, c) => p?.[c], taskRes.summary)
 
-            this.chartDataSets[signal][dataSetIndex].data[Idx] = value
+            // add the datapoint inside the dataset at the position of the date
+            if (taskType === 'jstyle') {
+              // special case for jstyle
+              for (const dailySummary of taskRes.summary.activitySummary) {
+                const day = dailySummary.date.slice(0, 10)
+                const Idx = this.labels.indexOf(day)
+                const value = signal.split('.').reduce((p, c) => p?.[c], dailySummary)
+                let previous = this.chartDataSets[signal][dataSetIndex].data[Idx]
+                if (!previous) previous = 0
+                this.chartDataSets[signal][dataSetIndex].data[Idx] = previous + value
+              }
+            } else {
+              // index of the datapoint with respect to its date
+              const Idx = this.labels.indexOf(taskRes.date)
+              const value = signal.split('.').reduce((p, c) => p?.[c], taskRes.summary)
+              this.chartDataSets[signal][dataSetIndex].data[Idx] = value
+            }
           }
         }
       }
@@ -178,6 +203,7 @@ export default {
       if (taskType === 'peakFlow') return ['pefMax']
       if (taskType === 'po60') return ['spo2', 'hr']
       if (taskType === 'smwt') return ['distance']
+      if (taskType === 'jstyle') return ['steps', 'activeMinutes', 'exerciseMinutes']
     }
   }
 }

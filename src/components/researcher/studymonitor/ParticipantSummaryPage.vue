@@ -376,18 +376,20 @@ export default {
       } else if (taskType === 'tugt') {
         retString += 'Duration: ' + (summary.durationMs / 1000).toFixed(0) + ' sec'
       } else if (taskType === 'miband3') {
-        retString += 'From: ' + summary.firstTS + ' to: ' + summary.lastTS + '<br>'
+        retString += 'From: ' + summary.firstTS.slice(0, 10) + ' to: ' + summary.lastTS.slice(0, 10)
       } else if (taskType === 'peakFlow') {
-        retString += 'PEF Max: ' + summary.pefMax + '<br>'
+        retString += 'PEF Max: ' + summary.pefMax
       } else if (taskType === 'po60') {
-        retString += 'SPO2: ' + summary.spo2 + ', HR: ' + summary.hr + '<br>'
+        retString += 'SPO2: ' + summary.spo2 + ', HR: ' + summary.hr
       } else if (taskType === 'position') {
         retString += 'Location: ' + summary.location + '<br>'
         retString += 'Weather: ' + summary.weather + '<br>'
         retString += 'Temperature: ' + summary.temperature + '<br>'
-        retString += 'Air quality: ' + summary.aqi + '<br>'
+        retString += 'Air quality: ' + summary.aqi
       } else if (taskType === 'smwt') {
-        retString += 'Distance: ' + summary.distance.toFixed(0) + 'm <br>'
+        retString += 'Distance: ' + summary.distance.toFixed(0) + 'm'
+      } else if (taskType === 'jstyle') {
+        retString += 'From: ' + summary.firstTS.slice(0, 10) + ' to ' + summary.lastTS.slice(0, 10)
       }
       return retString
     }
