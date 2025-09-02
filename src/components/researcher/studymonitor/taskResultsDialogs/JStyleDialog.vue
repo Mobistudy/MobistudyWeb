@@ -326,7 +326,7 @@ export default {
         if (item.detailSteps && item.detailSteps.length > 0) {
           item.detailSteps.forEach((detail, idx) => {
             stepsData.push({
-              x: new Date(new Date(item.date).getTime() + (idx * 60000)),
+              x: new Date(new Date(item.date).getTime() - (idx * 60000)),
               y: detail
             })
           })
@@ -343,7 +343,7 @@ export default {
         data: stepsData,
         backgroundColor: '#050bb5',
         borderColor: '#050bb5',
-        borderWidth: 1,
+        borderWidth: 0,
         pointRadius: 1,
         lineTension: 0
       }
