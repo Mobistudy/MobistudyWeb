@@ -112,6 +112,7 @@ export default {
               const day = dailySummary.date.slice(0, 10)
               // add the label (date) if not already present
               if (this.labels.indexOf(day) === -1) {
+                // console.log('day from jstyle', day, dailySummary)
                 this.labels.push(day)
               }
             }
@@ -122,6 +123,7 @@ export default {
             taskRes.date = date
             // add the label (date) if not already present
             if (this.labels.indexOf(date) === -1) {
+              // console.log('day from task', date)
               this.labels.push(date)
             }
           }
@@ -195,6 +197,12 @@ export default {
     }
   },
   methods: {
+    getDayString (aDate) {
+      aDate = new Date(aDate)
+      const offset = aDate.getTimezoneOffset()
+      aDate = new Date(aDate.getTime() - (offset * 60 * 1000))
+      return aDate.toISOString().split('T')[0]
+    },
     getSummarySignalsNames (taskType) {
       if (taskType === 'tugt') return ['durationMs']
       if (taskType === 'fingerTapping') return ['tappingCount']
