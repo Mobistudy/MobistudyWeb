@@ -41,7 +41,7 @@
         </div>
         <p style="text-align: center;">Data collected between: {{ niceTimestamp(taskSummary?.firstTS) }} and {{
           niceTimestamp(taskSummary?.lastTS)
-        }}</p>
+          }}</p>
       </q-card-section>
 
       <q-card-actions align="right">
@@ -325,10 +325,12 @@ export default {
       for (const item of taskData.activity) {
         if (item.detailSteps && item.detailSteps.length > 0) {
           item.detailSteps.forEach((detail, idx) => {
-            stepsData.push({
-              x: new Date(new Date(item.date).getTime() - (idx * 60000)),
-              y: detail
-            })
+            if (detail > 0) {
+              stepsData.push({
+                x: new Date(new Date(item.date).getTime() - (idx * 60000)),
+                y: detail
+              })
+            }
           })
         } else {
           stepsData.push({
