@@ -13,7 +13,7 @@ import { taskTypeToString } from '@i18n/utils'
 
 import {
   Chart as ChartJS,
-  CategoryScale,
+  TimeScale,
   LinearScale,
   PointElement,
   LineElement,
@@ -23,14 +23,18 @@ import {
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
 
+import 'chartjs-adapter-luxon'
+import zoomPlugin from 'chartjs-plugin-zoom'
+
 ChartJS.register(
-  CategoryScale,
+  TimeScale,
   LinearScale,
   PointElement,
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  zoomPlugin
 )
 
 const COLORS = [
@@ -63,6 +67,11 @@ export default {
     }
   },
   watch: {
+    /**
+     * Creates the charts for the selected tasks
+     * @param newTasks - array of task ids, all tasks must be of the same type
+     * @param oldTasks - unused
+     */
     async selectedTasks (newTasks, oldTasks) {
       this.loaded = false
       this.unsupported = false
@@ -79,8 +88,8 @@ export default {
       }
 
       // initialize the dataset for each signal
-      // labels can be different per task, but not per signal
-      this.labels = [] // we only need one for all charts
+      // we keep the same labels for all charts
+      this.labels = []
       this.chartDataSets = {} // we need an array per signal
       // table relating the task id -> the dataset index in the datasets array
       const taskidDatasetIndex = {}
@@ -91,39 +100,67 @@ export default {
 
         // initialise the chart options
         this.chartOptions[signal] = {
+          responsive: true,
+          // maintainAspectRatio: false,
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                minUnit: 'minute',
+                // Luxon format string
+                tooltipFormat: 'yyyy-MM-dd HH:mm:ss'
+              },
+              title: {
+                display: true,
+                text: 'time'
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'value'
+              }
+            }
+          },
           plugins: {
             title: {
               display: true,
-              text: signal // TODO: print something nicer
+              text: signal,
+              color: '#459399',
+              font: {
+                size: 16
+              }
             }
           }
-          // responsive: true
         }
       }
       const resp = await API.getTasksResults(studykey, this.userKey, newTasks.value.ids)
 
+      function findDateInArray (array, value) {
+        return array.findIndex(item => { return item.getTime() === value.getTime() })
+      }
+
       // for each task, populate the labels first
       for (const taskRes of resp) {
         if (!taskRes.discarded) {
-          let date = ''
           if (taskType === 'jstyle') {
             // special case for jstyle
             for (const dailySummary of taskRes.summary.activitySummary) {
               const day = dailySummary.date.slice(0, 10)
+              const date = new Date(day)
               // add the label (date) if not already present
-              if (this.labels.indexOf(day) === -1) {
-                // console.log('day from jstyle', day, dailySummary)
-                this.labels.push(day)
+              if (findDateInArray(this.labels, date) === -1) {
+                this.labels.push(date)
               }
             }
           } else {
-            if (taskRes.summary.completedTS) date = taskRes.summary.completedTS.slice(0, 10)
-            else date = taskRes.createdTS.slice(0, 10)
+            let date
+            if (taskRes.summary.completedTS) date = new Date(taskRes.summary.completedTS)
+            else date = new Date(taskRes.createdTS)
             // add the date to the results, so we don't need to recalcuate it later
             taskRes.date = date
             // add the label (date) if not already present
-            if (this.labels.indexOf(date) === -1) {
-              // console.log('day from task', date)
+            if (findDateInArray(this.labels, date) === -1) {
               this.labels.push(date)
             }
           }
@@ -177,8 +214,11 @@ export default {
             if (taskType === 'jstyle') {
               // special case for jstyle
               for (const dailySummary of taskRes.summary.activitySummary) {
-                const day = dailySummary.date.slice(0, 10)
-                const Idx = this.labels.indexOf(day)
+                const day = new Date(dailySummary.date.slice(0, 10))
+                // find index in labels
+                const Idx = findDateInArray(this.labels, day)
+                // get the value of the signal
+                // we sum up the values if there are multiple entries for the same day
                 const value = signal.split('.').reduce((p, c) => p?.[c], dailySummary)
                 let previous = this.chartDataSets[signal][dataSetIndex].data[Idx]
                 if (!previous) previous = 0
@@ -186,7 +226,7 @@ export default {
               }
             } else {
               // index of the datapoint with respect to its date
-              const Idx = this.labels.indexOf(taskRes.date)
+              const Idx = findDateInArray(this.labels, taskRes.date)
               const value = signal.split('.').reduce((p, c) => p?.[c], taskRes.summary)
               this.chartDataSets[signal][dataSetIndex].data[Idx] = value
             }
