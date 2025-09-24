@@ -64,13 +64,15 @@ import {
   Legend,
   LinearScale,
   PointElement,
+  LineElement,
   TimeScale
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
 import 'chartjs-adapter-luxon'
 import zoomPlugin from 'chartjs-plugin-zoom'
+import annotationPlugin from 'chartjs-plugin-annotation'
 
-ChartJS.register(Title, LinearScale, PointElement, Tooltip, Legend, TimeScale, zoomPlugin)
+ChartJS.register(Title, LinearScale, PointElement, LineElement, Tooltip, Legend, TimeScale, zoomPlugin, annotationPlugin)
 
 export default {
   props: ['taskResult', 'taskName'],
@@ -211,6 +213,11 @@ export default {
                 this.$refs.timeChart.chart.update()
               }
             }
+          },
+          annotation: {
+            annotations: {
+              // to be added dynamically
+            }
           }
         }
       }
@@ -321,20 +328,30 @@ export default {
         lineTension: 0
       }
 
+      const dateToDaryString = (d) => {
+        console.log('DATE', d)
+        return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate()
+      }
+
       const stepsData = []
+      const days = []
       for (const item of taskData.activity) {
         if (item.detailSteps && item.detailSteps.length > 0) {
+          const date = new Date(item.date)
+          const dayString = dateToDaryString(date)
+          // add the annotation if not already present
+          if (!days.includes(dayString)) days.push(dayString)
           item.detailSteps.forEach((detail, idx) => {
             if (detail > 0) {
               stepsData.push({
-                x: new Date(new Date(item.date).getTime() - (idx * 60000)),
+                x: new Date(date.getTime() - (idx * 60000)),
                 y: detail
               })
             }
           })
         } else {
           stepsData.push({
-            x: new Date(item.date),
+            x: date,
             y: item.steps / 10
           })
         }
@@ -348,6 +365,25 @@ export default {
         borderWidth: 0,
         pointRadius: 1,
         lineTension: 0
+      }
+
+      days.sort()
+      // set a line annotation for each day
+      // skip first day
+      for (let i = 1; i < days.length; i++) {
+        const day = days[i]
+        this.timeChartOptions.plugins.annotation.annotations[`line_${day}`] = {
+          type: 'line',
+          xMin: new Date(day),
+          xMax: new Date(day),
+          borderColor: 'blue',
+          borderWidth: 2,
+          label: {
+            content: day,
+            display: true,
+            position: 'center'
+          }
+        }
       }
     },
 
