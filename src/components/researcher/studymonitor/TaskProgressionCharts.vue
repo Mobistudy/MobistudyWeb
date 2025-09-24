@@ -1,6 +1,6 @@
 <template>
   <div v-if="loaded">
-    <Line v-for="(dataset, signal) of chartDataSets" :key="signal" :data="{ labels, datasets: dataset }"
+    <Scatter v-for="(dataset, signal) of chartDataSets" :key="signal" :data="{ labels, datasets: dataset }"
       :options="chartOptions[signal]" />
   </div>
   <h5 v-if="unsupported" style="q-mt-md">Task type currently unsupported</h5>
@@ -9,19 +9,18 @@
 <script>
 import API from '@shared/API.js'
 import { bestLocale } from '@mixins/bestLocale'
-import { taskTypeToString } from '@i18n/utils'
+import { taskTypeToString, signalToString, signalToUnitString } from '@i18n/utils'
 
 import {
   Chart as ChartJS,
   TimeScale,
   LinearScale,
   PointElement,
-  LineElement,
   Title,
   Tooltip,
   Legend
 } from 'chart.js'
-import { Line } from 'vue-chartjs'
+import { Scatter } from 'vue-chartjs'
 
 import 'chartjs-adapter-luxon'
 import zoomPlugin from 'chartjs-plugin-zoom'
@@ -30,7 +29,6 @@ ChartJS.register(
   TimeScale,
   LinearScale,
   PointElement,
-  LineElement,
   Title,
   Tooltip,
   Legend,
@@ -55,7 +53,7 @@ export default {
   mixins: [bestLocale],
   components: {
     // eslint-disable-next-line vue/no-reserved-component-names
-    Line
+    Scatter
   },
   data () {
     return {
@@ -118,18 +116,22 @@ export default {
             y: {
               title: {
                 display: true,
-                text: 'value'
+                text: signalToUnitString(signal)
               }
             }
           },
           plugins: {
             title: {
               display: true,
-              text: signal,
+              text: signalToString(signal),
               color: '#459399',
               font: {
                 size: 16
               }
+            },
+            legend: {
+              display: newTasks.length > 1,
+              position: 'top'
             }
           }
         }
@@ -146,8 +148,7 @@ export default {
           if (taskType === 'jstyle') {
             // special case for jstyle
             for (const dailySummary of taskRes.summary.activitySummary) {
-              const day = dailySummary.date.slice(0, 10)
-              const date = new Date(day)
+              const date = new Date(dailySummary.date)
               // add the label (date) if not already present
               if (findDateInArray(this.labels, date) === -1) {
                 this.labels.push(date)
@@ -214,7 +215,7 @@ export default {
             if (taskType === 'jstyle') {
               // special case for jstyle
               for (const dailySummary of taskRes.summary.activitySummary) {
-                const day = new Date(dailySummary.date.slice(0, 10))
+                const day = new Date(dailySummary.date)
                 // find index in labels
                 const Idx = findDateInArray(this.labels, day)
                 // get the value of the signal
