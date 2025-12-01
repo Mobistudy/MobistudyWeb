@@ -19,6 +19,8 @@ Install all dependencies with `npm install`.
 To start the interface, run `npm run dev` or, if you have installed the quasar cli, `quasar dev`.
 You will need the MobistudyAPI running in parallel (see MobistudyAPI README).
 
+Be aware that in development mode, Quasar will route calls to the API to localhost:3000. Remember to set the port number of the API accordingly.
+
 ## Test
 
 ```bash

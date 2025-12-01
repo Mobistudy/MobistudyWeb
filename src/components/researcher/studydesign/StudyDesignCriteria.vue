@@ -110,7 +110,7 @@
           </div>
           <div class="col q-pl-sm">
             <q-select ref="diseasesSelect" v-model="diseasesVue" use-input use-chips multiple :options="diseaseOptions"
-              input-debounce="500" @filter="searchDisease" @input="clearDiseasesFilter">
+              input-debounce="500" @filter="searchDisease" @add="clearDiseasesFilter">
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -138,7 +138,7 @@
           </div>
           <div class="col q-pl-sm">
             <q-select ref="medsSelect" v-model="medsVue" use-input use-chips multiple :options="medsOptions"
-              input-debounce="500" @filter="searchMeds" @input="clearMedsFilter">
+              input-debounce="500" @filter="searchMeds" @add="clearMedsFilter">
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey"> No medications found </q-item-section>
@@ -263,6 +263,7 @@ export default {
     // these are used to map label and value to term and conceptId
     diseasesVue: {
       get: function () {
+        console.log('Getting diseasesVue')
         if (this.studyDesign.inclusionCriteria.diseases && this.studyDesign.inclusionCriteria.diseases.length) {
           return this.studyDesign.inclusionCriteria.diseases.map(x => {
             return {
@@ -274,6 +275,7 @@ export default {
         } else return []
       },
       set: function (diseasesOpts) {
+        console.log('Setting diseasesVue')
         this.studyDesign.inclusionCriteria.diseases = diseasesOpts.map(x => {
           return {
             term: x.label,
@@ -311,7 +313,7 @@ export default {
       this.$emit('update:modelValue', this.studyDesign)
     },
     async searchDisease (diseaseDescription, update, abort) {
-      if (diseaseDescription.length < 2) {
+      if (diseaseDescription.length < 3) {
         abort()
         return
       }
@@ -334,7 +336,7 @@ export default {
       } else abort()
     },
     async searchMeds (medDescription, update, abort) {
-      if (medDescription.length < 2) {
+      if (medDescription.length < 3) {
         abort()
         return
       }
