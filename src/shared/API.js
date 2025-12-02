@@ -277,6 +277,21 @@ export default {
     const resp = await axios.get(BASE_URL + '/tasksResults', newOpts)
     return resp.data
   },
+  // Task Results Indicators
+  async getTaskResultsIndicators (studyKey, userKey, taskIds, producer, offset, count) {
+    // must include param: studyKey, userKey, optional as query: taskIds (comma separated), producer, offset, count
+    // :studyKey/:userKey/
+    const queryParams = {
+      taskIds,
+      producer,
+      offset,
+      count
+    }
+    const newOpts = { ...axiosConfig, ...{ params: queryParams } }
+    console.log('Fetching task results indicators with options:', newOpts)
+    const resp = await axios.get(BASE_URL + `/taskResultsIndicators/${studyKey}/${userKey}`, newOpts)
+    return resp.data
+  },
   async getTaskAttachment (studyKey, userKey, taskId, fileName) {
     // :studyKey/:userKey/:taskId/:fileName
     const URL = BASE_URL + `/tasksResults/attachments/${studyKey}/${userKey}/${taskId}/${fileName}`

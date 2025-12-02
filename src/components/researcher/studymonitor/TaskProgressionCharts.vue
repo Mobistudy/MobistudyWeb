@@ -136,25 +136,67 @@ export default {
           }
         }
       }
-      const resp = await API.getTasksResults(studykey, this.userKey, newTasks.value.ids)
 
-      function findDateInArray (array, value) {
-        return array.findIndex(item => { return item.getTime() === value.getTime() })
-      }
+      // get indicators to show, this depends on the task type
+      if (taskType === 'jstyle') {
+        // retrieve the indicators
+        // studyKey, userKey, taskIds, producer, offset, count
+        const dailyActivityIndicators = await API.getTaskResultsIndicators(studykey, this.userKey, newTasks.value.ids, 'jstyle-activity-daily-stats')
+        console.log('Retrieved jstyle daily activity indicators:', dailyActivityIndicators)
+        if (!dailyActivityIndicators || dailyActivityIndicators.length === 0) {
+          this.loaded = true
+          return
+        }
+        // sort by date ascending
+        dailyActivityIndicators.sort((a, b) => { return (new Date(a.indicatorsDate) - new Date(b.indicatorsDate)) })
 
-      // for each task, populate the labels first
-      for (const taskRes of resp) {
-        if (!taskRes.discarded) {
-          if (taskType === 'jstyle') {
-            // special case for jstyle
-            for (const dailySummary of taskRes.summary.activitySummary) {
-              const date = new Date(dailySummary.date)
-              // add the label (date) if not already present
-              if (findDateInArray(this.labels, date) === -1) {
-                this.labels.push(date)
+        // jstyle indicators can be associated to multiple task ids, but it's meaningless to show multiple times the same datapoint
+        // so we will just pick one task id to associate the datapoint to
+        const taskId = newTasks.value.ids[0]
+
+        // now populate the datasets
+        // this.chartDataSets[signal][dataSetIndex] contains all the datapoints for that task/signal
+        // for example, for signal 'steps', dataSetIndex 0 will contain the datapoints for the first task id
+        for (const indicatorSet of dailyActivityIndicators) {
+          // for each indicator, we need to add its date and the values to the datasets
+          const date = new Date(indicatorSet.indicatorsDate)
+          console.log('Adding datapoint for date', date)
+          this.labels.push(date)
+          for (const signal of signals) {
+            // add the datapoint inside the dataset
+            if (indicatorSet.indicators[signal]) {
+              // as there is only one task id, the dataset index is always 0
+              const dataSetIndex = 0
+
+              // initialise the dataset, there is one per signal
+              if (!this.chartDataSets[signal][dataSetIndex]) {
+                this.chartDataSets[signal][dataSetIndex] = {
+                  taskId,
+                  label: 'JStyle Activity Monitor',
+                  borderColor: COLORS[taskId % COLORS.length],
+                  backgroundColor: COLORS[taskId % COLORS.length],
+                  showLine: false,
+                  data: []
+                }
               }
+
+              // add the signal to the dataset
+              this.chartDataSets[signal][dataSetIndex].data.push(indicatorSet.indicators[signal])
             }
-          } else {
+          }
+        }
+      } else {
+        // other task types, use task results summaries to populate the charts
+        const resp = await API.getTasksResults(studykey, this.userKey, newTasks.value.ids)
+
+        // helper function to find a date in an array of dates
+        function findDateInArray (array, value) {
+          return array.findIndex(item => { return item.getTime() === value.getTime() })
+        }
+
+        // for each task, populate the labels first (the dates)
+        for (const taskRes of resp) {
+          if (!taskRes.discarded) {
             let date
             if (taskRes.summary.completedTS) date = new Date(taskRes.summary.completedTS)
             else date = new Date(taskRes.createdTS)
@@ -166,74 +208,61 @@ export default {
             }
           }
         }
-      }
 
-      // results are sorted ascending from API, however each task comes with different dates, so we need to re-sort
-      this.labels.sort()
+        // results are sorted ascending from API, however each task comes with different dates, so we need to re-sort
+        this.labels.sort()
+        // now re-iterate for the datapoints
+        for (const taskRes of resp) {
+          if (!taskRes.discarded) {
+            const taskId = taskRes.taskId
 
-      // now re-iterate for the datapoints
-      for (const taskRes of resp) {
-        if (!taskRes.discarded) {
-          const taskId = taskRes.taskId
-
-          // get the name of the task
-          let taskName = 'Unknown task'
-          const task = this.studyDescription.tasks.find(t => t.id === parseInt(taskId))
-          if (task.customTitle) {
-            taskName = this.getBestLocale(task.customTitle)
-          } else {
-            if (taskType === 'form' && task.formName) taskName = this.getBestLocale(task.formName)
-            else taskName = taskTypeToString(taskType)
-          }
-
-          // per each "signal" build up an array of datasets, one per taskId
-          // each dataset contains all the datapoints for that task/signal
-          for (const signal of signals) {
-            // get the index this task id has in the sequence of datasets:
-            let dataSetIndex
-            if (taskId in taskidDatasetIndex) {
-              dataSetIndex = taskidDatasetIndex[taskId]
+            // get the name of the task
+            let taskName = 'Unknown task'
+            const task = this.studyDescription.tasks.find(t => t.id === parseInt(taskId))
+            if (task.customTitle) {
+              taskName = this.getBestLocale(task.customTitle)
             } else {
-              // this is a new task we are adding, the index will be the one after the last available one
-              dataSetIndex = this.chartDataSets[signal].length
-              taskidDatasetIndex[taskId] = dataSetIndex
+              if (taskType === 'form' && task.formName) taskName = this.getBestLocale(task.formName)
+              else taskName = taskTypeToString(taskType)
             }
 
-            // initialise the dataset, there is one per signal and task id
-            if (!this.chartDataSets[signal][dataSetIndex]) {
-              this.chartDataSets[signal][dataSetIndex] = {
-                taskId,
-                label: taskName,
-                borderColor: COLORS[taskId % COLORS.length],
-                backgroundColor: COLORS[taskId % COLORS.length],
-                showLine: false,
-                data: []
+            // per each "signal" build up an array of datasets, one per taskId
+            // each dataset contains all the datapoints for that task/signal
+            for (const signal of signals) {
+              // get the index this task id has in the sequence of datasets:
+              let dataSetIndex
+              if (taskId in taskidDatasetIndex) {
+                dataSetIndex = taskidDatasetIndex[taskId]
+              } else {
+                // this is a new task we are adding, the index will be the one after the last available one
+                dataSetIndex = this.chartDataSets[signal].length
+                taskidDatasetIndex[taskId] = dataSetIndex
               }
-            }
 
-            // add the datapoint inside the dataset at the position of the date
-            if (taskType === 'jstyle') {
-              // special case for jstyle
-              for (const dailySummary of taskRes.summary.activitySummary) {
-                const day = new Date(dailySummary.date)
-                // find index in labels
-                const Idx = findDateInArray(this.labels, day)
-                // get the value of the signal
-                // we sum up the values if there are multiple entries for the same day
-                const value = signal.split('.').reduce((p, c) => p?.[c], dailySummary)
-                let previous = this.chartDataSets[signal][dataSetIndex].data[Idx]
-                if (!previous) previous = 0
-                this.chartDataSets[signal][dataSetIndex].data[Idx] = previous + value
+              // initialise the dataset, there is one per signal and task id
+              if (!this.chartDataSets[signal][dataSetIndex]) {
+                this.chartDataSets[signal][dataSetIndex] = {
+                  taskId,
+                  label: taskName,
+                  borderColor: COLORS[taskId % COLORS.length],
+                  backgroundColor: COLORS[taskId % COLORS.length],
+                  showLine: false,
+                  data: []
+                }
               }
-            } else {
-              // index of the datapoint with respect to its date
-              const Idx = findDateInArray(this.labels, taskRes.date)
-              const value = signal.split('.').reduce((p, c) => p?.[c], taskRes.summary)
-              this.chartDataSets[signal][dataSetIndex].data[Idx] = value
+
+              // add the datapoint inside the dataset at the position of the date
+              {
+                // index of the datapoint with respect to its date
+                const Idx = findDateInArray(this.labels, taskRes.date)
+                const value = signal.split('.').reduce((p, c) => p?.[c], taskRes.summary)
+                this.chartDataSets[signal][dataSetIndex].data[Idx] = value
+              }
             }
           }
         }
       }
+
       this.loaded = true
     }
   },

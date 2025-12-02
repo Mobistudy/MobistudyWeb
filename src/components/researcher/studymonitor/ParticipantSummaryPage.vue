@@ -54,77 +54,6 @@
 
     </div>
 
-    <!-- <q-dialog v-model="taskDataModal" persistent transition-show="flip-down" transition-hide="flip-up">
-      <q-card style="min-width: 400px; max-width: 900px;">
-        <q-bar class="my-q-bar bg-primary">
-          <div class="text-h6 text-white text-bold text-uppercase">
-            <span>{{ taskDataType }}</span>
-          </div>
-          <q-space />
-          <q-btn dense flat icon="close" v-close-popup class="material-symbols-outlined">
-            <q-tooltip class="bg-secondary text-white">Close</q-tooltip>
-          </q-btn>
-        </q-bar>
-        <q-card-section>
-
-          <div v-if="taskDataType === 'fingerTapping'">
-            <FingerTappingDrawingVisualization :taskProps="taskProps" />
-          </div>
-          <div v-if="taskDataType === 'holdPhone'">
-            <HoldPhoneVisualization :taskProps="taskProps" />
-          </div>
-          <div v-if="taskDataType === 'drawing'">
-            <DrawingVisualization :taskProps="taskProps" />
-          </div>
-          <div v-if="taskDataType === 'tugt'">
-            <TugtVisualization :taskProps="taskProps" />
-          </div>
-          <div v-if="taskDataType === 'vocalization'">
-            <VocalizationVisualization :taskProps="taskProps" />
-          </div>
-          <div v-if="taskDataType === 'peakFlow'">
-            <PeakFlowVisualization :taskProps="taskProps" />
-          </div>
-          <div v-if="taskDataType === 'position'">
-            <PositionVisualization :taskProps="taskProps" />
-          </div>
-          <div v-if="taskDataType === 'miband'">
-            <MibandVisualization :taskProps="taskProps" />
-          </div>
-          <div v-if="taskDataType === 'po60'">
-            <Po60Visualization :taskProps="taskProps" />
-          </div>
-          <div v-if="taskDataType === 'miband3'">
-            <MiBand3Visualization :studyKey="studyKey" :userKey="userKey" :taskDataContent="taskDataContent" />
-          </div>
-          <div v-if="taskDataType === 'smwt'">
-            <div>
-              <p class="q-title text-bold">Steps</p>
-              <p>{{ smwtSteps }}</p>
-              <p class="q-title text-bold">Distance</p>
-              <p>{{ smwtDistance }} m</p>
-            </div>
-            <div>
-              <q-option-group v-model="panel" inline :options="[
-                { label: 'Map', value: 'map' },
-                { label: 'Chart', value: 'chart' }
-              ]" />
-              <q-tab-panels v-model="panel" animated class="shadow-2 rounded-borders">
-                <q-tab-panel name="map">
-                  <SmwtMapVisualization :studyKey="studyKey" :userKey="userKey" :taskDataContent="taskDataContent">
-                  </SmwtMapVisualization>
-                </q-tab-panel>
-                <q-tab-panel name="chart">
-                  <SmwtChartVisualization :studyKey="studyKey" :userKey="userKey" :taskDataContent="taskDataContent">
-                  </SmwtChartVisualization>
-                </q-tab-panel>
-              </q-tab-panels>
-            </div>
-          </div>
-        </q-card-section>
-      </q-card>
-    </q-dialog> -->
-
   </q-page>
 </template>
 
@@ -166,58 +95,6 @@ export default {
       // for progression charts:
       progrTaskSelectOptions: [],
       progrSelectedTasks: null
-
-      // locale: this.$i18n.locale,
-      // panel: ref('map'),
-      // current: 0,
-      // direction: 1,
-      // transitionName: 'fade',
-      // slides: [],
-      // tasksToLoad: [],
-      // currentIndex: 0,
-      // isImageVisible: false,
-      // fullscreen: ref(false),
-      // activeTab: 'tab-chart',
-      // taskDataType: undefined,
-      // taskDataContent: undefined,
-      // taskDataModal: false,
-      // taskCompletedDate: undefined,
-      // taskProps: null,
-      // smwtDistance: undefined,
-      // smwtSteps: undefined,
-      // chartLoaded: false,
-      // chartData: {
-      //   labels: [],
-      //   datasets: [
-      //     {
-      //       label: 'Pain',
-      //       backgroundColor: 'rgba(255, 0, 0, 0.5)',
-      //       data: []
-      //     },
-      //     {
-      //       label: 'Temperature',
-      //       backgroundColor: 'rgba(0, 0, 255, 0.5)',
-      //       data: []
-      //     }
-      //   ]
-      // },
-      // chartOptions: {
-      //   responsive: true,
-      //   scales: {
-      //     x: {
-      //       title: {
-      //         display: true,
-      //         text: 'Date'
-      //       }
-      //     },
-      //     y: {
-      //       title: {
-      //         display: true,
-      //         text: 'Value'
-      //       }
-      //     }
-      //   }
-      // }
     }
   },
   async created () {
