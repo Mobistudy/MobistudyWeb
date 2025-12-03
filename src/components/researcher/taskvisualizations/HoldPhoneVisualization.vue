@@ -1165,37 +1165,44 @@ export default {
     getMotionObjects (data) {
       return JSON.parse(JSON.stringify(data.motion))
     },
-    getAccG (axis, data) {
-      const arr = []
-      const accGObjArr = this.getMotionObjects(data).map(obj => obj.accG)
-      for (let i = 0; i < accGObjArr.length; i++) {
-        arr.push({
-          x: i,
-          y: Math.sqrt((accGObjArr[i][axis] * accGObjArr[i][axis]))
-        })
+    calcMS (obj) {
+      console.log(obj)
+      if (this.lastMS !== null) {
+        const diffMS = obj.startedTS - this.lastMS
+        this.lastMS = obj.startedTS
+        this.MS = this.MS + diffMS
+        return this.MS
+      } else {
+        this.lastMS = obj.startedTS
+        this.MS = 0
+        return this.MS
       }
-      return arr
+    },
+    getAccG (axis, data) {
+      const motionObj = this.getMotionObjects(data)
+      const accGArr = motionObj.map(obj => {
+        const accGObj = {
+          x: obj.msFromStart,
+          y: Math.sqrt((obj.accG[axis] * obj.accG[axis]))
+        }
+        return accGObj
+      })
+      return accGArr
     },
     getXYZ (data) {
-      const vectors = []
-      const arr = this.getMotionObjects(data).map(obj => obj.accG)
-      for (let i = 0; i < arr.length; i++) {
-        vectors.push({
-          x: i,
-          y: Math.sqrt((arr[i].x * arr[i].x), (arr[i].y * arr[i].y), (arr[i].z * arr[i].z))
-        })
-      }
-      return vectors
-    },
-    getTotalTime () {
-      const totalTime = this.getMotionObjects().reverse()[0].msFromStart / 1000
-      const roundTotalTime = (Math.round(totalTime * 100) / 100).toFixed(2)
-      return roundTotalTime
+      const motionObj = this.getMotionObjects(data)
+      const accGArr = motionObj.map(obj => {
+        const accGObj = {
+          x: obj.msFromStart,
+          y: Math.sqrt((obj.accG.x * obj.accG.x), (obj.accG.y * obj.accG.y), (obj.accG.z * obj.accG.z))
+        }
+        return accGObj
+      })
+      return accGArr
     }
   }
 }
 </script>
-
 <style>
   .row {
     display:flex;

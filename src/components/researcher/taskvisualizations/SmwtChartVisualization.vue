@@ -5,20 +5,13 @@
         {{ $t('smwt.lineChart') }}
       </div>
       <div class="q-pa-md">
-        <canvas
-          style="margin: 0 auto; padding-right: 2rem; display: inline;"
-          height="320"
-          ref="lineChart"
-        />
+        <canvas style="margin: 0 auto; padding-right: 2rem; display: inline;" height="320" ref="lineChart" />
       </div>
     </div>
 
     <q-inner-loading :showing="isDownloading">
-      <div class="mobitxt2">{{ $t('miband3.dataDownload') }}</div>
-      <q-spinner-dots
-        size="50px"
-        color="primary"
-      />
+      <div class="mobitxt2">{{ $t('smwt.dataDownload') }}</div>
+      <q-spinner-dots size="50px" color="primary" />
     </q-inner-loading>
   </div>
 </template>
@@ -287,7 +280,6 @@ export default {
 }
 </script>
 <style scoped>
-
 #main {
   width: 50vw;
   min-height: 60vh;

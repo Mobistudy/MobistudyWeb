@@ -1,49 +1,47 @@
 <template>
-  <div v-if="loading">
-    <q-spinner-gears size="80px" color="primary" />
-  </div>
-  <div v-else-if="data">
-    <div>
-      <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(this.taskProps.row.summary.completedTS) }}</p>
+  <div id="container">
+    <div v-if="loading">
+      <q-spinner-gears size="80px" color="primary" />
     </div>
-    <div v-if="data" id="map"></div>
-    <q-list id="position_accordion" bordered class="rounded-borders" v-for="(content, key) in this.data.environment"
-      :key="key">
-      <q-expansion-item expand-separator :label="key.toUpperCase()">
-        <q-card>
-          <q-card-section>
-            <table id="position_table">
-              <tbody>
-                <tr>
-                  <td v-if="key === 'weather'">
-                    <q-table :rows="getWeatherRows(content)" :columns="getWeatherColumns()" row-key="field" :dense="true"
-                      class="q-mt-md" :rows-per-page-options="[0]" :hide-pagination="true" />
-                  </td>
-                  <td v-if="key === 'pollution'">
-                    <q-table :rows="getPollutionRows(content)" :columns="getPollutionColumns()" row-key="field"
-                      :dense="true" class="q-mt-md" :rows-per-page-options="[0]" :hide-pagination="true" />
-                  </td>
-                  <td v-if="key === 'postcode'">
-                    <q-table :rows="getPostcodeRows(content)" :columns="getPostcodeColumns()" row-key="field"
-                      :dense="true" class="q-mt-md" :rows-per-page-options="[0]" :hide-pagination="true" />
-                  </td>
-                  <td v-if="key === 'allergens'">
-                    <q-table :rows="getAllergensRows(content)" :columns="getAllergensColumns()" row-key="field"
-                      :dense="true" class="q-mt-md" :rows-per-page-options="[0]" :hide-pagination="true" />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </q-card-section>
-        </q-card>
-      </q-expansion-item>
-    </q-list>
+    <div v-else-if="data">
+      <div>
+        <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(this.taskProps.row.summary.completedTS) }}</p>
+      </div>
+        <div v-if="data" id="map"></div>
+        <q-list id="position_accordion" bordered class="rounded-borders" v-for="(content, key) in this.data.environment" :key="key">
+          <q-expansion-item expand-separator :label="key.toUpperCase()">
+            <q-card>
+              <q-card-section>
+                <table id="position_table">
+                    <tbody>
+                        <tr>
+                            <td v-if="key === 'weather'">
+                              <q-table :rows="getWeatherRows(content)" :columns="getWeatherColumns()" row-key="field" :dense="true" class="q-mt-md" :rows-per-page-options="[0]" :hide-pagination="true" />
+                            </td>
+                            <td v-if="key === 'pollution'">
+                              <q-table :rows="getPollutionRows(content)" :columns="getPollutionColumns()" row-key="field" :dense="true" class="q-mt-md" :rows-per-page-options="[0]" :hide-pagination="true" />
+                            </td>
+                            <td v-if="key === 'postcode'">
+                              <q-table :rows="getPostcodeRows(content)" :columns="getPostcodeColumns()" row-key="field" :dense="true" class="q-mt-md" :rows-per-page-options="[0]" :hide-pagination="true" />
+                            </td>
+                            <td v-if="key === 'allergens'">
+                              <q-table :rows="getAllergensRows(content)" :columns="getAllergensColumns()" row-key="field" :dense="true" class="q-mt-md" :rows-per-page-options="[0]" :hide-pagination="true" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+              </q-card-section>
+            </q-card>
+          </q-expansion-item>
+        </q-list>
+    </div>
+    <div v-else>
+        <q-alert color="negative" icon="report_problem">
+          Cannot retrieve the task content
+        </q-alert>
+    </div>
   </div>
-  <div v-else>
-    <q-alert color="negative" icon="report_problem">
-      Cannot retrieve the task content
-    </q-alert>
-  </div>
+
 </template>
 
 <script>
@@ -146,8 +144,7 @@ export default {
     getPostcodeRows (content) {
       return [
         { title: 'Postcode', data: content.postcode },
-        { title: 'Place', data: content.place },
-        { title: 'Country', data: content.country }
+        { title: 'County', data: content.county }
       ]
     },
     getAllergensColumns () {
@@ -193,7 +190,6 @@ export default {
   height: 400px;
   margin-bottom: 10px;
 }
-
 #position_table {
   display: flex;
   flex-direction: column;
@@ -201,12 +197,15 @@ export default {
   align-items: center;
   margin-right: 20px;
 }
-
 #position_accordion {
   display: flex;
   flex-direction: column;
   margin: auto;
 
   max-width: 350px;
+}
+#container {
+  padding-left: 40px;
+  padding-right: 40px;
 }
 </style>

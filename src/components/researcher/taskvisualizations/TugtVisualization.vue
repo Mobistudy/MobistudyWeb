@@ -1,24 +1,28 @@
 <template>
-  <div>
-    <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(this.taskProps.row.summary.completedTS) }}</p>
-  </div>
-  <div>
-    <p id="tugtTotalTime">Total time: {{ this.data && getTotalTime() }}</p>
-  </div>
-  <div>
-    <q-toggle @click=" this.data && handleFTToggleChange()" v-model="isACCombined">{{ isACCombined ? 'Module' : 'XYZ' }}</q-toggle>
-    <canvas id="tugtChart"></canvas>
-  </div>
+  <div id="container">
+    <div>
+      <p class="taskVisualizationHeader">Completed: {{ this.niceTimestamp(this.taskProps.row.summary.completedTS) }}</p>
+    </div>
+    <div>
+      <p id="tugtTotalTime">Total time: {{ this.data && getTotalTime() }}</p>
+    </div>
+    <div>
+      <q-toggle @click=" this.data && handleFTToggleChange()" v-model="isACCombined">{{ isACCombined ? 'Module' : 'XYZ'
+      }}</q-toggle>
+      <canvas id="tugtChart"></canvas>
+    </div>
     <div class="resetChart">
       <q-btn @click="tugtChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
     </div>
-  <div>
-    <q-toggle @click="this.data && handleRoterToggleChange()" v-model="isRCombined">{{ isRCombined ? 'Module' : 'XYZ' }}</q-toggle>
-    <canvas id="tugtRotarChart"></canvas>
-  </div>
+    <div>
+      <q-toggle @click="this.data && handleRoterToggleChange()" v-model="isRCombined">{{ isRCombined ? 'Module' : 'XYZ'
+      }}</q-toggle>
+      <canvas id="tugtRotarChart"></canvas>
+    </div>
     <div class="resetChart">
       <q-btn @click="tugtRotarChart.resetZoom()" class="reset_btn">Reset Zoom</q-btn>
     </div>
+  </div>
 </template>
 
 <script>
@@ -37,6 +41,8 @@ export default {
   data () {
     return {
       data: null,
+      lastMS: null,
+      MS: null,
       isACCombined: ref(true),
       isRCombined: ref(true)
     }
@@ -408,52 +414,61 @@ export default {
     getMotionObjects () {
       return JSON.parse(JSON.stringify(this.data.motion))
     },
-    getOrientationObjects () {
-      return JSON.parse(JSON.stringify(this.data.orientation))
+    calcMS (obj) {
+      if (this.lastMS !== null) {
+        const diffMS = obj.msFromStart - this.lastMS
+        this.lastMS = obj.msFromStart
+        this.MS = this.MS + diffMS
+        return this.MS
+      } else {
+        this.lastMS = obj.msFromStart
+        this.MS = 0
+        return this.MS
+      }
     },
     getAccG (axis) {
-      const accGArr = []
-      const accGObjArr = this.getMotionObjects().map(obj => obj.accG)
-      for (let i = 0; i < accGObjArr.length; i++) {
-        accGArr.push({
-          x: i,
-          y: Math.sqrt((accGObjArr[i][axis] * accGObjArr[i][axis]))
-        })
-      }
+      const motionObj = this.getMotionObjects()
+      const accGArr = motionObj.map(obj => {
+        const accGObj = {
+          x: this.calcMS(obj),
+          y: Math.sqrt((obj.accG[axis] * obj.accG[axis]))
+        }
+        return accGObj
+      })
       return accGArr
     },
     getXYZ () {
-      const vectors = []
-      const accGArr = this.getMotionObjects().map(obj => obj.accG)
-      for (let i = 0; i < accGArr.length; i++) {
-        vectors.push({
-          x: i,
-          y: Math.sqrt((accGArr[i].x * accGArr[i].x), (accGArr[i].y * accGArr[i].y), (accGArr[i].z * accGArr[i].z))
-        })
-      }
-      return vectors
+      const motionObj = this.getMotionObjects()
+      const accGArr = motionObj.map(obj => {
+        const accGObj = {
+          x: this.calcMS(obj),
+          y: Math.sqrt((obj.accG.x * obj.accG.x), (obj.accG.y * obj.accG.y), (obj.accG.z * obj.accG.z))
+        }
+        return accGObj
+      })
+      return accGArr
     },
     getAlphaBetaGamma (aBG) {
-      const alphaBetaGamma = []
-      const roterArr = this.getMotionObjects().map(obj => obj.rotRate)
-      for (let i = 0; i < roterArr.length; i++) {
-        alphaBetaGamma.push({
-          x: i,
-          y: Math.sqrt((roterArr[i][aBG] * roterArr[i][aBG]))
-        })
-      }
-      return alphaBetaGamma
+      const motionObj = this.getMotionObjects()
+      const accGArr = motionObj.map(obj => {
+        const accGObj = {
+          x: this.calcMS(obj),
+          y: Math.sqrt((obj.rotRate[aBG] * obj.rotRate[aBG]))
+        }
+        return accGObj
+      })
+      return accGArr
     },
     getRoter () {
-      const vectors = []
-      const roterArr = this.getMotionObjects().map(obj => obj.rotRate)
-      for (let i = 0; i < roterArr.length; i++) {
-        vectors.push({
-          x: i,
-          y: Math.sqrt((roterArr[i].alpha * roterArr[i].alpha), (roterArr[i].beta * roterArr[i].beta), (roterArr[i].gamma * roterArr[i].gamma))
-        })
-      }
-      return vectors
+      const motionObj = this.getMotionObjects()
+      const accGArr = motionObj.map(obj => {
+        const accGObj = {
+          x: this.calcMS(obj),
+          y: Math.sqrt((obj.rotRate.alpha * obj.rotRate.alpha), (obj.rotRate.beta * obj.rotRate.beta), (obj.rotRate.gamma * obj.rotRate.gamma))
+        }
+        return accGObj
+      })
+      return accGArr
     },
     getTotalTime () {
       const totalTime = this.getMotionObjects().reverse()[0].msFromStart / 1000
@@ -470,10 +485,17 @@ export default {
   font-weight: bold;
   color: #459399;
 }
+
 .reset_btn {
-  font-size: 12px; padding: 4px 8px
+  font-size: 12px;
+  padding: 4px 8px
 }
+
 #tugtTotalTime {
   text-align: center;
 }
-</style>
+
+#container {
+  padding-left: 70px;
+  padding-right: 70px;
+}</style>
