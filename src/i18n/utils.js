@@ -34,7 +34,9 @@ export function signalToString (signal) {
   } else if (signal === 'exerciseMinutes') {
     return 'Exercise Minutes'
   } else if (signal === 'distance') {
-    return 'Distance (meters)'
+    return 'Distance'
+  } else if (signal === 'sleepDurationMins') {
+    return 'Sleep Duration'
   }
   return signal.charAt(0).toUpperCase() + signal.slice(1)
 }
@@ -48,6 +50,8 @@ export function signalToUnitString (signal) {
     return 'minutes'
   } else if (signal === 'distance') {
     return 'meters'
+  } else if (signal === 'sleepDurationMins') {
+    return 'minutes'
   }
   return ''
 }
