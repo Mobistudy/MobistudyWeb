@@ -92,7 +92,7 @@ export default {
       // table relating the task id -> the dataset index in the datasets array
       const taskidDatasetIndex = {}
 
-      for (const signal of signals) {
+      const prepareForSignal = (signal) => {
         // initialise datasets arrays
         this.chartDataSets[signal] = []
 
@@ -105,8 +105,9 @@ export default {
               type: 'time',
               time: {
                 minUnit: 'minute',
+                unit: 'day',
                 // Luxon format string
-                tooltipFormat: 'yyyy-MM-dd HH:mm:ss'
+                tooltipFormat: 'DD T'
               },
               title: {
                 display: true,
@@ -137,18 +138,30 @@ export default {
         }
       }
 
+      for (const signal of signals) {
+        prepareForSignal(signal)
+      }
+
+      // helper function to find a date in an array of dates
+      function findDateInArray (array, value) {
+        return array.findIndex(item => { return item.getTime() === value.getTime() })
+      }
+
       // get indicators to show, this depends on the task type
       if (taskType === 'jstyle') {
         // retrieve the indicators
         // studyKey, userKey, taskIds, producer, offset, count
+        let jstyleIndicators = []
         const dailyActivityIndicators = await API.getTaskResultsIndicators(studykey, this.userKey, newTasks.value.ids, 'jstyle-activity-daily-stats')
-        console.log('Retrieved jstyle daily activity indicators:', dailyActivityIndicators)
-        if (!dailyActivityIndicators || dailyActivityIndicators.length === 0) {
+        jstyleIndicators = jstyleIndicators.concat(dailyActivityIndicators)
+        const dailySleepIndicators = await API.getTaskResultsIndicators(studykey, this.userKey, newTasks.value.ids, 'jstyle-sleep-daily-stats')
+        jstyleIndicators = jstyleIndicators.concat(dailySleepIndicators)
+        if (!jstyleIndicators || jstyleIndicators.length === 0) {
           this.loaded = true
           return
         }
         // sort by date ascending
-        dailyActivityIndicators.sort((a, b) => { return (new Date(a.indicatorsDate) - new Date(b.indicatorsDate)) })
+        jstyleIndicators.sort((a, b) => { return (new Date(a.indicatorsDate) - new Date(b.indicatorsDate)) })
 
         // jstyle indicators can be associated to multiple task ids, but it's meaningless to show multiple times the same datapoint
         // so we will just pick one task id to associate the datapoint to
@@ -157,11 +170,12 @@ export default {
         // now populate the datasets
         // this.chartDataSets[signal][dataSetIndex] contains all the datapoints for that task/signal
         // for example, for signal 'steps', dataSetIndex 0 will contain the datapoints for the first task id
-        for (const indicatorSet of dailyActivityIndicators) {
+        for (const indicatorSet of jstyleIndicators) {
           // for each indicator, we need to add its date and the values to the datasets
           const date = new Date(indicatorSet.indicatorsDate)
-          console.log('Adding datapoint for date', date)
-          this.labels.push(date)
+          if (findDateInArray(this.labels, date) === -1) {
+            this.labels.push(date)
+          }
           for (const signal of signals) {
             // add the datapoint inside the dataset
             if (indicatorSet.indicators[signal]) {
@@ -189,14 +203,24 @@ export default {
         // other task types, use task results summaries to populate the charts
         const resp = await API.getTasksResults(studykey, this.userKey, newTasks.value.ids)
 
-        // helper function to find a date in an array of dates
-        function findDateInArray (array, value) {
-          return array.findIndex(item => { return item.getTime() === value.getTime() })
-        }
-
         // for each task, populate the labels first (the dates)
         for (const taskRes of resp) {
           if (!taskRes.discarded) {
+            // if the task is a form, take the summary properties as signals to show
+            if (taskType === 'form') {
+              for (const prop in taskRes.summary) {
+                if (!signals.includes(prop) &&
+                  typeof taskRes.summary[prop] === 'number' &&
+                  prop !== 'answered' &&
+                  prop !== 'asked' &&
+                  prop !== 'startedTS' &&
+                  prop !== 'completedTS') {
+                  signals.push(prop)
+                  prepareForSignal(prop)
+                }
+              }
+            }
+
             let date
             if (taskRes.summary.completedTS) date = new Date(taskRes.summary.completedTS)
             else date = new Date(taskRes.createdTS)
@@ -207,6 +231,12 @@ export default {
               this.labels.push(date)
             }
           }
+        }
+
+        // at this stage all signals are identified, otherwise, set it to unsupported
+        if (signals.length === 0) {
+          this.unsupported = true
+          return
         }
 
         // results are sorted ascending from API, however each task comes with different dates, so we need to re-sort
@@ -274,6 +304,7 @@ export default {
       return aDate.toISOString().split('T')[0]
     },
     getSummarySignalsNames (taskType) {
+      if (taskType === 'form') return []
       if (taskType === 'tugt') return ['durationMs']
       if (taskType === 'fingerTapping') return ['tappingCount']
       if (taskType === 'drawing') return ['totalVariabilitySquare', 'totalVariabilitySpiral']
@@ -281,7 +312,7 @@ export default {
       if (taskType === 'peakFlow') return ['pefMax']
       if (taskType === 'po60') return ['spo2', 'hr']
       if (taskType === 'smwt') return ['distance']
-      if (taskType === 'jstyle') return ['steps', 'activeMinutes', 'exerciseMinutes']
+      if (taskType === 'jstyle') return ['steps', 'activeMinutes', 'exerciseMinutes', 'sleepDurationMins']
     }
   }
 }
