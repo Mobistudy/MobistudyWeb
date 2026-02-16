@@ -1,7 +1,9 @@
 <template>
   <div v-if="loaded">
-    <Scatter v-for="(dataset, signal) of chartDataSets" :key="signal" :data="{ labels, datasets: dataset }"
-      :options="chartOptions[signal]" />
+    <div v-for="(dataset, signal) of chartDataSets" :key="signal">
+      <p>{{ chartOptions[signal].description }}</p>
+      <Scatter :data="{ labels, datasets: dataset }" :options="chartOptions[signal]" />
+    </div>
   </div>
   <h5 v-if="unsupported" style="q-mt-md">Task type currently unsupported</h5>
 </template>
@@ -9,12 +11,13 @@
 <script>
 import API from '@shared/API.js'
 import { bestLocale } from '@mixins/bestLocale'
-import { taskTypeToString, signalToString, signalToUnitString } from '@i18n/utils'
+import { taskTypeToString } from '@i18n/utils'
 
 import {
   Chart as ChartJS,
   TimeScale,
   LinearScale,
+  CategoryScale,
   PointElement,
   Title,
   Tooltip,
@@ -28,6 +31,7 @@ import zoomPlugin from 'chartjs-plugin-zoom'
 ChartJS.register(
   TimeScale,
   LinearScale,
+  CategoryScale,
   PointElement,
   Title,
   Tooltip,
@@ -79,7 +83,17 @@ export default {
       // we can just take the first
       const taskDescr = this.studyDescription.tasks.find(t => t.id === parseInt(newTasks.value.ids[0]))
       const taskType = taskDescr.type
-      const signals = this.getSummarySignalsNames(taskType)
+      let formDef
+      if (taskType === 'form') {
+        // get the form definition to know which signals to show
+        formDef = await API.getForm(taskDescr.formKey)
+        if (!formDef) {
+          this.unsupported = true
+          return
+        }
+      }
+      const signals = this.getSummarySignalsNames(taskType, formDef)
+
       if (!signals) {
         this.unsupported = true
         return
@@ -92,7 +106,7 @@ export default {
       // table relating the task id -> the dataset index in the datasets array
       const taskidDatasetIndex = {}
 
-      const prepareForSignal = (signal) => {
+      for (const signal of signals) {
         // initialise datasets arrays
         this.chartDataSets[signal] = []
 
@@ -117,14 +131,14 @@ export default {
             y: {
               title: {
                 display: true,
-                text: signalToUnitString(signal)
+                text: this.signalToUnitString(signal)
               }
             }
           },
           plugins: {
             title: {
               display: true,
-              text: signalToString(signal),
+              text: this.signalToString(signal, formDef),
               color: '#459399',
               font: {
                 size: 16
@@ -136,10 +150,25 @@ export default {
             }
           }
         }
-      }
+        this.chartOptions[signal].description = this.signalToDescriptionString(signal, formDef)
 
-      for (const signal of signals) {
-        prepareForSignal(signal)
+        // if the form definition specifies that the signal type is "category"
+        if (formDef && formDef.summaryFunctionDescription &&
+          signal in formDef.summaryFunctionDescription &&
+          formDef.summaryFunctionDescription[signal].type === 'category') {
+          // add the categories to the chart options
+          this.chartOptions[signal].categories = formDef.summaryFunctionDescription[signal].categories
+          // add category options to the y axis
+          this.chartOptions[signal].scales.y = {
+            type: 'category',
+            offset: true,
+            labels: Object.values(formDef.summaryFunctionDescription[signal].categories).map((entry) => this.getBestLocale(entry.name)),
+            title: {
+              display: true,
+              text: this.signalToUnitString(signal)
+            }
+          }
+        }
       }
 
       // helper function to find a date in an array of dates
@@ -206,21 +235,6 @@ export default {
         // for each task, populate the labels first (the dates)
         for (const taskRes of resp) {
           if (!taskRes.discarded) {
-            // if the task is a form, take the summary properties as signals to show
-            if (taskType === 'form') {
-              for (const prop in taskRes.summary) {
-                if (!signals.includes(prop) &&
-                  typeof taskRes.summary[prop] === 'number' &&
-                  prop !== 'answered' &&
-                  prop !== 'asked' &&
-                  prop !== 'startedTS' &&
-                  prop !== 'completedTS') {
-                  signals.push(prop)
-                  prepareForSignal(prop)
-                }
-              }
-            }
-
             let date
             if (taskRes.summary.completedTS) date = new Date(taskRes.summary.completedTS)
             else date = new Date(taskRes.createdTS)
@@ -231,12 +245,6 @@ export default {
               this.labels.push(date)
             }
           }
-        }
-
-        // at this stage all signals are identified, otherwise, set it to unsupported
-        if (signals.length === 0) {
-          this.unsupported = true
-          return
         }
 
         // results are sorted ascending from API, however each task comes with different dates, so we need to re-sort
@@ -285,7 +293,12 @@ export default {
               {
                 // index of the datapoint with respect to its date
                 const Idx = findDateInArray(this.labels, taskRes.date)
-                const value = signal.split('.').reduce((p, c) => p?.[c], taskRes.summary)
+                let value = signal.split('.').reduce((p, c) => p?.[c], taskRes.summary)
+
+                // if the value is a category, we need to convert it to the corresponding label
+                if (this.chartOptions[signal].scales.y.type === 'category') {
+                  value = this.getBestLocale(this.chartOptions[signal].categories[value].name)
+                }
                 this.chartDataSets[signal][dataSetIndex].data[Idx] = value
               }
             }
@@ -303,8 +316,14 @@ export default {
       aDate = new Date(aDate.getTime() - (offset * 60 * 1000))
       return aDate.toISOString().split('T')[0]
     },
-    getSummarySignalsNames (taskType) {
-      if (taskType === 'form') return []
+    getSummarySignalsNames (taskType, formDef) {
+      if (taskType === 'form') {
+        if (!formDef) return null
+        if (formDef.summaryFunction && formDef.summaryFunctionDescription) {
+          // if the form definition contains a summary function description, we use it to determine which signals to show
+          return Object.keys(formDef.summaryFunctionDescription)
+        }
+      }
       if (taskType === 'tugt') return ['durationMs']
       if (taskType === 'fingerTapping') return ['tappingCount']
       if (taskType === 'drawing') return ['totalVariabilitySquare', 'totalVariabilitySpiral']
@@ -313,6 +332,54 @@ export default {
       if (taskType === 'po60') return ['spo2', 'hr']
       if (taskType === 'smwt') return ['distance']
       if (taskType === 'jstyle') return ['steps', 'activeMinutes', 'exerciseMinutes', 'sleepDurationMins']
+    },
+    signalToString (signal, formDef) {
+      if (formDef && formDef.summaryFunctionDescription && signal in formDef.summaryFunctionDescription) {
+        return this.getBestLocale(formDef.summaryFunctionDescription[signal].name)
+      }
+      if (signal === 'steps') {
+        return 'Steps'
+      } else if (signal === 'activeMinutes') {
+        return 'Active Minutes'
+      } else if (signal === 'exerciseMinutes') {
+        return 'Exercise Minutes'
+      } else if (signal === 'distance') {
+        return 'Distance'
+      } else if (signal === 'sleepDurationMins') {
+        return 'Sleep Duration'
+      }
+      return signal.charAt(0).toUpperCase() + signal.slice(1)
+    },
+    signalToDescriptionString (signal, formDef) {
+      if (formDef && formDef.summaryFunctionDescription && signal in formDef.summaryFunctionDescription) {
+        return this.getBestLocale(formDef.summaryFunctionDescription[signal].description)
+      }
+      if (signal === 'steps') {
+        return 'Number of steps'
+      } else if (signal === 'activeMinutes') {
+        return 'Number of minutes in light activity'
+      } else if (signal === 'exerciseMinutes') {
+        return 'Number of minutes in exercise activity'
+      } else if (signal === 'distance') {
+        return 'Distance walked'
+      } else if (signal === 'sleepDurationMins') {
+        return 'Duration of sleep in minutes'
+      }
+      return ''
+    },
+    signalToUnitString (signal) {
+      if (signal === 'steps') {
+        return 'steps'
+      } else if (signal === 'activeMinutes') {
+        return 'minutes'
+      } else if (signal === 'exerciseMinutes') {
+        return 'minutes'
+      } else if (signal === 'distance') {
+        return 'meters'
+      } else if (signal === 'sleepDurationMins') {
+        return 'minutes'
+      }
+      return ''
     }
   }
 }
