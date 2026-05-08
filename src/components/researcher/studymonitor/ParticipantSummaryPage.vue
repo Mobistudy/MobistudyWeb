@@ -212,12 +212,6 @@ export default {
     }
   },
   computed: {
-    participantBMI () {
-      const w = this.participant.weight
-      const h = this.participant.height
-      if (!w || !h) return null
-      return (w / Math.pow(h / 100, 2)).toFixed(1)
-    },
     availableStatTrends () {
       return this.availableTrends.filter(k => this.allTrendData[k])
     },
