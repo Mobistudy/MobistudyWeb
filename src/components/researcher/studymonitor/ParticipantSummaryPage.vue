@@ -12,7 +12,7 @@
         <div v-if="participant.dateOfBirth || participant.sex || participant.weight || participant.height"
           class="patient-meta">
           <span v-if="participant.dateOfBirth">{{ new Date(participant.dateOfBirth).toLocaleDateString('sv-SE')
-          }}</span>
+            }}</span>
           <span v-if="participant.dateOfBirth && participant.sex"> · </span>
           <span v-if="participant.sex">{{ participant.sex }}</span>
           <template v-if="participant.weight || participant.height">
@@ -42,13 +42,14 @@
         class="tab-nav-tabs q-px-lg" style="min-height: 56px">
         <q-tab name="progression" icon="ssid_chart" label="Progression" />
         <q-tab name="activity" icon="list_alt" label="Activity Log" />
-        <q-tab name="notes" icon="sticky_note_2" label="Clinical Notes" disable />
+        <q-tab name="notes" icon="sticky_note_2" label="Clinical Notes" disable/>
         <q-tab name="external" icon="link" label="External Systems" disable />
       </q-tabs>
     </div>
 
     <!-- Tab content -->
-    <q-tab-panels v-model="activeTab" animated class="tab-panels-bg">
+    <!-- keep-alive preserves panel state (e.g. progression chart, selected task) when switching tabs -->
+    <q-tab-panels v-model="activeTab" animated keep-alive class="tab-panels-bg">
 
       <!-- Progression -->
       <q-tab-panel name="progression" class="q-pa-none">
@@ -100,12 +101,11 @@
           </div>
         </div>
 
-        <div class="progression-tab-wrapper q-px-lg q-pb-lg">
+        <div class="q-px-lg q-pb-lg">
           <div class="progression-content">
             <div class="text-h6 q-mb-sm">Progression</div>
-            <q-select square outlined bg-color="white" v-model="progrSelectedTasks"
-              :options="progrTaskSelectOptions" label="Select task"
-              :popup-content-style="{ maxHeight: '260px' }" />
+            <q-select square outlined bg-color="white" v-model="progrSelectedTasks" :options="progrTaskSelectOptions"
+              label="Select task" :popup-content-style="{ maxHeight: '260px' }" />
             <div v-show="!progrSelectedTasks" class="text-grey-7 q-mt-md">
               No task selected
             </div>
@@ -397,19 +397,12 @@ export default {
 }
 
 /* ── Progression tab ───────────────────────────────────────────────── */
-.progression-tab-wrapper {
-  display: flex;
-  justify-content: center;
-}
-
 .progression-content {
   width: 100%;
-  max-width: 1100px;
 }
 
 .progression-charts {
   max-width: 760px;
-  margin: 0 auto;
 }
 
 .patient-toolbar {
