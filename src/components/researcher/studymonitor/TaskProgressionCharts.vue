@@ -3,7 +3,23 @@
     <div v-if="loading" class="tpc-status">Loading…</div>
     <div v-else-if="unsupported" class="tpc-status">Task type currently unsupported</div>
     <div v-else-if="!hasRenderable" class="tpc-status">No data to display</div>
-    <Scatter v-else :data="chartData" :options="chartOptions" />
+    <template v-else>
+      <div class="tpc-toolbar">
+        <button type="button" class="tpc-btn" @click="resetZoom" title="Reset zoom" aria-label="Reset zoom">⟲</button>
+      </div>
+      <div class="tpc-chart-wrap">
+        <Scatter ref="chartRef" :data="chartData" :options="chartOptions" />
+      </div>
+      <input
+        type="range"
+        class="tpc-pan-slider"
+        :min="dataXMin || 0"
+        :max="dataXMax || 1"
+        step="any"
+        aria-label="Pan time range"
+        @input="onPanSlider"
+      />
+    </template>
   </div>
 </template>
 
@@ -72,6 +88,18 @@ const COLORS = [
   '#374151' // gray-dark
 ]
 
+// Zoom: slow wheel (default 0.1 is twitchy), x-axis only, locked to the
+// original data range so panning can't drift into empty time.
+const ZOOM_OPTIONS = {
+  pan: { enabled: true, mode: 'x', threshold: 10 },
+  zoom: {
+    wheel: { enabled: true, speed: 0.05 },
+    pinch: { enabled: true },
+    mode: 'x'
+  },
+  limits: { x: { min: 'original', max: 'original', minRange: 60 * 60 * 1000 } }
+}
+
 export default {
   name: 'TaskProgressionCharts',
   props: {
@@ -95,7 +123,10 @@ export default {
       chartData: { datasets: [] },
       chartOptions: {},
       // cacheKey -> { points: [{ date, values }] }
-      taskDataCache: {}
+      taskDataCache: {},
+      // Full time-axis bounds (ms) used as the pan slider's min/max.
+      dataXMin: null,
+      dataXMax: null
     }
   },
   watch: {
@@ -162,6 +193,16 @@ export default {
       if (typeof val === 'string') return val
       return this.getBestLocale(val) || ''
     },
+    // Axis title: "Name (unit)" when both exist, otherwise whichever is
+    // present. Keeps axes self-explanatory when the unit alone (e.g.
+    // "min") would be ambiguous.
+    _axisTitle (desc) {
+      if (!desc) return ''
+      const name = this.resolveLocale(desc.name)
+      const unit = this.resolveLocale(desc.unit)
+      if (name && unit) return `${name} (${unit})`
+      return name || unit || ''
+    },
     extractValue (values, signalKey) {
       return signalKey.split('.').reduce((p, c) => (p == null ? p : p[c]), values)
     },
@@ -181,6 +222,8 @@ export default {
       this.loading = true
       this.unsupported = false
       this.hasRenderable = false
+      this.dataXMin = null
+      this.dataXMax = null
 
       try {
         const primary = metrics[0]
@@ -292,12 +335,14 @@ export default {
         return
       }
 
+      this._setDataRangeFrom(points.flat())
+
       // Scales
       const scales = {
         x: {
           type: 'time',
           time: { minUnit: 'minute', unit: 'day', tooltipFormat: 'DD T' },
-          title: { display: true, text: 'Time' }
+          title: { display: true, text: 'Date' }
         }
       }
       if (primaryCategorical) {
@@ -308,7 +353,7 @@ export default {
           position: 'left',
           title: {
             display: true,
-            text: this.resolveLocale(primaryDesc.unit) || this.resolveLocale(primaryDesc.name),
+            text: this._axisTitle(primaryDesc),
             color: COLORS[0]
           },
           ticks: { color: COLORS[0] }
@@ -319,7 +364,7 @@ export default {
           position: 'left',
           title: {
             display: true,
-            text: this.resolveLocale(primaryDesc.unit) || this.resolveLocale(primaryDesc.name),
+            text: this._axisTitle(primaryDesc),
             color: COLORS[0]
           },
           ticks: { color: COLORS[0] }
@@ -335,7 +380,7 @@ export default {
           grid: { drawOnChartArea: false },
           title: {
             display: true,
-            text: this.resolveLocale(desc1.unit) || this.resolveLocale(desc1.name),
+            text: this._axisTitle(desc1),
             color: c1
           },
           ticks: { color: c1 }
@@ -369,7 +414,8 @@ export default {
                 return `${ds.label}: ${ctx.formattedValue}`
               }
             }
-          }
+          },
+          zoom: ZOOM_OPTIONS
         },
         interaction: { mode: 'x', axis: 'x', intersect: false }
       }
@@ -453,6 +499,8 @@ export default {
         return
       }
 
+      this._setDataRangeFrom(sorted.map(m => ({ x: m.date })))
+
       // Symptom forms commonly use 0–5 severity scales; anchor the y-axis
       // to 5 when values fit so charts are visually comparable across
       // patients. Otherwise round up to the nearest tens for readability.
@@ -466,7 +514,7 @@ export default {
           x: {
             type: 'time',
             time: { minUnit: 'minute', unit: 'day', tooltipFormat: 'DD T' },
-            title: { display: true, text: 'Time' }
+            title: { display: true, text: 'Date' }
           },
           y: {
             type: 'linear',
@@ -506,12 +554,45 @@ export default {
               if (e.native && e.native.target) e.native.target.style.cursor = 'default'
             }
           },
-          tooltip: { mode: 'x', axis: 'x', intersect: false }
+          tooltip: { mode: 'x', axis: 'x', intersect: false },
+          zoom: ZOOM_OPTIONS
         },
         interaction: { mode: 'x', axis: 'x', intersect: false }
       }
       this.hasRenderable = true
       this.loading = false
+    },
+
+    // ── Zoom / pan controls ──────────────────────────────────────────
+    _setDataRangeFrom (points) {
+      let min = Infinity
+      let max = -Infinity
+      for (const p of points) {
+        const t = p.x instanceof Date ? p.x.getTime() : new Date(p.x).getTime()
+        if (Number.isNaN(t)) continue
+        if (t < min) min = t
+        if (t > max) max = t
+      }
+      if (min < max) {
+        this.dataXMin = min
+        this.dataXMax = max
+      }
+    },
+    resetZoom () {
+      const c = this.$refs.chartRef && this.$refs.chartRef.chart
+      if (c) c.resetZoom()
+    },
+    onPanSlider (e) {
+      const c = this.$refs.chartRef && this.$refs.chartRef.chart
+      if (!c) return
+      const x = c.scales.x
+      const span = x.max - x.min
+      const center = Number(e.target.value)
+      let min = center - span / 2
+      let max = center + span / 2
+      if (min < this.dataXMin) { min = this.dataXMin; max = min + span }
+      if (max > this.dataXMax) { max = this.dataXMax; min = max - span }
+      c.zoomScale('x', { min, max })
     }
   }
 }
@@ -521,12 +602,19 @@ export default {
 .tpc-container {
   position: relative;
   width: 100%;
-  height: 320px;
+  height: 380px;
+  display: flex;
+  flex-direction: column;
 }
-
-.tpc-status {
-  color: #6b7280;
-  text-align: center;
-  padding: 24px 16px;
+.tpc-status { color: #6b7280; text-align: center; padding: 24px 16px; }
+.tpc-toolbar { display: flex; justify-content: flex-end; padding-bottom: 4px; }
+.tpc-btn {
+  width: 28px; height: 24px;
+  border: 1px solid #d1d5db; background: #fff; color: #374151;
+  border-radius: 4px; cursor: pointer; padding: 0;
 }
+.tpc-btn:hover { background: #f3f4f6; }
+/* Chart.js needs a sized, positioned parent when maintainAspectRatio is off. */
+.tpc-chart-wrap { position: relative; flex: 1 1 auto; min-height: 0; }
+.tpc-pan-slider { width: 100%; margin-top: 6px; accent-color: #5f8d98; }
 </style>
