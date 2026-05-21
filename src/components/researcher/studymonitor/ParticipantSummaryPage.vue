@@ -42,7 +42,7 @@
         class="tab-nav-tabs q-px-lg" style="min-height: 56px">
         <q-tab name="progression" icon="ssid_chart" label="Progression" />
         <q-tab name="activity" icon="list_alt" label="Activity Log" />
-        <q-tab name="notes" icon="sticky_note_2" label="Clinical Notes" />
+        <q-tab name="notes" icon="sticky_note_2" label="Notes" />
       </q-tabs>
     </div>
 
