@@ -42,8 +42,7 @@
         class="tab-nav-tabs q-px-lg" style="min-height: 56px">
         <q-tab name="progression" icon="ssid_chart" label="Progression" />
         <q-tab name="activity" icon="list_alt" label="Activity Log" />
-        <q-tab name="notes" icon="sticky_note_2" label="Clinical Notes" disable/>
-        <q-tab name="external" icon="link" label="External Systems" disable />
+        <q-tab name="notes" icon="sticky_note_2" label="Notes" />
       </q-tabs>
     </div>
 
@@ -103,15 +102,59 @@
 
         <div class="q-px-lg q-pb-lg">
           <div class="progression-content">
-            <div class="text-h6 q-mb-sm">Progression</div>
-            <q-select square outlined bg-color="white" v-model="progrSelectedTasks" :options="progrTaskSelectOptions"
-              label="Select task" :popup-content-style="{ maxHeight: '260px' }" />
-            <div v-show="!progrSelectedTasks" class="text-grey-7 q-mt-md">
-              No task selected
+            <div class="row items-center q-mb-md">
+              <div class="text-h6 col">Progression</div>
+              <q-btn outline color="secondary" icon="add" label="Add chart" no-caps
+                :disable="progrSlots.length >= 4" @click="addSlot" />
             </div>
-            <div class="progression-charts q-mt-md">
-              <TaskProgressionCharts :studyDescription="studyDescription" :userKey="userKey"
-                :selectedTasks="progrSelectedTasks" />
+
+            <div class="row q-col-gutter-md">
+              <div v-for="(slot, idx) in progrSlots" :key="slot.id" :class="slotColClass">
+                <div class="slot-wrapper">
+                  <div v-if="progrSlots.length > 1" class="row no-wrap items-center q-mb-xs">
+                    <q-space />
+                    <q-btn flat round dense size="sm" icon="close" color="grey-6"
+                      aria-label="Remove chart" @click="removeSlot(idx)" />
+                  </div>
+
+                  <!-- Metric picker rows: primary + optional overlays -->
+                  <div v-for="(metric, mIdx) in slot.metrics" :key="mIdx" class="metric-row q-mb-sm">
+                    <div class="row q-col-gutter-sm items-center">
+                      <div class="col-12 col-md">
+                        <q-select dense outlined bg-color="white"
+                          :model-value="taskOptionFromTaskValue(metric.taskValue)"
+                          :options="progrTaskSelectOptions"
+                          :label="mIdx === 0 ? 'Task' : 'Compare with task'"
+                          :popup-content-style="{ maxHeight: '260px' }"
+                          @update:model-value="setMetricTask(idx, mIdx, $event)" />
+                      </div>
+                      <div class="col-12 col-md">
+                        <q-select dense outlined bg-color="white"
+                          :model-value="metric.signalKey"
+                          :options="signalOptionsForTaskValue(metric.taskValue)"
+                          label="Signal" emit-value map-options
+                          :popup-content-style="{ maxHeight: '260px' }"
+                          :disable="!metric.taskValue"
+                          @update:model-value="setMetricSignal(idx, mIdx, $event)" />
+                      </div>
+                      <div v-if="slot.metrics.length > 1" class="col-auto">
+                        <q-btn flat round dense size="sm" icon="close" color="grey-6"
+                          aria-label="Remove metric" @click="removeMetric(idx, mIdx)" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <q-btn flat dense no-caps size="sm" color="secondary" icon="add"
+                    :disable="!canAddMetric(slot)"
+                    label="Compare with another metric"
+                    @click="addMetric(idx)" />
+
+                  <div class="progression-charts q-mt-md">
+                    <TaskProgressionCharts :studyDescription="studyDescription" :userKey="userKey"
+                      :slot-config="slot" :form-defs="formDefs" />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -138,6 +181,10 @@ import { taskTypeToString } from '@i18n/utils'
 import TaskProgressionCharts from './TaskProgressionCharts.vue'
 import PatientTrends from './PatientTrends.vue'
 import ParticipantActivityLog from './ParticipantActivityLog.vue'
+import { listSignalsForTask, describeSignal } from './signalCatalog.js'
+
+// Upper bound on how many metrics can be compared in a single chart slot
+const MAX_METRICS_PER_SLOT = 2
 
 export default {
   name: 'ParticipantSummaryPage',
@@ -155,7 +202,16 @@ export default {
 
       // for progression charts:
       progrTaskSelectOptions: [],
-      progrSelectedTasks: null,
+      // 1–4 chart slots. Each slot has 1–4 metrics; each metric is a
+      // (taskValue, signalKey) pair. The first metric is the primary;
+      // additional metrics overlay as extra lines/datasets.
+      progrSlots: [],
+      // Form definitions indexed by taskId, preloaded so the signal
+      // picker can resolve form signal labels synchronously.
+      formDefs: {},
+      // Monotonic id used as :key on each slot to keep Vue's vdom stable
+      // when slots are added/removed.
+      nextSlotId: 1,
 
       // trend data populated by ParticipantTrendsBar via @trendsLoaded
       allTrendData: {},
@@ -171,6 +227,17 @@ export default {
   computed: {
     availableStatTrends () {
       return this.availableTrends.filter(k => this.allTrendData[k])
+    },
+    slotColClass () {
+      // Single chart fills the row; 2–4 charts each take half on desktop
+      // (col-md-6) and stack on narrow viewports (col-12).
+      return this.progrSlots.length === 1 ? 'col-12' : 'col-12 col-md-6'
+    },
+    slotStorageKey () {
+      // v2 schema (slot = { metrics: [{taskValue, signalKey}] }). v1 keys
+      // remain in localStorage but are ignored — users will see one empty
+      // slot first time after the upgrade.
+      return `progr-slots-v2-${this.studyKey}-${this.userKey}`
     },
     // Display-ready configs for the 4 selected stat cards
     statCardDefs () {
@@ -235,6 +302,23 @@ export default {
         }
       }
       this.progrTaskSelectOptions = taskOptions
+
+      // Preload form definitions so the signal-picker can list signals
+      // synchronously when the user opens a form's signal dropdown.
+      const formTasks = (this.studyDescription.tasks || []).filter(t => t.type === 'form')
+      await Promise.all(formTasks.map(async (t) => {
+        try {
+          const def = await API.getForm(t.formKey)
+          if (def) this.formDefs[t.id] = def
+        } catch (err) {
+          console.warn('Could not preload form definition', t.id, err)
+        }
+      }))
+
+      // Restore previously chosen slots for this (study × patient).
+      // Tasks/signals that no longer exist are reset to empty silently.
+      const loaded = this._loadSlots()
+      this.progrSlots = (loaded && loaded.length) ? loaded : [this._emptySlot()]
     } catch (err) {
       console.error(err)
       this.$q.notify({
@@ -242,6 +326,14 @@ export default {
         message: 'Cannot retrieve study plan',
         icon: 'report_problem'
       })
+    }
+  },
+  watch: {
+    progrSlots: {
+      handler () {
+        this._saveSlots()
+      },
+      deep: true
     }
   },
   methods: {
@@ -291,6 +383,170 @@ export default {
      */
     closeTab () {
       window.close()
+    },
+
+    // ── Slot / metric helpers ─────────────────────────────────────────
+    _emptyMetric () {
+      return { taskValue: null, signalKey: null }
+    },
+    _emptySlot () {
+      return { id: `slot-${this.nextSlotId++}`, metrics: [this._emptyMetric()] }
+    },
+    addSlot () {
+      if (this.progrSlots.length >= 4) return
+      this.progrSlots.push(this._emptySlot())
+    },
+    removeSlot (idx) {
+      if (this.progrSlots.length <= 1) return
+      this.progrSlots.splice(idx, 1)
+    },
+    addMetric (slotIdx) {
+      const slot = this.progrSlots[slotIdx]
+      if (!slot || !this.canAddMetric(slot)) return
+      const newSlot = { ...slot, metrics: [...slot.metrics, this._emptyMetric()] }
+      this.progrSlots.splice(slotIdx, 1, newSlot)
+    },
+    removeMetric (slotIdx, mIdx) {
+      const slot = this.progrSlots[slotIdx]
+      if (!slot || slot.metrics.length <= 1) return
+      const metrics = slot.metrics.slice()
+      metrics.splice(mIdx, 1)
+      this.progrSlots.splice(slotIdx, 1, { ...slot, metrics })
+    },
+    async setMetricTask (slotIdx, mIdx, taskOpt) {
+      const slot = this.progrSlots[slotIdx]
+      if (!slot) return
+
+      if (!taskOpt) {
+        this._patchMetric(slotIdx, mIdx, this._emptyMetric())
+        return
+      }
+
+      const taskValue = { type: taskOpt.value.type, ids: taskOpt.value.ids.slice() }
+
+      // if preload didn't complete (or failed) for
+      // this form, fetch its definition now so the signal picker is
+      // never empty when a real form is selected.
+      if (taskValue.type === 'form') {
+        await this._ensureFormDef(taskValue.ids[0])
+      }
+
+      const sigOpts = this.signalOptionsForTaskValue(taskValue)
+      // Auto-select the signal when there's exactly one, avoids the
+      // friction of a second click for single-signal forms like Pain Level.
+      const autoSignal = sigOpts.length === 1 ? sigOpts[0].value : null
+
+      this._patchMetric(slotIdx, mIdx, { taskValue, signalKey: autoSignal })
+    },
+    _patchMetric (slotIdx, mIdx, newMetric) {
+      const slot = this.progrSlots[slotIdx]
+      if (!slot) return
+      const metrics = slot.metrics.slice()
+      metrics.splice(mIdx, 1, newMetric)
+      this.progrSlots.splice(slotIdx, 1, { ...slot, metrics })
+    },
+    async _ensureFormDef (taskId) {
+      if (this.formDefs[taskId]) return this.formDefs[taskId]
+      const task = (this.studyDescription.tasks || []).find(t => t.id === parseInt(taskId))
+      if (!task || !task.formKey) return null
+      try {
+        const def = await API.getForm(task.formKey)
+        if (def) this.formDefs[taskId] = def
+        return def
+      } catch (err) {
+        console.warn('Could not load form definition', taskId, err)
+        return null
+      }
+    },
+    setMetricSignal (slotIdx, mIdx, signalKey) {
+      const slot = this.progrSlots[slotIdx]
+      if (!slot) return
+      const old = slot.metrics[mIdx]
+      const metrics = slot.metrics.slice()
+      metrics.splice(mIdx, 1, { ...old, signalKey })
+      this.progrSlots.splice(slotIdx, 1, { ...slot, metrics })
+    },
+    canAddMetric (slot) {
+      if (!slot || slot.metrics.length >= MAX_METRICS_PER_SLOT) return false
+      // Only allow adding a comparison once the primary metric is fully
+      const primary = slot.metrics[0]
+      if (!primary || !primary.taskValue || !primary.signalKey) return false
+      // The "all subscales (trends)" view takes over the whole slot —
+      // overlays are not visually meaningful there.
+      if (this._isExclusivePresentation(primary.signalKey)) return false
+      return true
+    },
+    _isExclusivePresentation (signalKey) {
+      return signalKey === '__alltrends'
+    },
+
+    // Picker-data helpers for the signal picker
+    taskOptionFromTaskValue (taskValue) {
+      if (!taskValue) return null
+      return this.progrTaskSelectOptions.find(o =>
+        o.value.type === taskValue.type && o.value.ids[0] === taskValue.ids[0]
+      ) || null
+    },
+    signalOptionsForTaskValue (taskValue) {
+      if (!taskValue) return []
+      const formDef = taskValue.type === 'form' ? this.formDefs[taskValue.ids[0]] : null
+      const keys = listSignalsForTask(taskValue.type, formDef)
+      return keys.map(k => {
+        const desc = describeSignal(taskValue.type, k, formDef)
+        return { label: this._resolveLocale(desc.name) || k, value: k }
+      })
+    },
+    _resolveLocale (val) {
+      if (!val) return ''
+      if (typeof val === 'string') return val
+      return this.getBestLocale(val) || ''
+    },
+
+    // Slot persistence (per study and patient)
+    _saveSlots () {
+      if (!this.studyKey || !this.userKey) return
+      try {
+        const serialisable = this.progrSlots.map(slot => ({
+          metrics: slot.metrics.map(m => (m && m.taskValue)
+            ? { taskType: m.taskValue.type, taskIds: m.taskValue.ids.slice(), signalKey: m.signalKey || null }
+            : null)
+        }))
+        localStorage.setItem(this.slotStorageKey, JSON.stringify(serialisable))
+      } catch {}
+    },
+    _loadSlots () {
+      try {
+        const raw = localStorage.getItem(this.slotStorageKey)
+        if (!raw) return null
+        const parsed = JSON.parse(raw)
+        if (!Array.isArray(parsed) || !parsed.length) return null
+        return parsed.slice(0, 4).map(s => {
+          const metrics = []
+          for (const m of (s.metrics || []).slice(0, MAX_METRICS_PER_SLOT)) {
+            if (!m || !m.taskType || !Array.isArray(m.taskIds) || !m.taskIds.length) {
+              metrics.push(this._emptyMetric())
+              continue
+            }
+            const taskExists = this.progrTaskSelectOptions.find(o =>
+              o.value.type === m.taskType && o.value.ids[0] === m.taskIds[0]
+            )
+            if (!taskExists) {
+              metrics.push(this._emptyMetric())
+              continue
+            }
+            const taskValue = { type: m.taskType, ids: m.taskIds.slice() }
+            const sigOpts = this.signalOptionsForTaskValue(taskValue)
+            const validSignal = m.signalKey && sigOpts.find(o => o.value === m.signalKey)
+            // If the saved signal is gone but the task has one signal, auto-pick it to mirror the picker UX.
+            const fallback = !validSignal && sigOpts.length === 1 ? sigOpts[0].value : null
+            metrics.push({ taskValue, signalKey: validSignal ? m.signalKey : fallback })
+          }
+          if (!metrics.length) metrics.push(this._emptyMetric())
+          return { id: `slot-${this.nextSlotId++}`, metrics }
+        })
+      } catch {
+        return null
+      }
     }
   }
 }
@@ -402,7 +658,20 @@ export default {
 }
 
 .progression-charts {
-  max-width: 760px;
+  width: 100%;
+}
+
+.slot-wrapper {
+  width: 100%;
+  position: relative;
+  border: 1px solid #d4d8dd;
+  border-radius: 8px;
+  padding: 12px 14px 14px 14px;
+  background: #ffffff;
+}
+
+.metric-row :deep(.q-field__control) {
+  min-height: 36px;
 }
 
 .patient-toolbar {
