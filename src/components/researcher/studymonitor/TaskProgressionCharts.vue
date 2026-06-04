@@ -5,6 +5,8 @@
     <div v-else-if="!hasRenderable" class="tpc-status">No data to display</div>
     <template v-else>
       <div class="tpc-toolbar">
+        <button type="button" class="tpc-btn" @click="zoomIn" title="Zoom in" aria-label="Zoom in">+</button>
+        <button type="button" class="tpc-btn" @click="zoomOut" title="Zoom out" aria-label="Zoom out">−</button>
         <button type="button" class="tpc-btn" @click="resetZoom" title="Reset zoom" aria-label="Reset zoom">⟲</button>
       </div>
       <div class="tpc-chart-wrap">
@@ -577,6 +579,14 @@ export default {
         this.dataXMin = min
         this.dataXMax = max
       }
+    },
+    zoomIn () {
+      const c = this.$refs.chartRef && this.$refs.chartRef.chart
+      if (c) c.zoom({ x: 1.2 })
+    },
+    zoomOut () {
+      const c = this.$refs.chartRef && this.$refs.chartRef.chart
+      if (c) c.zoom({ x: 0.8 })
     },
     resetZoom () {
       const c = this.$refs.chartRef && this.$refs.chartRef.chart
