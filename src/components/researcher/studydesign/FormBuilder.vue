@@ -465,21 +465,21 @@ export default {
     },
     updateQuestionType (question) {
       if (question.type === 'singleChoice' || question.type === 'multiChoice') {
-        this.$set(question, 'answerChoices', [{
+        question.answerChoices = [{
           id: question.id + 'A1',
           text: {},
           nextQuestionId: undefined,
           includeFreeText: false
-        }])
+        }]
       }
       if (question.type === 'number') {
-        this.$set(question, 'min', undefined)
-        this.$set(question, 'max', undefined)
+        question.min = undefined
+        question.max = undefined
       }
       if (question.type === 'slider') {
-        this.$set(question, 'min', undefined)
-        this.$set(question, 'max', undefined)
-        this.$set(question, 'vertical', false)
+        question.min = undefined
+        question.max = undefined
+        question.vertical = false
       }
       if (question.type === 'textOnly' || question.type === 'freetext') {
         delete question.answerChoices
@@ -527,7 +527,7 @@ export default {
     // add an answer choice
     addAnswerChoice (qIndex) {
       if (!this.formDescription.questions[qIndex].answerChoices) {
-        this.$set(this.formDescription.questions[qIndex], 'answerChoices', [])
+        this.formDescription.questions[qIndex].answerChoices = []
       }
       const newAnswer = {
         id: this.formDescription.questions[qIndex].id + 'A' + (this.formDescription.questions[qIndex].answerChoices.length + 1),
