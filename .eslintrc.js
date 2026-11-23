@@ -6,13 +6,12 @@ module.exports = {
 
   parserOptions: {
     parser: '@babel/eslint-parser',
-    ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
+    ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features (dynamic import)
     sourceType: 'module' // Allows for the use of imports
   },
 
   env: {
-    browser: true,
-    'vue/setup-compiler-macros': true
+    browser: true
   },
 
   // Rules order is important, please avoid shuffling them
@@ -23,9 +22,9 @@ module.exports = {
     // Uncomment any of the lines below to choose desired strictness,
     // but leave only one uncommented!
     // See https://eslint.vuejs.org/rules/#available-rules
-    'plugin:vue/vue3-essential', // Priority A: Essential (Error Prevention)
-    // 'plugin:vue/vue3-strongly-recommended', // Priority B: Strongly Recommended (Improving Readability)
-    // 'plugin:vue/vue3-recommended', // Priority C: Recommended (Minimizing Arbitrary Choices and Cognitive Overhead)
+    'plugin:vue/essential', // Priority A: Essential (Error Prevention)
+    // 'plugin:vue/strongly-recommended', // Priority B: Strongly Recommended (Improving Readability)
+    // 'plugin:vue/recommended', // Priority C: Recommended (Minimizing Arbitrary Choices and Cognitive Overhead)
 
     'standard'
     
