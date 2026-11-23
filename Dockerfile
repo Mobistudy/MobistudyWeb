@@ -1,4 +1,4 @@
-FROM node:24.11.1 as build
+FROM node:26.13 AS build
 
 # install python (needed by some dev deps)
 #RUN apk add --no-cache --virtual .gyp \
@@ -15,6 +15,6 @@ WORKDIR /usr/src/app
 RUN npm install
 RUN npx quasar build
 
-FROM caddy:2.4.6-alpine
+FROM caddy:2.11-alpine
 
 COPY --from=build /usr/src/app/dist/spa /var/www
